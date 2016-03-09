@@ -30,6 +30,27 @@
 /* Including needed modules to compile this module/procedure */
 #include "Cpu.h"
 #include "Events.h"
+#include "FRTOS1.h"
+#include "UTIL1.h"
+#include "LEDred.h"
+#include "LEDpin1.h"
+#include "BitIoLdd1.h"
+#include "LEDgreen.h"
+#include "LEDpin2.h"
+#include "BitIoLdd2.h"
+#include "LEDblue.h"
+#include "LEDpin3.h"
+#include "BitIoLdd3.h"
+#include "WAIT1.h"
+#include "DIRL.h"
+#include "BitIoLdd4.h"
+#include "PWML.h"
+#include "PwmLdd1.h"
+#include "DIRR.h"
+#include "BitIoLdd5.h"
+#include "PWMR.h"
+#include "PwmLdd2.h"
+#include "TU1.h"
 /* Including shared modules, which are used for whole project */
 #include "PE_Types.h"
 #include "PE_Error.h"
@@ -49,6 +70,8 @@ int main(void)
 
   /* Write your code here */
   /* For example: for(;;) { } */
+
+  startApplication();
 
   /*** Don't write any code pass this line, or it will be deleted during code generation. ***/
   /*** RTOS startup code. Macro PEX_RTOS_START is defined by the RTOS component. DON'T MODIFY THIS CODE!!! ***/
