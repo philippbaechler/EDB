@@ -1,0 +1,12 @@
+Documentation/
+Generated_code/
+Debug/
+.settings/
+*/Debugger/
+
+ProjectInfo.xml
+.cwGeneratedFileSetLog
+
+*.g_c
+*.g_x
+*.launch
