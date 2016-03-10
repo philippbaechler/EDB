@@ -44,12 +44,8 @@
 #include "WAIT1.h"
 #include "DIRL.h"
 #include "BitIoLdd4.h"
-#include "PWML.h"
-#include "PwmLdd1.h"
 #include "DIRR.h"
 #include "BitIoLdd5.h"
-#include "PWMR.h"
-#include "PwmLdd2.h"
 #include "TU1.h"
 /* Including shared modules, which are used for whole project */
 #include "PE_Types.h"

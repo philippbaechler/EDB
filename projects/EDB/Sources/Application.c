@@ -1,5 +1,4 @@
-#include "application.h"
-
+#include "Application.h"
 
 
 void startApplication(void)
@@ -8,8 +7,8 @@ void startApplication(void)
 	//initializeEvent();
 
 	while(true) {
-		LED1_Neg();
-		WAIT1_Waitms(400);
+		//LED1_Neg();
+		//WAIT1_Waitms(400);
 	}
 
 	//deinitializeEvent();
