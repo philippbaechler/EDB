@@ -28,6 +28,7 @@
 
 #include "Cpu.h"
 #include "Events.h"
+#include "LEDred.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -56,9 +57,9 @@ void Cpu_OnNMIINT(void)
 
 /*
 ** ===================================================================
-**     Event       :  FRTOS1_vApplicationStackOverflowHook (module Events)
+**     Event       :  FRTOS_vApplicationStackOverflowHook (module Events)
 **
-**     Component   :  FRTOS1 [FreeRTOS]
+**     Component   :  FRTOS [FreeRTOS]
 **     Description :
 **         if enabled, this hook will be called in case of a stack
 **         overflow.
@@ -69,7 +70,7 @@ void Cpu_OnNMIINT(void)
 **     Returns     : Nothing
 ** ===================================================================
 */
-void FRTOS1_vApplicationStackOverflowHook(xTaskHandle pxTask, char *pcTaskName)
+void FRTOS_vApplicationStackOverflowHook(xTaskHandle pxTask, char *pcTaskName)
 {
   /* This will get called if a stack overflow is detected during the context
      switch.  Set configCHECK_FOR_STACK_OVERFLOWS to 2 to also check for stack
@@ -84,9 +85,9 @@ void FRTOS1_vApplicationStackOverflowHook(xTaskHandle pxTask, char *pcTaskName)
 
 /*
 ** ===================================================================
-**     Event       :  FRTOS1_vApplicationTickHook (module Events)
+**     Event       :  FRTOS_vApplicationTickHook (module Events)
 **
-**     Component   :  FRTOS1 [FreeRTOS]
+**     Component   :  FRTOS [FreeRTOS]
 **     Description :
 **         If enabled, this hook will be called by the RTOS for every
 **         tick increment.
@@ -94,7 +95,7 @@ void FRTOS1_vApplicationStackOverflowHook(xTaskHandle pxTask, char *pcTaskName)
 **     Returns     : Nothing
 ** ===================================================================
 */
-void FRTOS1_vApplicationTickHook(void)
+void FRTOS_vApplicationTickHook(void)
 {
   /* Called for every RTOS tick. */
   /* Write your code here ... */
@@ -102,9 +103,9 @@ void FRTOS1_vApplicationTickHook(void)
 
 /*
 ** ===================================================================
-**     Event       :  FRTOS1_vApplicationIdleHook (module Events)
+**     Event       :  FRTOS_vApplicationIdleHook (module Events)
 **
-**     Component   :  FRTOS1 [FreeRTOS]
+**     Component   :  FRTOS [FreeRTOS]
 **     Description :
 **         If enabled, this hook will be called when the RTOS is idle.
 **         This might be a good place to go into low power mode.
@@ -112,7 +113,7 @@ void FRTOS1_vApplicationTickHook(void)
 **     Returns     : Nothing
 ** ===================================================================
 */
-void FRTOS1_vApplicationIdleHook(void)
+void FRTOS_vApplicationIdleHook(void)
 {
   /* Called whenever the RTOS is idle (from the IDLE task).
      Here would be a good place to put the CPU into low power mode. */
@@ -121,9 +122,9 @@ void FRTOS1_vApplicationIdleHook(void)
 
 /*
 ** ===================================================================
-**     Event       :  FRTOS1_vApplicationMallocFailedHook (module Events)
+**     Event       :  FRTOS_vApplicationMallocFailedHook (module Events)
 **
-**     Component   :  FRTOS1 [FreeRTOS]
+**     Component   :  FRTOS [FreeRTOS]
 **     Description :
 **         If enabled, the RTOS will call this hook in case memory
 **         allocation failed.
@@ -131,7 +132,7 @@ void FRTOS1_vApplicationIdleHook(void)
 **     Returns     : Nothing
 ** ===================================================================
 */
-void FRTOS1_vApplicationMallocFailedHook(void)
+void FRTOS_vApplicationMallocFailedHook(void)
 {
   /* Called if a call to pvPortMalloc() fails because there is insufficient
      free memory available in the FreeRTOS heap.  pvPortMalloc() is called

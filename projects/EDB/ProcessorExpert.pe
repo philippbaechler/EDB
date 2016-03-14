@@ -3,7 +3,7 @@
   <Header>
     <Name>EDB</Name>
     <SavedBy>Philipp</SavedBy>
-    <ModificationStamp>4</ModificationStamp>
+    <ModificationStamp>6</ModificationStamp>
     <Date>2016-03-09</Date>
     <IDE>Eclipse IDE</IDE>
     <PEversion>1.12.1.RT7_b1531-0480</PEversion>
@@ -29,7 +29,7 @@
     <UseExistingModules>true</UseExistingModules>
     <RenamePeripheries>false</RenamePeripheries>
     <Autodependency>true</Autodependency>
-    <ProjectCompNumb>60</ProjectCompNumb>
+    <ProjectCompNumb>61</ProjectCompNumb>
     <DelUnusedPreviouslyGenFiles>true</DelUnusedPreviouslyGenFiles>
     <GeneratedCodeFrozen>false</GeneratedCodeFrozen>
     <AssignInitComponentNameToPrph>true</AssignInitComponentNameToPrph>
@@ -4544,7 +4544,7 @@
   <Bean>
     <Repository>file:/${ProcessorExpertPath:user}</Repository>
     <BeanType>FreeRTOS</BeanType>
-    <Name>FRTOS1</Name>
+    <Name>FRTOS</Name>
     <CompNumb>6</CompNumb>
     <CompEnabled>true</CompEnabled>
     <GenCodeMode>ALWAYS_WRITE</GenCodeMode>
@@ -4559,7 +4559,7 @@
         <ItemSymbol>DeviceName</ItemSymbol>
         <ReadOnly>false</ReadOnly>
         <UserReadOnly>false</UserReadOnly>
-        <Value>FRTOS1</Value>
+        <Value>FRTOS</Value>
       </ItemState>
       <ItemState>
         <ItemSymbol>FreeRTOSVersion</ItemSymbol>
@@ -6262,7 +6262,7 @@
         <ItemSymbol>vApplicationStackOverflowHookName</ItemSymbol>
         <ReadOnly>false</ReadOnly>
         <UserReadOnly>false</UserReadOnly>
-        <Value>FRTOS1_vApplicationStackOverflowHook</Value>
+        <Value>FRTOS_vApplicationStackOverflowHook</Value>
       </ItemState>
       <ItemState>
         <ItemSymbol>vApplicationTickHook</ItemSymbol>
@@ -6278,7 +6278,7 @@
         <ItemSymbol>vApplicationTickHookName</ItemSymbol>
         <ReadOnly>false</ReadOnly>
         <UserReadOnly>false</UserReadOnly>
-        <Value>FRTOS1_vApplicationTickHook</Value>
+        <Value>FRTOS_vApplicationTickHook</Value>
       </ItemState>
       <ItemState>
         <ItemSymbol>vApplicationIdleHook</ItemSymbol>
@@ -6294,7 +6294,7 @@
         <ItemSymbol>vApplicationIdleHookName</ItemSymbol>
         <ReadOnly>false</ReadOnly>
         <UserReadOnly>false</UserReadOnly>
-        <Value>FRTOS1_vApplicationIdleHook</Value>
+        <Value>FRTOS_vApplicationIdleHook</Value>
       </ItemState>
       <ItemState>
         <ItemSymbol>vApplicationMallocFailedHook</ItemSymbol>
@@ -6310,7 +6310,7 @@
         <ItemSymbol>vApplicationMallocFailedHookName</ItemSymbol>
         <ReadOnly>false</ReadOnly>
         <UserReadOnly>false</UserReadOnly>
-        <Value>FRTOS1_vApplicationMallocFailedHook</Value>
+        <Value>FRTOS_vApplicationMallocFailedHook</Value>
       </ItemState>
       <ItemState>
         <ItemSymbol>vOnPreSleepProcessing</ItemSymbol>
@@ -6326,7 +6326,7 @@
         <ItemSymbol>vOnPreSleepProcessingName</ItemSymbol>
         <ReadOnly>false</ReadOnly>
         <UserReadOnly>false</UserReadOnly>
-        <Value>FRTOS1_vOnPreSleepProcessing</Value>
+        <Value>FRTOS_vOnPreSleepProcessing</Value>
       </ItemState>
       <ItemState>
         <ItemSymbol>vOnPostSleepProcessing</ItemSymbol>
@@ -6342,7 +6342,7 @@
         <ItemSymbol>vOnPostSleepProcessingName</ItemSymbol>
         <ReadOnly>false</ReadOnly>
         <UserReadOnly>false</UserReadOnly>
-        <Value>FRTOS1_vOnPostSleepProcessing</Value>
+        <Value>FRTOS_vOnPostSleepProcessing</Value>
       </ItemState>
     </Events>
   </Bean>
@@ -11870,10 +11870,10 @@
         <ReadOnly>false</ReadOnly>
         <UserReadOnly>false</UserReadOnly>
         <PropertyModelIsAutomatic>false</PropertyModelIsAutomatic>
-        <Index>1</Index>
-        <Value>false</Value>
+        <Index>0</Index>
+        <Value>true</Value>
         <LastSelection>true</LastSelection>
-        <LastUserSel>no</LastUserSel>
+        <LastUserSel>yes</LastUserSel>
         <UsrMethodName>SetOffsetTicks</UsrMethodName>
       </ItemState>
       <ItemState>
@@ -11881,10 +11881,10 @@
         <ReadOnly>false</ReadOnly>
         <UserReadOnly>false</UserReadOnly>
         <PropertyModelIsAutomatic>false</PropertyModelIsAutomatic>
-        <Index>1</Index>
-        <Value>false</Value>
+        <Index>0</Index>
+        <Value>true</Value>
         <LastSelection>true</LastSelection>
-        <LastUserSel>no</LastUserSel>
+        <LastUserSel>yes</LastUserSel>
         <UsrMethodName>GetOffsetTicks</UsrMethodName>
       </ItemState>
       <ItemState>
@@ -11892,10 +11892,10 @@
         <ReadOnly>false</ReadOnly>
         <UserReadOnly>false</UserReadOnly>
         <PropertyModelIsAutomatic>false</PropertyModelIsAutomatic>
-        <Index>1</Index>
-        <Value>false</Value>
+        <Index>0</Index>
+        <Value>true</Value>
         <LastSelection>true</LastSelection>
-        <LastUserSel>no</LastUserSel>
+        <LastUserSel>yes</LastUserSel>
         <UsrMethodName>GetCaptureValue</UsrMethodName>
       </ItemState>
       <ItemState>
