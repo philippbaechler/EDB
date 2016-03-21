@@ -5,7 +5,7 @@
 **     Component   : Events
 **     Version     : Driver 01.00
 **     Compiler    : GNU C Compiler
-**     Date/Time   : 2016-03-09, 09:50, # CodeGen: 0
+**     Date/Time   : 2016-03-21, 11:10, # CodeGen: 0
 **     Abstract    :
 **         This is user's event module.
 **         Put your event handler code here.
@@ -33,23 +33,6 @@
 #include "PE_Error.h"
 #include "PE_Const.h"
 #include "IO_Map.h"
-#include "FRTOS.h"
-#include "UTIL1.h"
-#include "LEDred.h"
-#include "LEDpin1.h"
-#include "BitIoLdd1.h"
-#include "LEDgreen.h"
-#include "LEDpin2.h"
-#include "BitIoLdd2.h"
-#include "LEDblue.h"
-#include "LEDpin3.h"
-#include "BitIoLdd3.h"
-#include "WAIT1.h"
-#include "DIRL.h"
-#include "BitIoLdd4.h"
-#include "DIRR.h"
-#include "BitIoLdd5.h"
-#include "TU1.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -70,107 +53,6 @@ extern "C" {
 /* ===================================================================*/
 void Cpu_OnNMIINT(void);
 
-
-void FRTOS_vApplicationStackOverflowHook(xTaskHandle pxTask, char *pcTaskName);
-/*
-** ===================================================================
-**     Event       :  FRTOS_vApplicationStackOverflowHook (module Events)
-**
-**     Component   :  FRTOS [FreeRTOS]
-**     Description :
-**         if enabled, this hook will be called in case of a stack
-**         overflow.
-**     Parameters  :
-**         NAME            - DESCRIPTION
-**         pxTask          - Task handle
-**       * pcTaskName      - Pointer to task name
-**     Returns     : Nothing
-** ===================================================================
-*/
-
-void FRTOS_vApplicationTickHook(void);
-/*
-** ===================================================================
-**     Event       :  FRTOS_vApplicationTickHook (module Events)
-**
-**     Component   :  FRTOS [FreeRTOS]
-**     Description :
-**         If enabled, this hook will be called by the RTOS for every
-**         tick increment.
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
-
-void FRTOS_vApplicationIdleHook(void);
-/*
-** ===================================================================
-**     Event       :  FRTOS_vApplicationIdleHook (module Events)
-**
-**     Component   :  FRTOS [FreeRTOS]
-**     Description :
-**         If enabled, this hook will be called when the RTOS is idle.
-**         This might be a good place to go into low power mode.
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
-
-void FRTOS_vApplicationMallocFailedHook(void);
-/*
-** ===================================================================
-**     Event       :  FRTOS_vApplicationMallocFailedHook (module Events)
-**
-**     Component   :  FRTOS [FreeRTOS]
-**     Description :
-**         If enabled, the RTOS will call this hook in case memory
-**         allocation failed.
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
-
-/*
-** ===================================================================
-**     Event       :  TU1_OnChannel0 (module Events)
-**
-**     Component   :  TU1 [TimerUnit_LDD]
-*/
-/*!
-**     @brief
-**         Called if compare register match the counter registers or
-**         capture register has a new content. OnChannel0 event and
-**         Timer unit must be enabled. See [SetEventMask] and
-**         [GetEventMask] methods. This event is available only if a
-**         [Interrupt] is enabled.
-**     @param
-**         UserDataPtr     - Pointer to the user or
-**                           RTOS specific data. The pointer passed as
-**                           the parameter of Init method.
-*/
-/* ===================================================================*/
-void TU1_OnChannel0(LDD_TUserData *UserDataPtr);
-
-/*
-** ===================================================================
-**     Event       :  TU1_OnChannel1 (module Events)
-**
-**     Component   :  TU1 [TimerUnit_LDD]
-*/
-/*!
-**     @brief
-**         Called if compare register match the counter registers or
-**         capture register has a new content. OnChannel1 event and
-**         Timer unit must be enabled. See [SetEventMask] and
-**         [GetEventMask] methods. This event is available only if a
-**         [Interrupt] is enabled.
-**     @param
-**         UserDataPtr     - Pointer to the user or
-**                           RTOS specific data. The pointer passed as
-**                           the parameter of Init method.
-*/
-/* ===================================================================*/
-void TU1_OnChannel1(LDD_TUserData *UserDataPtr);
 
 /* END Events */
 
