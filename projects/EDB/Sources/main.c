@@ -30,6 +30,13 @@
 /* Including needed modules to compile this module/procedure */
 #include "Cpu.h"
 #include "Events.h"
+#include "CLS1.h"
+#include "WAIT1.h"
+#include "CS1.h"
+#include "BT1.h"
+#include "Serial1.h"
+#include "ASerialLdd1.h"
+#include "UTIL1.h"
 /* Including shared modules, which are used for whole project */
 #include "PE_Types.h"
 #include "PE_Error.h"
@@ -49,6 +56,11 @@ int main(void)
 
   /* Write your code here */
   /* For example: for(;;) { } */
+
+  for (;;){
+	  WAIT1_Waitms(200);
+	  CLS1_SendStr("HelloWorld\r\n", CLS1_GetStdio()->stdOut);
+   }
 
   /*** Don't write any code pass this line, or it will be deleted during code generation. ***/
   /*** RTOS startup code. Macro PEX_RTOS_START is defined by the RTOS component. DON'T MODIFY THIS CODE!!! ***/
