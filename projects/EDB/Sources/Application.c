@@ -8,6 +8,8 @@ void APP_Start(void){
 
 	MOT_Init();
 
+	motionController.master_speed_period = 1000;
+
 	for(;;){
 
 		/*

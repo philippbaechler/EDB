@@ -13,9 +13,9 @@ MOT_FSMData motionController;
 void MOT_Init(void){
 	motionController.running = FALSE;
 	motionController.state = MOT_FSM_STOP;
-	motionController.max_common_period = 50000;
+	motionController.max_common_period = 65000;
 	motionController.min_common_period = 200; 		// 0.2 ms minimale Periodendauer -> grösst mogliche Geschwindigkeit
-	motionController.accleration_value = 1000;		// alle 10 ms wird die Periodendauer um 1 ms kleiner
+	motionController.accleration_value = 500;		// alle 10 ms wird die Periodendauer um 0.1 ms kleiner
 }
 
 /*

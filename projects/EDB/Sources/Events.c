@@ -86,46 +86,6 @@ void SIG_OnChannel0(LDD_TUserData *UserDataPtr)
 	// Here could the calculation of the amount of steps happen
 }
 
-/*
-** ===================================================================
-**     Event       :  MOT_RIGHT_OnEnd (module Events)
-**
-**     Component   :  MOT_RIGHT [PPG]
-**     Description :
-**         This event is called when the specified number of iterations
-**         is generated. (Only when the component is enabled - <Enable>
-**         and the events are enabled - <EnableEvent>). The event is
-**         available only when the peripheral supports an interrupt,
-**         that is generated at the end of the PWM period.
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
-void MOT_RIGHT_OnEnd(void)
-{
-  /* Write your code here ... */
-}
-
-/*
-** ===================================================================
-**     Event       :  MOT_LEFT_OnEnd (module Events)
-**
-**     Component   :  MOT_LEFT [PPG]
-**     Description :
-**         This event is called when the specified number of iterations
-**         is generated. (Only when the component is enabled - <Enable>
-**         and the events are enabled - <EnableEvent>). The event is
-**         available only when the peripheral supports an interrupt,
-**         that is generated at the end of the PWM period.
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
-void MOT_LEFT_OnEnd(void)
-{
-  /* Write your code here ... */
-}
-
 /* END Events */
 
 #ifdef __cplusplus
