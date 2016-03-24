@@ -37,12 +37,19 @@
 #include "Serial1.h"
 #include "ASerialLdd1.h"
 #include "UTIL1.h"
+#include "MOT_LEFT.h"
+#include "PpgLdd1.h"
+#include "SIG.h"
+#include "MOT_RIGHT.h"
+#include "PpgLdd2.h"
 /* Including shared modules, which are used for whole project */
 #include "PE_Types.h"
 #include "PE_Error.h"
 #include "PE_Const.h"
 #include "IO_Map.h"
 /* User includes (#include below this line is not maintained by Processor Expert) */
+
+
 
 /*lint -save  -e970 Disable MISRA rule (6.3) checking. */
 int main(void)

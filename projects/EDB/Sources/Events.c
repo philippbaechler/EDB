@@ -54,6 +54,70 @@ void Cpu_OnNMIINT(void)
   /* Write your code here ... */
 }
 
+/*
+** ===================================================================
+**     Event       :  SIG_OnChannel0 (module Events)
+**
+**     Component   :  SIG [TimerUnit_LDD]
+*/
+/*!
+**     @brief
+**         Called if compare register match the counter registers or
+**         capture register has a new content. OnChannel0 event and
+**         Timer unit must be enabled. See [SetEventMask] and
+**         [GetEventMask] methods. This event is available only if a
+**         [Interrupt] is enabled.
+**     @param
+**         UserDataPtr     - Pointer to the user or
+**                           RTOS specific data. The pointer passed as
+**                           the parameter of Init method.
+*/
+/* ===================================================================*/
+void SIG_OnChannel0(LDD_TUserData *UserDataPtr)
+{
+  /* Write your code here ... */
+}
+
+/*
+** ===================================================================
+**     Event       :  MOT_RIGHT_OnEnd (module Events)
+**
+**     Component   :  MOT_RIGHT [PPG]
+**     Description :
+**         This event is called when the specified number of iterations
+**         is generated. (Only when the component is enabled - <Enable>
+**         and the events are enabled - <EnableEvent>). The event is
+**         available only when the peripheral supports an interrupt,
+**         that is generated at the end of the PWM period.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void MOT_RIGHT_OnEnd(void)
+{
+  /* Write your code here ... */
+}
+
+/*
+** ===================================================================
+**     Event       :  MOT_LEFT_OnEnd (module Events)
+**
+**     Component   :  MOT_LEFT [PPG]
+**     Description :
+**         This event is called when the specified number of iterations
+**         is generated. (Only when the component is enabled - <Enable>
+**         and the events are enabled - <EnableEvent>). The event is
+**         available only when the peripheral supports an interrupt,
+**         that is generated at the end of the PWM period.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void MOT_LEFT_OnEnd(void)
+{
+  /* Write your code here ... */
+}
+
 /* END Events */
 
 #ifdef __cplusplus
