@@ -36,6 +36,9 @@ extern "C" {
 
 /* User includes (#include below this line is not maintained by Processor Expert) */
 
+#include "MotionController.h"
+#include "SIG.h"
+
 /*
 ** ===================================================================
 **     Event       :  Cpu_OnNMIINT (module Events)
@@ -75,7 +78,12 @@ void Cpu_OnNMIINT(void)
 /* ===================================================================*/
 void SIG_OnChannel0(LDD_TUserData *UserDataPtr)
 {
-  /* Write your code here ... */
+	if(motionController.running){
+		MOT_Process();
+		TPM0_C0V = TPM0_CNT + 3750; // MOT_Process() runs with a frequency of 1kHz
+	}
+
+	// Here could the calculation of the amount of steps happen
 }
 
 /*

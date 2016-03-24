@@ -34,7 +34,7 @@
 #include "PE_Const.h"
 #include "IO_Map.h"
 #include "CLS1.h"
-#include "WAIT1.h"
+#include "WAIT.h"
 #include "CS1.h"
 #include "BT1.h"
 #include "Serial1.h"
