@@ -30,18 +30,20 @@
 /* Including needed modules to compile this module/procedure */
 #include "Cpu.h"
 #include "Events.h"
-#include "CLS1.h"
 #include "WAIT.h"
 #include "CS1.h"
-#include "BT1.h"
-#include "Serial1.h"
-#include "ASerialLdd1.h"
 #include "UTIL1.h"
 #include "MOT_LEFT.h"
 #include "PpgLdd1.h"
 #include "SIG.h"
 #include "MOT_RIGHT.h"
 #include "PpgLdd2.h"
+#include "LED1.h"
+#include "LEDpin1.h"
+#include "BitIoLdd1.h"
+#include "SERIAL_UART.h"
+#include "AS1.h"
+#include "ASerialLdd2.h"
 /* Including shared modules, which are used for whole project */
 #include "PE_Types.h"
 #include "PE_Error.h"
@@ -60,9 +62,6 @@ int main(void)
   /*** Processor Expert internal initialization. DON'T REMOVE THIS CODE!!! ***/
   PE_low_level_init();
   /*** End of Processor Expert internal initialization.                    ***/
-
-  /* Write your code here */
-  /* For example: for(;;) { } */
 
   APP_Start();
 

@@ -80,7 +80,7 @@ void SIG_OnChannel0(LDD_TUserData *UserDataPtr)
 {
 	if(motionController.running){
 		MOT_Process();
-		TPM0_C0V = TPM0_CNT + 3750; // MOT_Process() runs with a frequency of 1kHz
+		TPM1_C0V = TPM1_CNT + 3750; // MOT_Process() runs with a frequency of 1kHz
 	}
 
 	// Here could the calculation of the amount of steps happen
