@@ -41,10 +41,35 @@
 #include "SIG.h"
 #include "MOT_RIGHT.h"
 #include "PpgLdd2.h"
-#include "LED1.h"
+#include "LED_RED.h"
 #include "LEDpin1.h"
 #include "BitIoLdd1.h"
 #include "SERIAL_UART.h"
+#include "MOT_LEFT_NSLEEP.h"
+#include "BitIoLdd2.h"
+#include "MOT_RGHT_NSLEEP.h"
+#include "BitIoLdd3.h"
+#include "MOT_LEFT_DIR.h"
+#include "BitIoLdd4.h"
+#include "MOT_RIGHT_DIR.h"
+#include "BitIoLdd5.h"
+#include "MOT_LEFT_M0.h"
+#include "BitIoLdd6.h"
+#include "MOT_LEFT_M1.h"
+#include "BitIoLdd7.h"
+#include "MOT_RIGHT_M0.h"
+#include "BitIoLdd8.h"
+#include "MOT_RIGHT_M1.h"
+#include "BitIoLdd9.h"
+#include "ULTRA_SONIC_TRIG.h"
+#include "BitIoLdd10.h"
+#include "COLOR_SENSOR_NLED.h"
+#include "BitIoLdd11.h"
+#include "LED_GREEN.h"
+#include "LEDpin3.h"
+#include "BitIoLdd13.h"
+#include "IR_SENSOR.h"
+#include "AdcLdd1.h"
 #include "AS1.h"
 #include "ASerialLdd2.h"
 
@@ -88,6 +113,38 @@ void Cpu_OnNMIINT(void);
 */
 /* ===================================================================*/
 void SIG_OnChannel0(LDD_TUserData *UserDataPtr);
+
+void IR_SENSOR_OnEnd(void);
+/*
+** ===================================================================
+**     Event       :  IR_SENSOR_OnEnd (module Events)
+**
+**     Component   :  IR_SENSOR [ADC]
+**     Description :
+**         This event is called after the measurement (which consists
+**         of <1 or more conversions>) is/are finished.
+**         The event is available only when the <Interrupt
+**         service/event> property is enabled.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+
+void IR_SENSOR_OnCalibrationEnd(void);
+/*
+** ===================================================================
+**     Event       :  IR_SENSOR_OnCalibrationEnd (module Events)
+**
+**     Component   :  IR_SENSOR [ADC]
+**     Description :
+**         This event is called when the calibration has been finished.
+**         User should check if the calibration pass or fail by
+**         Calibration status method./nThis event is enabled only if
+**         the <Interrupt service/event> property is enabled.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
 
 /* END Events */
 

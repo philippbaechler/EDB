@@ -47,4 +47,5 @@ void MOT_ChangeState(MOT_StateKinds newState);
 void MOT_Regulate();
 uint16_t GetSpeed();
 void MOT_CalcualteDifferential();
+void MOT_CalcualteNOfSteps();
 void MOT_Process();

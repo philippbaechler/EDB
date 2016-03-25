@@ -1,7 +1,7 @@
 #include "PE_Types.h"
 #include "MOT_LEFT.h"
 #include "MOT_RIGHT.h"
-#include "LED1.h"
+#include "LED_RED.h"
 #include "SERIAL_UART.h"
 
 #include "MotionController.h"
@@ -424,7 +424,7 @@ void MOT_Process(){
 	switch(motionController.state){
 		case MOT_FSM_STOP:
 
-			LED1_Off();
+			LED_RED_Off();
 
 			motionController.actual_common_period = motionController.max_common_period;
 
@@ -443,7 +443,7 @@ void MOT_Process(){
 
 			if(motionController.actual_common_period <= motionController.target_common_period){
 				motionController.state = MOT_FSM_RUN;
-				LED1_On();
+				LED_RED_On();
 			}
 
 			MOT_SetSpeed();
@@ -453,7 +453,7 @@ void MOT_Process(){
 
 			MOT_CalcualteNOfSteps();
 
-			LED1_Off();
+			LED_RED_Off();
 
 			if((motionController.actual_common_period-motionController.target_common_period) > 500){
 				motionController.state = MOT_FSM_ACCEL;
@@ -481,7 +481,7 @@ void MOT_Process(){
 				else{
 					motionController.state = MOT_FSM_RUN;
 				}
-				LED1_On();
+				LED_RED_On();
 			}
 			else if(motionController.accleration_counter == 0){
 				motionController.state = MOT_FSM_STOP;
