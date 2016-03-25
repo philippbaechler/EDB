@@ -29,14 +29,13 @@ typedef struct MOT_FSMData {
 	uint16_t target_common_period;	// Zielgeschwidigkeit
 	uint16_t accleration_counter;	// Variable um die Periodendauer für die Beschleunigung zu berechnen
 
-//	uint16_t accleration_value;		// Beschleunigungswert
-
 	int8_t differential;			// Abweichung von der Mittellinie. -128 bis 127
 
 	MOT_MOTOR motorLeft;
 	MOT_MOTOR motorRight;
 
 	uint16_t step_count; // uint16_t = 65536 -> reicht bei d = 60mm und 1/8 step mode für 7,7 Meter mit mm Auflösung
+	uint16_t step_cout_target;
 } MOT_FSMData;
 
 extern MOT_FSMData motionController;

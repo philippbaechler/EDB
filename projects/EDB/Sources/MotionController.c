@@ -2,6 +2,7 @@
 #include "MOT_LEFT.h"
 #include "MOT_RIGHT.h"
 #include "LED1.h"
+#include "SERIAL_UART.h"
 
 #include "MotionController.h"
 
@@ -408,6 +409,16 @@ void MOT_CalcualteDifferential(){
 	}
 }
 
+void MOT_CalcualteNOfSteps(){
+	uint16_t newSteps = (10000 / motionController.actual_common_period); // works only when actual_common_period > 10000, we've got here an error in our distance measuring. Since we've normally have periods < 1000, this shoulden't be a problem!
+	motionController.step_count = motionController.step_count + newSteps;
+
+	if (motionController.step_count >= motionController.step_cout_target && motionController.step_cout_target != 0){
+		SERIAL_UART_SendChar('d');
+		motionController.step_count = 0;
+	}
+}
+
 void MOT_Process(){
 
 	switch(motionController.state){
@@ -424,6 +435,8 @@ void MOT_Process(){
 
 		case MOT_FSM_ACCEL:
 
+			MOT_CalcualteNOfSteps();
+
 			MOT_LEFT_Enable();
 			motionController.accleration_counter++;
 			motionController.actual_common_period = GetSpeed();
@@ -438,6 +451,8 @@ void MOT_Process(){
 
 		case MOT_FSM_RUN:
 
+			MOT_CalcualteNOfSteps();
+
 			LED1_Off();
 
 			if((motionController.actual_common_period-motionController.target_common_period) > 500){
@@ -450,6 +465,8 @@ void MOT_Process(){
 			break;
 
 		case MOT_FSM_DECEL:
+
+			MOT_CalcualteNOfSteps();
 
 			motionController.accleration_counter--;
 			motionController.actual_common_period = GetSpeed();

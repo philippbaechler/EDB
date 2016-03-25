@@ -278,7 +278,12 @@ void SerialProcess(){
 	//
 	//		}
 	if (c == 1){					// eventAfterDistance
-		WAIT_Waitms(1);
+		do{
+			WAIT_Waitms(1);
+			SERIAL_UART_ReadChar(&c);
+		}while(c == 0);
+
+		motionController.step_cout_target = (c*10)/0.1178;
 	}
 	else if (c == 2){				// run
 		do{
