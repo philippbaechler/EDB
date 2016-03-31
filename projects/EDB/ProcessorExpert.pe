@@ -9705,11 +9705,11 @@
       </ItemState>
       <ItemState>
         <ItemSymbol>CmpInt</ItemSymbol>
-        <Value>INT_TPM1</Value>
+        <Value>INT_TPM0</Value>
       </ItemState>
       <ItemState>
         <ItemSymbol>CmpInt1</ItemSymbol>
-        <Value>INT_TPM1</Value>
+        <Value>INT_TPM0</Value>
       </ItemState>
       <ItemState>
         <ItemSymbol>ShutdownFeature</ItemSymbol>
@@ -10139,7 +10139,7 @@
             </ItemState>
             <ItemState>
               <ItemSymbol>CmpInt</ItemSymbol>
-              <Value>INT_TPM1</Value>
+              <Value>INT_TPM0</Value>
             </ItemState>
             <ItemState>
               <ItemSymbol>CmpIntPriority</ItemSymbol>
