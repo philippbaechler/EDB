@@ -66,8 +66,8 @@
 #include "COLOR_SENSOR_NLED.h"
 #include "BitIoLdd11.h"
 #include "LED_GREEN.h"
-#include "LEDpin3.h"
-#include "BitIoLdd13.h"
+#include "LEDpin2.h"
+#include "BitIoLdd12.h"
 #include "IR_SENSOR.h"
 #include "AdcLdd1.h"
 #include "AS1.h"
@@ -145,6 +145,27 @@ void IR_SENSOR_OnCalibrationEnd(void);
 **     Returns     : Nothing
 ** ===================================================================
 */
+
+/*
+** ===================================================================
+**     Event       :  SIG_OnChannel1 (module Events)
+**
+**     Component   :  SIG [TimerUnit_LDD]
+*/
+/*!
+**     @brief
+**         Called if compare register match the counter registers or
+**         capture register has a new content. OnChannel1 event and
+**         Timer unit must be enabled. See [SetEventMask] and
+**         [GetEventMask] methods. This event is available only if a
+**         [Interrupt] is enabled.
+**     @param
+**         UserDataPtr     - Pointer to the user or
+**                           RTOS specific data. The pointer passed as
+**                           the parameter of Init method.
+*/
+/* ===================================================================*/
+void SIG_OnChannel1(LDD_TUserData *UserDataPtr);
 
 /* END Events */
 

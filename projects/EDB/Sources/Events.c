@@ -38,6 +38,7 @@ extern "C" {
 
 #include "MotionController.h"
 #include "SIG.h"
+#include "Ultrasonic.h"
 
 /*
 ** ===================================================================
@@ -82,8 +83,6 @@ void SIG_OnChannel0(LDD_TUserData *UserDataPtr)
 		MOT_Process();
 		TPM1_C0V = TPM1_CNT + 3750; // MOT_Process() runs with a frequency of 1kHz
 	}
-
-	// Here could the calculation of the amount of steps happen
 }
 
 /*
@@ -122,6 +121,30 @@ void IR_SENSOR_OnEnd(void)
 void IR_SENSOR_OnCalibrationEnd(void)
 {
   /* Write your code here ... */
+}
+
+/*
+** ===================================================================
+**     Event       :  SIG_OnChannel1 (module Events)
+**
+**     Component   :  SIG [TimerUnit_LDD]
+*/
+/*!
+**     @brief
+**         Called if compare register match the counter registers or
+**         capture register has a new content. OnChannel1 event and
+**         Timer unit must be enabled. See [SetEventMask] and
+**         [GetEventMask] methods. This event is available only if a
+**         [Interrupt] is enabled.
+**     @param
+**         UserDataPtr     - Pointer to the user or
+**                           RTOS specific data. The pointer passed as
+**                           the parameter of Init method.
+*/
+/* ===================================================================*/
+void SIG_OnChannel1(LDD_TUserData *UserDataPtr)
+{
+	US_EventEchoCapture();
 }
 
 /* END Events */
