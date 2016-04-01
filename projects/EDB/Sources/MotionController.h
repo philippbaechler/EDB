@@ -1,7 +1,7 @@
 #define MOTORLEFT 1
 #define MOTORRIGHT 2
 
-#include "PE_Types.h" // it's needed to fix strange errors with data-types
+#include "PE_Types.h"
 
 typedef enum MOT_StateKinds {
 	MOT_FSM_STOP,

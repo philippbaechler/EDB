@@ -2,6 +2,7 @@
 #include "WAIT.h"
 #include "SIG.h"
 #include "LED_RED.h"
+#include "ContainerRecognizer.h"
 
 typedef enum {
   ECHO_IDLE, 		/* device not used */
@@ -42,11 +43,14 @@ void US_EventEchoCapture(){
 
 		if(usDevice.capture <= rangeInTics){
 			// Change state to "Object captured"!
-			LED_RED_On();
+//			LED_RED_On();
+			containerRecognizer.state = COR_FSM_SURFACESCAN;
 		}
 		else{
 			// Stay in state "listening"!
-			LED_RED_Off();
+//			LED_RED_Off();
+
+			/* just doing nothing */
 		}
 	}
 }
