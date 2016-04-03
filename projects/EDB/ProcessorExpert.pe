@@ -3,7 +3,7 @@
   <Header>
     <Name>EDB</Name>
     <SavedBy>Philipp</SavedBy>
-    <ModificationStamp>26</ModificationStamp>
+    <ModificationStamp>27</ModificationStamp>
     <Date>2016-03-21</Date>
     <IDE>Eclipse IDE</IDE>
     <PEversion>1.12.1.RT7_b1531-0480</PEversion>
@@ -31631,8 +31631,8 @@
         <ReadOnly>false</ReadOnly>
         <UserReadOnly>false</UserReadOnly>
         <PropertyModelIsAutomatic>false</PropertyModelIsAutomatic>
-        <Value>8</Value>
-        <Base>DEC</Base>
+        <Value>41</Value>
+        <Base>HEX</Base>
       </ItemState>
       <ItemState>
         <ItemSymbol>_SlaveModeGrp</ItemSymbol>
