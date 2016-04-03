@@ -87,9 +87,9 @@ void SIG_OnChannel0(LDD_TUserData *UserDataPtr)
 
 /*
 ** ===================================================================
-**     Event       :  IR_SENSOR_OnEnd (module Events)
+**     Event       :  ADC_OnEnd (module Events)
 **
-**     Component   :  IR_SENSOR [ADC]
+**     Component   :  ADC [ADC]
 **     Description :
 **         This event is called after the measurement (which consists
 **         of <1 or more conversions>) is/are finished.
@@ -99,16 +99,16 @@ void SIG_OnChannel0(LDD_TUserData *UserDataPtr)
 **     Returns     : Nothing
 ** ===================================================================
 */
-void IR_SENSOR_OnEnd(void)
+void ADC_OnEnd(void)
 {
   /* Write your code here ... */
 }
 
 /*
 ** ===================================================================
-**     Event       :  IR_SENSOR_OnCalibrationEnd (module Events)
+**     Event       :  ADC_OnCalibrationEnd (module Events)
 **
-**     Component   :  IR_SENSOR [ADC]
+**     Component   :  ADC [ADC]
 **     Description :
 **         This event is called when the calibration has been finished.
 **         User should check if the calibration pass or fail by
@@ -118,7 +118,7 @@ void IR_SENSOR_OnEnd(void)
 **     Returns     : Nothing
 ** ===================================================================
 */
-void IR_SENSOR_OnCalibrationEnd(void)
+void ADC_OnCalibrationEnd(void)
 {
   /* Write your code here ... */
 }
@@ -145,6 +145,44 @@ void IR_SENSOR_OnCalibrationEnd(void)
 void SIG_OnChannel1(LDD_TUserData *UserDataPtr)
 {
 	US_EventEchoCapture();
+}
+
+/*
+** ===================================================================
+**     Event       :  RGB_SENSOR_OnReceiveData (module Events)
+**
+**     Component   :  RGB_SENSOR [InternalI2C]
+**     Description :
+**         This event is invoked when I2C finishes the reception of the
+**         data successfully. This event is not available for the SLAVE
+**         mode and if both RecvChar and RecvBlock are disabled. This
+**         event is enabled only if interrupts/events are enabled.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void RGB_SENSOR_OnReceiveData(void)
+{
+  /* Write your code here ... */
+}
+
+/*
+** ===================================================================
+**     Event       :  RGB_SENSOR_OnTransmitData (module Events)
+**
+**     Component   :  RGB_SENSOR [InternalI2C]
+**     Description :
+**         This event is invoked when I2C finishes the transmission of
+**         the data successfully. This event is not available for the
+**         SLAVE mode and if both SendChar and SendBlock are disabled.
+**         This event is enabled only if interrupts/events are enabled.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void RGB_SENSOR_OnTransmitData(void)
+{
+  /* Write your code here ... */
 }
 
 /* END Events */

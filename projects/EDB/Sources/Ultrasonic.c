@@ -50,7 +50,7 @@ void US_EventEchoCapture(){
 			// Stay in state "listening"!
 //			LED_RED_Off();
 
-			/* just doing nothing */
+			/* just doing nothing here */
 		}
 	}
 }

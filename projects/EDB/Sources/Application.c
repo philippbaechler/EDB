@@ -16,7 +16,7 @@ void APP_Start(void){
 	motionController.running = FALSE;
 	motionController.target_common_period = motionController.max_common_period;
 
-	containerRecognizer.state = COR_FSM_OBSERVANT;
+	containerRecognizer.state = COR_FSM_RECOGNIZECOLOR;
 	containerRecognizer.active = TRUE;
 
 	vContainerRecognizerTask();

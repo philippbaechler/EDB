@@ -1,6 +1,7 @@
 #include "ContainerRecognizer.h"
 #include "WAIT.h"
 #include "Ultrasonic.h"
+#include "SurfaceScan.h"
 
 COR_FSMData containerRecognizer;
 
@@ -21,7 +22,7 @@ void COR_Process(){
 			break;
 
 		case COR_FSM_SURFACESCAN:
-			containerRecognizer.state = COR_FSM_STOP;
+			(void)SCN_Process(); // Continue here!
 			break;
 
 		case COR_FSM_RECOGNIZECOLOR:

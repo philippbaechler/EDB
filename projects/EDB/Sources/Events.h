@@ -63,13 +63,29 @@
 #include "BitIoLdd9.h"
 #include "ULTRA_SONIC_TRIG.h"
 #include "BitIoLdd10.h"
-#include "COLOR_SENSOR_NLED.h"
 #include "BitIoLdd11.h"
+#include "LED_Enable_2.h"
+#include "BitIoLdd19.h"
 #include "LED_GREEN.h"
 #include "LEDpin2.h"
 #include "BitIoLdd12.h"
-#include "IR_SENSOR.h"
+#include "ADC.h"
 #include "AdcLdd1.h"
+#include "Shut_OFF.h"
+#include "BitIoLdd13.h"
+#include "Battery_low.h"
+#include "BitIoLdd14.h"
+#include "RGB_SENSOR.h"
+#include "IntI2cLdd1.h"
+#include "_6V_ON.h"
+#include "BitIoLdd15.h"
+#include "Route_B_LED.h"
+#include "BitIoLdd16.h"
+#include "Route_A_LED.h"
+#include "BitIoLdd17.h"
+#include "RGB_Sensor_LED.h"
+#include "BitIoLdd18.h"
+#include "LED_Enable_1.h"
 #include "AS1.h"
 #include "ASerialLdd2.h"
 
@@ -114,12 +130,12 @@ void Cpu_OnNMIINT(void);
 /* ===================================================================*/
 void SIG_OnChannel0(LDD_TUserData *UserDataPtr);
 
-void IR_SENSOR_OnEnd(void);
+void ADC_OnEnd(void);
 /*
 ** ===================================================================
-**     Event       :  IR_SENSOR_OnEnd (module Events)
+**     Event       :  ADC_OnEnd (module Events)
 **
-**     Component   :  IR_SENSOR [ADC]
+**     Component   :  ADC [ADC]
 **     Description :
 **         This event is called after the measurement (which consists
 **         of <1 or more conversions>) is/are finished.
@@ -130,12 +146,12 @@ void IR_SENSOR_OnEnd(void);
 ** ===================================================================
 */
 
-void IR_SENSOR_OnCalibrationEnd(void);
+void ADC_OnCalibrationEnd(void);
 /*
 ** ===================================================================
-**     Event       :  IR_SENSOR_OnCalibrationEnd (module Events)
+**     Event       :  ADC_OnCalibrationEnd (module Events)
 **
-**     Component   :  IR_SENSOR [ADC]
+**     Component   :  ADC [ADC]
 **     Description :
 **         This event is called when the calibration has been finished.
 **         User should check if the calibration pass or fail by
@@ -166,6 +182,38 @@ void IR_SENSOR_OnCalibrationEnd(void);
 */
 /* ===================================================================*/
 void SIG_OnChannel1(LDD_TUserData *UserDataPtr);
+
+/*
+** ===================================================================
+**     Event       :  RGB_SENSOR_OnReceiveData (module Events)
+**
+**     Component   :  RGB_SENSOR [InternalI2C]
+**     Description :
+**         This event is invoked when I2C finishes the reception of the
+**         data successfully. This event is not available for the SLAVE
+**         mode and if both RecvChar and RecvBlock are disabled. This
+**         event is enabled only if interrupts/events are enabled.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void RGB_SENSOR_OnReceiveData(void);
+
+/*
+** ===================================================================
+**     Event       :  RGB_SENSOR_OnTransmitData (module Events)
+**
+**     Component   :  RGB_SENSOR [InternalI2C]
+**     Description :
+**         This event is invoked when I2C finishes the transmission of
+**         the data successfully. This event is not available for the
+**         SLAVE mode and if both SendChar and SendBlock are disabled.
+**         This event is enabled only if interrupts/events are enabled.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void RGB_SENSOR_OnTransmitData(void);
 
 /* END Events */
 
