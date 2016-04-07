@@ -1,3 +1,6 @@
+#ifndef CONTAINERRECOGNIZER_H
+#define CONTAINERRECOGNIZER_H
+
 #include "PE_Types.h"
 
 typedef enum COR_StateKinds {
@@ -15,3 +18,9 @@ typedef struct COR_FSMData {
 } COR_FSMData;
 
 extern COR_FSMData containerRecognizer;
+
+void COR_Init();
+void COR_Process();
+void vContainerRecognizerTask(/*void* pvParameters*/);
+
+#endif /* CONTAINERRECOGNIZER_H */

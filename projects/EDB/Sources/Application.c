@@ -3,6 +3,7 @@
 #include "Ultrasonic.h"
 #include "LED_RED.h"
 #include "ContainerRecognizer.h"
+#include "Serial.h"
 
 static void APP_EventHandler(/*EVNT_Handle event*/){
 }
@@ -13,13 +14,15 @@ void APP_Start(void){
 	US_Init();
 	COR_Init();
 
-	motionController.running = FALSE;
+	motionController.running = TRUE;
 	motionController.target_common_period = motionController.max_common_period;
 
 	containerRecognizer.state = COR_FSM_RECOGNIZECOLOR;
-	containerRecognizer.active = TRUE;
+	containerRecognizer.active = FALSE;
 
-	vContainerRecognizerTask();
+//	vContainerRecognizerTask();
+
+	vSerialTask();
 
 //	for(;;){
 //

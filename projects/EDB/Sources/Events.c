@@ -81,7 +81,7 @@ void SIG_OnChannel0(LDD_TUserData *UserDataPtr)
 {
 	if(motionController.running){
 		MOT_Process();
-		TPM1_C0V = TPM1_CNT + 3750; // MOT_Process() runs with a frequency of 1kHz
+		TPM0_C0V = TPM0_CNT + 30000; // MOT_Process() gets called with a frequency of 1kHz
 	}
 }
 
@@ -149,38 +149,34 @@ void SIG_OnChannel1(LDD_TUserData *UserDataPtr)
 
 /*
 ** ===================================================================
-**     Event       :  RGB_SENSOR_OnReceiveData (module Events)
+**     Event       :  RGB_SENSOR_OnRequestBus (module Events)
 **
-**     Component   :  RGB_SENSOR [InternalI2C]
+**     Component   :  RGB_SENSOR [GenericI2C]
 **     Description :
-**         This event is invoked when I2C finishes the reception of the
-**         data successfully. This event is not available for the SLAVE
-**         mode and if both RecvChar and RecvBlock are disabled. This
-**         event is enabled only if interrupts/events are enabled.
+**         User event which will be called before accessing the I2C bus.
+**         Useful for starting a critical section.
 **     Parameters  : None
 **     Returns     : Nothing
 ** ===================================================================
 */
-void RGB_SENSOR_OnReceiveData(void)
+void RGB_SENSOR_OnRequestBus(void)
 {
   /* Write your code here ... */
 }
 
 /*
 ** ===================================================================
-**     Event       :  RGB_SENSOR_OnTransmitData (module Events)
+**     Event       :  RGB_SENSOR_OnReleaseBus (module Events)
 **
-**     Component   :  RGB_SENSOR [InternalI2C]
+**     Component   :  RGB_SENSOR [GenericI2C]
 **     Description :
-**         This event is invoked when I2C finishes the transmission of
-**         the data successfully. This event is not available for the
-**         SLAVE mode and if both SendChar and SendBlock are disabled.
-**         This event is enabled only if interrupts/events are enabled.
+**         User event which will be called after accessing the I2C bus.
+**         Useful for ending a critical section.
 **     Parameters  : None
 **     Returns     : Nothing
 ** ===================================================================
 */
-void RGB_SENSOR_OnTransmitData(void)
+void RGB_SENSOR_OnReleaseBus(void)
 {
   /* Write your code here ... */
 }

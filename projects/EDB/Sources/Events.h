@@ -76,7 +76,7 @@
 #include "Battery_low.h"
 #include "BitIoLdd14.h"
 #include "RGB_SENSOR.h"
-#include "IntI2cLdd1.h"
+#include "I2C1.h"
 #include "_6V_ON.h"
 #include "BitIoLdd15.h"
 #include "Route_B_LED.h"
@@ -183,37 +183,33 @@ void ADC_OnCalibrationEnd(void);
 /* ===================================================================*/
 void SIG_OnChannel1(LDD_TUserData *UserDataPtr);
 
+void RGB_SENSOR_OnRequestBus(void);
 /*
 ** ===================================================================
-**     Event       :  RGB_SENSOR_OnReceiveData (module Events)
+**     Event       :  RGB_SENSOR_OnRequestBus (module Events)
 **
-**     Component   :  RGB_SENSOR [InternalI2C]
+**     Component   :  RGB_SENSOR [GenericI2C]
 **     Description :
-**         This event is invoked when I2C finishes the reception of the
-**         data successfully. This event is not available for the SLAVE
-**         mode and if both RecvChar and RecvBlock are disabled. This
-**         event is enabled only if interrupts/events are enabled.
+**         User event which will be called before accessing the I2C bus.
+**         Useful for starting a critical section.
 **     Parameters  : None
 **     Returns     : Nothing
 ** ===================================================================
 */
-void RGB_SENSOR_OnReceiveData(void);
 
+void RGB_SENSOR_OnReleaseBus(void);
 /*
 ** ===================================================================
-**     Event       :  RGB_SENSOR_OnTransmitData (module Events)
+**     Event       :  RGB_SENSOR_OnReleaseBus (module Events)
 **
-**     Component   :  RGB_SENSOR [InternalI2C]
+**     Component   :  RGB_SENSOR [GenericI2C]
 **     Description :
-**         This event is invoked when I2C finishes the transmission of
-**         the data successfully. This event is not available for the
-**         SLAVE mode and if both SendChar and SendBlock are disabled.
-**         This event is enabled only if interrupts/events are enabled.
+**         User event which will be called after accessing the I2C bus.
+**         Useful for ending a critical section.
 **     Parameters  : None
 **     Returns     : Nothing
 ** ===================================================================
 */
-void RGB_SENSOR_OnTransmitData(void);
 
 /* END Events */
 

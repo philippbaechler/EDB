@@ -2,6 +2,7 @@
 #include "WAIT.h"
 #include "Ultrasonic.h"
 #include "SurfaceScan.h"
+#include "ColorSensor.h"
 
 COR_FSMData containerRecognizer;
 
@@ -26,6 +27,7 @@ void COR_Process(){
 			break;
 
 		case COR_FSM_RECOGNIZECOLOR:
+			(void)COL_Process();
 			break;
 
 		case COR_FSM_PICKUP:
@@ -37,7 +39,7 @@ void vContainerRecognizerTask(/*void* pvParameters*/){
 	for(;;){
 		if(containerRecognizer.active /*containerRecognizer.state != COR_FSM_STOP*/){ // maybe this task could set sleeping if its not used?
 			COR_Process();
-			WAIT_Waitms(200);
+//			WAIT_Waitms(200);
 		}
 	}
 }

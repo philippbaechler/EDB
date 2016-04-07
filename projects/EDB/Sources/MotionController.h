@@ -1,3 +1,6 @@
+#ifndef MOTIONCONTROLLER_H
+#define MOTIONCONTROLLER_H
+
 #define MOTORLEFT 1
 #define MOTORRIGHT 2
 
@@ -35,7 +38,9 @@ typedef struct MOT_FSMData {
 	MOT_MOTOR motorRight;
 
 	uint16_t step_count; // uint16_t = 65536 -> reicht bei d = 60mm und 1/8 step mode für 7,7 Meter mit mm Auflösung
-	uint16_t step_cout_target;
+	uint16_t step_count_target;
+	uint16_t steps_for_decleration;
+	uint16_t steps_left_until_stop;
 } MOT_FSMData;
 
 extern MOT_FSMData motionController;
@@ -45,7 +50,10 @@ void MOT_SetMaxSpeed(int16_t max_speed);
 void MOT_SetSpeed();
 void MOT_ChangeState(MOT_StateKinds newState);
 void MOT_Regulate();
-uint16_t GetSpeed();
+uint16_t MOT_GetSpeed();
 void MOT_CalcualteDifferential();
 void MOT_CalcualteNOfSteps();
+void MOT_StopAfterSteps(uint8_t nOfStepsLeft);
 void MOT_Process();
+
+#endif /* MOTIONCONTROLLER_H */

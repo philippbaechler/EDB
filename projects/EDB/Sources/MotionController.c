@@ -2,9 +2,9 @@
 #include "MOT_LEFT.h"
 #include "MOT_RIGHT.h"
 #include "LED_RED.h"
-#include "SERIAL_UART.h"
 
 #include "MotionController.h"
+#include "Serial.h"
 
 
 MOT_FSMData motionController;
@@ -50,13 +50,12 @@ void MOT_ChangeState(MOT_StateKinds newState){
 void MOT_Regulate(){
 
 	MOT_CalcualteDifferential();
-
 }
 
 /*
  * Returns the period duration for a specific number accleration_value (0-330).
  * */
-uint16_t GetSpeed(){
+uint16_t MOT_GetSpeed(){
 
 	uint16 r;
 
@@ -413,9 +412,14 @@ void MOT_CalcualteNOfSteps(){
 	uint16_t newSteps = (10000 / motionController.actual_common_period); // works only when actual_common_period > 10000, we've got here an error in our distance measuring. Since we've normally have periods < 1000, this shoulden't be a problem!
 	motionController.step_count = motionController.step_count + newSteps;
 
-	if (motionController.step_count >= motionController.step_cout_target && motionController.step_cout_target != 0){
-		SERIAL_UART_SendChar('d');
+	if (motionController.step_count >= motionController.step_count_target && motionController.step_count_target != 0){
+		SER_SendEvent(); /* sending an event if we reach the number of steps to the PI */
 		motionController.step_count = 0;
+		motionController.step_count_target = 0;
+	}
+
+	if (motionController.steps_left_until_stop > motionController.steps_for_decleration){
+		motionController.steps_left_until_stop - newSteps;
 	}
 }
 
@@ -438,12 +442,19 @@ void MOT_Process(){
 			MOT_CalcualteNOfSteps();
 
 			MOT_LEFT_Enable();
+			MOT_RIGHT_Enable();
 			motionController.accleration_counter++;
-			motionController.actual_common_period = GetSpeed();
+			motionController.actual_common_period = MOT_GetSpeed();
 
 			if(motionController.actual_common_period <= motionController.target_common_period){
 				motionController.state = MOT_FSM_RUN;
 				LED_RED_On();
+			}
+
+			/* Check if we have to start the deceleration for a stop */
+			if(motionController.steps_for_decleration <= motionController.steps_left_until_stop){
+				motionController.target_common_period = motionController.max_common_period;
+				motionController.state = MOT_FSM_DECEL;
 			}
 
 			MOT_SetSpeed();
@@ -462,6 +473,12 @@ void MOT_Process(){
 				motionController.state = MOT_FSM_DECEL;
 			}
 
+			/* Check if we have to start the deceleration */
+			if(motionController.steps_for_decleration <= motionController.steps_left_until_stop){
+				motionController.target_common_period = motionController.max_common_period;
+				motionController.state = MOT_FSM_DECEL;
+			}
+
 			break;
 
 		case MOT_FSM_DECEL:
@@ -469,7 +486,7 @@ void MOT_Process(){
 			MOT_CalcualteNOfSteps();
 
 			motionController.accleration_counter--;
-			motionController.actual_common_period = GetSpeed();
+			motionController.actual_common_period = MOT_GetSpeed();
 
 			if(motionController.actual_common_period >= motionController.target_common_period){
 
@@ -477,6 +494,7 @@ void MOT_Process(){
 
 					motionController.state = MOT_FSM_STOP;
 					MOT_LEFT_Disable();
+					MOT_RIGHT_Disable();
 				}
 				else{
 					motionController.state = MOT_FSM_RUN;
@@ -486,6 +504,7 @@ void MOT_Process(){
 			else if(motionController.accleration_counter == 0){
 				motionController.state = MOT_FSM_STOP;
 				MOT_LEFT_Disable();
+				MOT_RIGHT_Disable();
 			}
 
 			MOT_SetSpeed();

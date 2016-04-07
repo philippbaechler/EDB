@@ -2,9 +2,10 @@
 #include "WAIT.h"
 
 #include "MotionController.h"
+#include "ContainerRecognizer.h"
 #include "Serial.h"
 
-uint16_t GetPeriod(uint8 c){
+uint16_t SER_GetPeriod(uint8 c){
 
 	uint16_t r;
 
@@ -268,53 +269,72 @@ uint16_t GetPeriod(uint8 c){
 	return r;
 }
 
-void SerialProcess(){
+void SER_SerialProcess(){
 	uint8_t c;
 
 	SERIAL_UART_ReadChar(&c);
 
-	//		if (c == 0){			// stopAfter
-	//			WAIT_Waitms(1);
-	//
-	//		}
-	if (c == 1){					// eventAfterDistance
-		do{
-			WAIT_Waitms(1);
-			SERIAL_UART_ReadChar(&c);
-		}while(c == 0);
+	switch(c){
+		case 1:		/* StopAfter */
+			do{
+				WAIT_Waitms(1); /* TODO: is this delay needed? */
+				SERIAL_UART_ReadChar(&c);
+			}while(c == 0);
+			motionController.steps_left_until_stop = c/0.1178; // c in mm
+			break;
 
-		motionController.step_cout_target = (c*10)/0.1178;
-	}
-	else if (c == 2){				// run
-		do{
-			WAIT_Waitms(1);
-			SERIAL_UART_ReadChar(&c);
-		}while(c == 0);
+		case 2:		/* EventAfterDistance */
+			do{
+				WAIT_Waitms(1); /* TODO: is this delay needed? */
+				SERIAL_UART_ReadChar(&c);
+			}while(c == 0);
+			motionController.step_count_target = (c*10)/0.1178; // c in cm
+			break;
 
-		motionController.master_speed_period = GetPeriod(c);
-		motionController.target_common_period = motionController.master_speed_period;
-	}
-	else if (c == 3){				// steeringLock
-		do{
-			WAIT_Waitms(1);
-			SERIAL_UART_ReadChar(&c);
-		}while(c == 0);
+		case 3:		/* Run */
+			do{
+				WAIT_Waitms(1); /* TODO: is this delay needed? */
+				SERIAL_UART_ReadChar(&c);
+			}while(c == 0);
 
-		motionController.differential = c;
+			//SERIAL_UART_SendChar(c);	/* only for debugging */
 
-		MOT_SetSpeed();
-	}
-	else if (c == 4){				// driveDistance
-		WAIT_Waitms(1);
-	}
-	else{							// error
+			motionController.master_speed_period = SER_GetPeriod(c); // c in mm/s
+			motionController.target_common_period = motionController.master_speed_period;
+			break;
 
+		case 4:		/* SearchContainers */
+			containerRecognizer.active = TRUE;
+			break;
+
+		case 5:		/* DoNotSearchContainers */
+			containerRecognizer.active = FALSE;
+			break;
+
+		case 6:		/* Steer */
+			do{
+				WAIT_Waitms(1); /* TODO: is this delay needed? */
+				SERIAL_UART_ReadChar(&c);
+			}while(c == 0);
+
+			motionController.differential = c;
+
+			MOT_SetSpeed();
+			break;
+
+		case 7:		/* SteerStraight */
+			motionController.differential = 0;
+			break;
 	}
+}
+
+void SER_SendEvent(){
+	SERIAL_UART_SendChar('1');
 }
 
 void vSerialTask(){
 	for(;;){
-		SerialProcess();
+		SER_SerialProcess();
 		WAIT_Waitms(10);
 	}
 }
