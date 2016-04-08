@@ -16,12 +16,12 @@ typedef struct {
   LDD_TDeviceData *trigDevice; 	/* device handle for the Trigger pin */
   LDD_TDeviceData *echoDevice; 	/* input capture device handle (echo pin) */
   volatile US_EchoState state; 	/* state */
-  SIG_TValueType capture; 	/* input capture value */
+  SIG_TValueType capture; 		/* input capture value */
   uint16_t lastValue_us; 		/* last captured echo, in us */
 } US_DeviceType;
 
-static US_DeviceType usDevice; /* device handle for the ultrasonic device */
-uint8_t range = 15;	/* defines the range(in cm) in which objects can be recognized */
+static US_DeviceType usDevice; 	/* device handle for the ultrasonic device */
+uint8_t range = 15;				/* defines the range(in cm) in which objects can be recognized */
 uint16_t rangeInTics;
 
 void US_Measure(){
@@ -34,7 +34,7 @@ void US_Measure(){
 
 void US_EventEchoCapture(){
 	if (usDevice.state == ECHO_TRIGGERED){
-		SIG_ResetCounter(usDevice.echoDevice); // TODO: are there any problems with the other devices?
+		SIG_ResetCounter(usDevice.echoDevice); // TODO: are there any problems with the other devices, if we reset the counter?
 		usDevice.state = ECHO_MEASURE;
 	}
 	else if(usDevice.state == ECHO_MEASURE){
@@ -59,10 +59,10 @@ void US_Init(){
 	rangeInTics = (((range * 10000) / 1047) * 2); // TODO: Check this! (1047?)
 }
 
-//void vUltrasonicTask(void* pvParameters) {
-//	for (;;) {
-//		(void)US_Measure_us();
-//		WAIT_Waitms(200);//RTOS_Wait(10);
-//	}
-//}
+void vUltrasonicTask(void* pvParameters) {
+	for (;;) {
+		US_Measure();
+		//RTOS_Wait(10);
+	}
+}
 

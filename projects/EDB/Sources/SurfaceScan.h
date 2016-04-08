@@ -3,6 +3,6 @@
 
 #include "PE_Types.h"
 
-bool SCN_Process();
+bool SCN_IsAContainer();
 
 #endif /* SURFACESCAN_H */

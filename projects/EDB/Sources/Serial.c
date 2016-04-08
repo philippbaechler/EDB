@@ -288,6 +288,7 @@ void SER_SerialProcess(){
 				WAIT_Waitms(1); /* TODO: is this delay needed? */
 				SERIAL_UART_ReadChar(&c);
 			}while(c == 0);
+			motionController.step_count = 0;
 			motionController.step_count_target = (c*10)/0.1178; // c in cm
 			break;
 
@@ -335,6 +336,6 @@ void SER_SendEvent(){
 void vSerialTask(){
 	for(;;){
 		SER_SerialProcess();
-		WAIT_Waitms(10);
+		WAIT_Waitms(10); // delete this
 	}
 }

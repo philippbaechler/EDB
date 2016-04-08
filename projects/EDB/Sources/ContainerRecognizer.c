@@ -3,6 +3,10 @@
 #include "Ultrasonic.h"
 #include "SurfaceScan.h"
 #include "ColorSensor.h"
+#include "MotionController.h"
+
+#define DistanceIRSevos 100 // in mm
+#define stepsAfterIR DistanceIRSevos / 0.1178
 
 COR_FSMData containerRecognizer;
 
@@ -23,7 +27,9 @@ void COR_Process(){
 			break;
 
 		case COR_FSM_SURFACESCAN:
-			(void)SCN_Process(); // Continue here!
+			if (SCN_IsAContainer()){ // Continue here!
+				motionController.steps_left_until_stop = stepsAfterIR; // n of Steps we have to go after we recognized a container
+			}
 			break;
 
 		case COR_FSM_RECOGNIZECOLOR:

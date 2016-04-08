@@ -24,10 +24,5 @@ void APP_Start(void){
 
 	vSerialTask();
 
-//	for(;;){
-//
-//
-//
-//		WAIT_Waitms(200);
-//	}
+	// Start RTOS here!
 }
