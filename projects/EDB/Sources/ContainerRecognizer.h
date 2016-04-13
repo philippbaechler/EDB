@@ -19,8 +19,8 @@ typedef struct COR_FSMData {
 
 extern COR_FSMData containerRecognizer;
 
-void COR_Init();
 void COR_Process();
 void vContainerRecognizerTask(/*void* pvParameters*/);
+void COR_Init();
 
 #endif /* CONTAINERRECOGNIZER_H */

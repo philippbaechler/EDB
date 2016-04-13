@@ -4,6 +4,7 @@
 #include "MotionController.h"
 #include "ContainerRecognizer.h"
 #include "Serial.h"
+#include "RTOS.h"
 
 uint16_t SER_GetPeriod(uint8 c){
 
@@ -336,6 +337,10 @@ void SER_SendEvent(){
 void vSerialTask(){
 	for(;;){
 		SER_SerialProcess();
-		WAIT_Waitms(10); // delete this
+//		WAIT_Waitms(10); // delete this
 	}
+}
+
+void SER_Init(){
+	RTOS_AddTask(vSerialTask, "SER", 2);
 }

@@ -5,21 +5,10 @@
 
 #include "MotionController.h"
 #include "Serial.h"
+#include "RTOS.h"
 
 
 MOT_FSMData motionController;
-
-/*
- * Initializes the MotionController. Different values could be defined here. e.g. minimal period time
- * */
-void MOT_Init(void){
-	motionController.running = FALSE;
-	motionController.state = MOT_FSM_STOP;
-	motionController.max_common_period = 65000;
-	motionController.min_common_period = 200; 		// 0.2 ms minimale Periodendauer -> grösst mogliche Geschwindigkeit
-
-	MOT_LEFT_Disable();
-}
 
 /*
  * Here you can set the new maximal speed. It's called when the PI changes States.
@@ -516,5 +505,30 @@ void MOT_Process(){
 void vMotionControlTask(){
 	for(;;){
 		// have to be executed exactly every 10 ms
+		if(motionController.running){
+			MOT_Process();
+			RTOS_Wait(10);
+		}
+		else{
+			// yield
+		}
 	}
+}
+
+/*
+ * Initializes the MotionController. Different values could be defined here. e.g. minimal period time
+ * */
+void MOT_Init(void){
+	motionController.running = FALSE;
+	motionController.state = MOT_FSM_STOP;
+	motionController.max_common_period = 65000;
+	motionController.min_common_period = 200; 		// 0.2 ms minimale Periodendauer -> grösst mögliche Geschwindigkeit
+
+	motionController.running = TRUE;
+	motionController.target_common_period = motionController.max_common_period;
+
+	MOT_LEFT_Disable();
+	MOT_RIGHT_Disable();
+
+	RTOS_AddTask(vMotionControlTask, "MOT", 2);
 }

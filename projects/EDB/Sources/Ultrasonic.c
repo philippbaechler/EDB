@@ -59,10 +59,10 @@ void US_Init(){
 	rangeInTics = (((range * 10000) / 1047) * 2); // TODO: Check this! (1047?)
 }
 
-void vUltrasonicTask(void* pvParameters) {
-	for (;;) {
-		US_Measure();
-		//RTOS_Wait(10);
-	}
-}
+//void vUltrasonicTask(void* pvParameters) {
+//	for (;;) {
+//		US_Measure();
+//		//RTOS_Wait(10);
+//	}
+//}
 

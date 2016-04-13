@@ -1,9 +1,10 @@
 #include "MotionController.h"
+#include "RTOS.h"
 
 
 uint8_t c;
 
-void BlueToothProcess(){
+void BLT_Process(){
 			//		CLS1_SendStr("HelloWorld\r\n", CLS1_GetStdio()->stdOut);
 			//
 			//		WAIT_Waitms(200);
@@ -34,6 +35,10 @@ void BlueToothProcess(){
 
 void vBlueToothTask(){
 	for(;;){
-		BlueToothProcess();
+		BLT_Process();
 	}
+}
+
+void BLT_Init(){
+	RTOS_AddTask(vBlueToothTask, "BLT", 1);
 }

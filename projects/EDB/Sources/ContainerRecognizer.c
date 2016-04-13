@@ -4,16 +4,12 @@
 #include "SurfaceScan.h"
 #include "ColorSensor.h"
 #include "MotionController.h"
+#include "RTOS.h"
 
 #define DistanceIRSevos 100 // in mm
 #define stepsAfterIR DistanceIRSevos / 0.1178
 
 COR_FSMData containerRecognizer;
-
-void COR_Init(){
-	containerRecognizer.active = FALSE;
-	containerRecognizer.state = COR_FSM_STOP;
-}
 
 void COR_Process(){
 
@@ -47,5 +43,18 @@ void vContainerRecognizerTask(/*void* pvParameters*/){
 			COR_Process();
 //			WAIT_Waitms(200);
 		}
+		else{
+			// yield
+		}
 	}
+}
+
+void COR_Init(){
+
+	US_Init();
+
+	containerRecognizer.active = FALSE;
+	containerRecognizer.state = COR_FSM_STOP;
+
+	RTOS_AddTask(vContainerRecognizerTask, "COR", 1);
 }

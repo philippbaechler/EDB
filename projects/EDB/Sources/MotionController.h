@@ -55,5 +55,6 @@ void MOT_CalcualteDifferential();
 void MOT_CalcualteNOfSteps();
 void MOT_StopAfterSteps(uint8_t nOfStepsLeft);
 void MOT_Process();
+void vMotionControlTask();
 
 #endif /* MOTIONCONTROLLER_H */
