@@ -4,6 +4,8 @@
 #include "LED_RED.h"
 #include "ContainerRecognizer.h"
 #include "Serial.h"
+#include "Bluetooth.h"
+#include "RTOS.h"
 
 static void APP_EventHandler(/*EVNT_Handle event*/){
 }

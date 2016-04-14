@@ -5,4 +5,4 @@ void BlueToothProcess();
 void vBlueToothTask();
 void BLT_Init();
 
-#endif BLUETOOTH_H
+#endif /* BLUETOOTH_H */

@@ -7,6 +7,8 @@
 #include "Serial.h"
 #include "RTOS.h"
 
+#include "SERIAL_UART.h"
+
 
 MOT_FSMData motionController;
 
@@ -481,6 +483,8 @@ void MOT_Process(){
 
 				if (motionController.target_common_period == motionController.max_common_period){
 
+					motionController.running = FALSE;
+
 					motionController.state = MOT_FSM_STOP;
 					MOT_LEFT_Disable();
 					MOT_RIGHT_Disable();
@@ -491,6 +495,9 @@ void MOT_Process(){
 				LED_RED_On();
 			}
 			else if(motionController.accleration_counter == 0){
+
+				motionController.running = FALSE;
+
 				motionController.state = MOT_FSM_STOP;
 				MOT_LEFT_Disable();
 				MOT_RIGHT_Disable();
@@ -507,6 +514,13 @@ void vMotionControlTask(){
 		// have to be executed exactly every 10 ms
 		if(motionController.running){
 			MOT_Process();
+
+			uint16_t i = motionController.actual_common_period;
+
+			SER_SendUint16(i);
+			SER_SendNewLine();
+
+
 			RTOS_Wait(10);
 		}
 		else{
@@ -524,11 +538,10 @@ void MOT_Init(void){
 	motionController.max_common_period = 65000;
 	motionController.min_common_period = 200; 		// 0.2 ms minimale Periodendauer -> grösst mögliche Geschwindigkeit
 
-	motionController.running = TRUE;
 	motionController.target_common_period = motionController.max_common_period;
 
 	MOT_LEFT_Disable();
 	MOT_RIGHT_Disable();
 
-	RTOS_AddTask(vMotionControlTask, "MOT", 2);
+	RTOS_AddTask(vMotionControlTask, "MOT", 1);
 }

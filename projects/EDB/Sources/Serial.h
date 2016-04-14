@@ -4,6 +4,9 @@
 uint16_t SER_GetPeriod(uint8 c);
 void SER_SerialProcess();
 void SER_SendEvent();
+void SER_SendString(unsigned char *msg);
+void SER_SendUint16(uint16_t i);
+void SER_SendNewLine();
 void vSerialTask();
 void SER_Init();
 

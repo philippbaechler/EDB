@@ -1,5 +1,6 @@
 #include "SERIAL_UART.h"
 #include "WAIT.h"
+#include "PE_Types.h"
 
 #include "MotionController.h"
 #include "ContainerRecognizer.h"
@@ -295,6 +296,7 @@ void SER_SerialProcess(){
 
 		case 3:		/* Run */
 			do{
+				motionController.running = TRUE;
 				WAIT_Waitms(1); /* TODO: is this delay needed? */
 				SERIAL_UART_ReadChar(&c);
 			}while(c == 0);
@@ -334,13 +336,26 @@ void SER_SendEvent(){
 	SERIAL_UART_SendChar('1');
 }
 
+void SER_SendString(unsigned char *msg){
+	SERIAL_UART_SendStr(msg, SERIAL_UART_GetStdio()->stdOut);
+}
+
+void SER_SendUint16(uint16_t i){
+	SERIAL_UART_SendNum16u(i,SERIAL_UART_GetStdio()->stdOut);
+}
+
+void SER_SendNewLine(){
+	SERIAL_UART_SendChar('\r');
+	SERIAL_UART_SendChar('\n');
+}
+
 void vSerialTask(){
 	for(;;){
 		SER_SerialProcess();
-//		WAIT_Waitms(10); // delete this
+		WAIT_Waitms(1); // delete this?
 	}
 }
 
 void SER_Init(){
-	RTOS_AddTask(vSerialTask, "SER", 2);
+	RTOS_AddTask(vSerialTask, "SER", 1);
 }

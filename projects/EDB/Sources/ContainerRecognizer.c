@@ -5,6 +5,7 @@
 #include "ColorSensor.h"
 #include "MotionController.h"
 #include "RTOS.h"
+#include "Serial.h"
 
 #define DistanceIRSevos 100 // in mm
 #define stepsAfterIR DistanceIRSevos / 0.1178
@@ -23,6 +24,7 @@ void COR_Process(){
 			break;
 
 		case COR_FSM_SURFACESCAN:
+
 			if (SCN_IsAContainer()){ // Continue here!
 				motionController.steps_left_until_stop = stepsAfterIR; // n of Steps we have to go after we recognized a container
 			}
@@ -41,7 +43,7 @@ void vContainerRecognizerTask(/*void* pvParameters*/){
 	for(;;){
 		if(containerRecognizer.active /*containerRecognizer.state != COR_FSM_STOP*/){ // maybe this task could set sleeping if its not used?
 			COR_Process();
-//			WAIT_Waitms(200);
+			RTOS_Wait(100);
 		}
 		else{
 			// yield

@@ -3,6 +3,7 @@
 #include "SIG.h"
 #include "LED_RED.h"
 #include "ContainerRecognizer.h"
+#include "Serial.h"
 
 typedef enum {
   ECHO_IDLE, 		/* device not used */
@@ -42,9 +43,13 @@ void US_EventEchoCapture(){
 		usDevice.state = ECHO_FINISHED;
 
 		if(usDevice.capture <= rangeInTics){
+
+			SER_SendString("Object recognized!");
+			SER_SendNewLine();
+
 			// Change state to "Object captured"!
 //			LED_RED_On();
-			containerRecognizer.state = COR_FSM_SURFACESCAN;
+//			containerRecognizer.state = COR_FSM_SURFACESCAN;
 		}
 		else{
 			// Stay in state "listening"!
@@ -56,7 +61,7 @@ void US_EventEchoCapture(){
 }
 
 void US_Init(){
-	rangeInTics = (((range * 10000) / 1047) * 2); // TODO: Check this! (1047?)
+	rangeInTics = (((range * 10000) / 99) * 2); // f = 3MHz -> T = 0.333us -> v_sonic = 300 m/s -> 99 um/tick
 }
 
 //void vUltrasonicTask(void* pvParameters) {
