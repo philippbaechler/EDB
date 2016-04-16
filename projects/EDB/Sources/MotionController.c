@@ -2,6 +2,7 @@
 #include "MOT_LEFT.h"
 #include "MOT_RIGHT.h"
 #include "LED_RED.h"
+#include "FRTOS1.h"
 
 #include "SIG.h"
 
@@ -535,7 +536,7 @@ void vMotionControlTask(){
 			RTOS_Wait(10);
 		}
 		else{
-			// yield
+			FRTOS1_taskYIELD();
 		}
 	}
 }

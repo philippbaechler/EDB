@@ -3,6 +3,13 @@
 
 #include "PE_Types.h"
 
+typedef struct colors{
+	uint16_t clearValue;
+	uint16_t redValue;
+	uint16_t greenValue;
+	uint16_t blueValue;
+}colors_t;
+
 // slave address
 #define TCS34725_ADDRESS          0x29
 
@@ -35,7 +42,16 @@
 #define Configuration_init								0x00
 #define GainControlRegister_init						0x00
 
-void COL_ReadData();
+// enable register
+#define CommandCodeEnable							0x80
+#define Enable_init									0x0b
+
+uint16_t COL_ReadClear();
+uint16_t COL_ReadRed();
+uint16_t COL_ReadGreen();
+uint16_t COL_ReadBlue();
+void COL_ReadColors();
+COL_RightContainer();
 void COL_Init();
 
 #endif /* COLORSENSOR_H */

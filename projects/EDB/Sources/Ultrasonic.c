@@ -49,7 +49,7 @@ void US_EventEchoCapture(){
 
 			// Change state to "Object captured"!
 //			LED_RED_On();
-//			containerRecognizer.state = COR_FSM_SURFACESCAN;
+			containerRecognizer.state = COR_FSM_SURFACESCAN;
 		}
 		else{
 			// Stay in state "listening"!

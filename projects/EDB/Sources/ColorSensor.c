@@ -2,12 +2,6 @@
 #include "ColorSensor.h"
 #include "Serial.h"
 
-typedef struct colors{
-	uint16_t clearValue;
-	uint16_t redValue;
-	uint16_t greenValue;
-	uint16_t blueValue;
-}colors_t;
 
 colors_t colors;
 
@@ -20,15 +14,7 @@ uint8_t CIHTHBArr[] = {ClearInterruptHighThresholdHighByte, ClearInterruptHighTh
 uint8_t InterruptPersistanceFilterArr[] = {InterruptPersistanceFilter, InterruptPersistanceFilter_init};
 uint8_t ConfigurationArr[] = {Configuration, Configuration_init};
 uint8_t GainControlRegisterArr[] = {GainControlRegister, GainControlRegister_init};
-
-
-
-// enable register
-#define CommandCodeEnable							0x80
-#define Enable_init									0x0b
-
 uint8_t enable[] = {CommandCodeEnable, Enable_init};
-#define lengthOfEnable			2
 
 
 
@@ -115,23 +101,8 @@ void COL_ReadColors(){
 
 	WAIT_Waitms(1);
 
-//	uint16_t clearRes = 0;
-//	clearRes = (uint8_t)clear[1] << 8;
-//	clearRes |= clear[0];
 
-//	uint16_t redRes = 0;
-//	redRes = (uint8_t)red[1] << 8;
-//	redRes |= red[0];
-
-//	uint16_t greenRes = 0;
-//	greenRes = (uint8_t)green[1] << 8;
-//	greenRes |= green[0];
-
-//	uint16_t blueRes = 0;
-//	blueRes = (uint8_t)blue[1] << 8;
-//	blueRes |= blue[0];
-
-	SER_SendString("c: ");		// debugging
+	SER_SendString("c: ");		// send on console for debug
 	SER_SendUint16(colors.clearValue);
 
 	SER_SendString("  r: ");
@@ -143,6 +114,12 @@ void COL_ReadColors(){
 	SER_SendString("  b: ");
 	SER_SendUint16(colors.blueValue);
 	SER_SendNewLine();
+}
+
+bool COL_RightColor(){
+	bool rightContainer = FALSE;
+
+	return rightContainer;
 }
 
 void COL_Init(){
@@ -162,6 +139,6 @@ void COL_Init(){
 	RGB_SENSOR_WriteBlock(&GainControlRegisterArr, 2, RGB_SENSOR_DO_NOT_SEND_STOP);
 
 	// enable the device
-	RGB_SENSOR_WriteBlock(enable, lengthOfEnable, RGB_SENSOR_SEND_STOP);
+	RGB_SENSOR_WriteBlock(enable, 2, RGB_SENSOR_SEND_STOP);
 }
 

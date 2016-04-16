@@ -6,6 +6,10 @@
 #include "MotionController.h"
 #include "RTOS.h"
 #include "Serial.h"
+#include "FRTOS1.h"
+#include "SERIAL_UART.h"
+#include "SIG.h"
+#include "Servos.h"
 
 #define DistanceIRSevos 100 // in mm
 #define stepsAfterIR DistanceIRSevos / 0.1178
@@ -16,10 +20,13 @@ void COR_Process(){
 
 	switch(containerRecognizer.state){
 		case COR_FSM_STOP:
-			containerRecognizer.state = COR_FSM_OBSERVANT;
+
+			containerRecognizer.state = COR_FSM_OBSERVANT; // is state STOP really needed?
 			break;
 
 		case COR_FSM_OBSERVANT:
+
+			RTOS_Wait(100);
 			US_Measure();
 			break;
 
@@ -28,25 +35,29 @@ void COR_Process(){
 			if (SCN_IsAContainer()){ // Continue here!
 				motionController.steps_left_until_stop = stepsAfterIR; // n of Steps we have to go after we recognized a container
 			}
+
 			break;
 
 		case COR_FSM_RECOGNIZECOLOR:
-			if(TRUE/*motionController.state = MOT_FSM_STOP*/){ // wait until we stand still (at the right place)
 
-				for(;;){
-					COL_ReadColors();
-					RTOS_Wait(100);
+			COL_ReadColors();
+
+			if(motionController.state = MOT_FSM_STOP){ // wait until we stand still (at the right place)
+				if(COL_RightContainer()){
+					containerRecognizer.state = COR_FSM_PICKUP;
 				}
-
-//				if(COL_RightContainer()){
-//					containerRecognizer.state = COR_FSM_PICKUP;
-//				}
-//				else{
-//					containerRecognizer.state = COR_FSM_STOP;
-//				}
+				else{
+					containerRecognizer.state = COR_FSM_STOP;
+				}
 			}
 			break;
 		case COR_FSM_PICKUP:
+			if (TPM0_C4V == grabberLowerLimit){
+				SRV_grab();
+			}
+			else if (TPM0_C4V == grabberUpperLimit){
+				SRV_release();
+			}
 			break;
 	}
 }
@@ -61,18 +72,17 @@ void vContainerRecognizerTask(/*void* pvParameters*/){
 			RTOS_Wait(100);
 		}
 		else{
-			// yield
+			FRTOS1_taskYIELD();
 		}
 	}
 }
 
 void COR_Init(){
 
-//	COL_Init();
 	US_Init();
 
-	containerRecognizer.active = TRUE;
-	containerRecognizer.state = COR_FSM_RECOGNIZECOLOR;
+	containerRecognizer.active = FALSE;
+	containerRecognizer.state = COR_FSM_STOP;
 
-	RTOS_AddTask(vContainerRecognizerTask, "COR", 1);
+	RTOS_AddTask(vContainerRecognizerTask, "COR", 2);
 }

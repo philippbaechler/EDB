@@ -8,6 +8,7 @@
 #include "RTOS.h"
 
 #include "Servos.h"
+#include "SIG.h"
 
 uint16_t SER_GetPeriod(uint8 c){
 
@@ -332,12 +333,45 @@ void SER_SerialProcess(){
 			motionController.differential = 0;
 			break;
 
-		case 8:
-			SRV_grab();
+		// below are just commands for debugging
+
+		case 8:		/* grab or release the container */
+			if (TPM0_C4V <= grabberLowerLimit+100){
+				SRV_grab();
+			}
+			else{
+				SRV_release();
+			}
 			break;
 
-		case 9:
-			SRV_release();
+		case 9: 	/* change state of the ContainerRecognizer */
+			switch (containerRecognizer.state){
+				case COR_FSM_STOP:
+					containerRecognizer.state = COR_FSM_OBSERVANT;
+					SER_SendString("COR_FSM_OBSERVANT");
+					SER_SendNewLine();
+					break;
+				case COR_FSM_OBSERVANT:
+					containerRecognizer.state = COR_FSM_SURFACESCAN;
+					SER_SendString("COR_FSM_SURFACESCAN");
+					SER_SendNewLine();
+					break;
+				case COR_FSM_SURFACESCAN:
+					containerRecognizer.state = COR_FSM_RECOGNIZECOLOR;
+					SER_SendString("COR_FSM_RECOGNIZECOLOR");
+					SER_SendNewLine();
+					break;
+				case COR_FSM_RECOGNIZECOLOR:
+					containerRecognizer.state = COR_FSM_PICKUP;
+					SER_SendString("COR_FSM_PICKUP");
+					SER_SendNewLine();
+					break;
+				case COR_FSM_PICKUP:
+					containerRecognizer.state = COR_FSM_STOP;
+					SER_SendString("COR_FSM_STOP");
+					SER_SendNewLine();
+					break;
+			}
 			break;
 	}
 }
