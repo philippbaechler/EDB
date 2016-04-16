@@ -7,6 +7,8 @@
 #include "Serial.h"
 #include "RTOS.h"
 
+#include "Servos.h"
+
 uint16_t SER_GetPeriod(uint8 c){
 
 	uint16_t r;
@@ -329,6 +331,14 @@ void SER_SerialProcess(){
 		case 7:		/* SteerStraight */
 			motionController.differential = 0;
 			break;
+
+		case 8:
+			SRV_grab();
+			break;
+
+		case 9:
+			SRV_release();
+			break;
 	}
 }
 
@@ -357,5 +367,5 @@ void vSerialTask(){
 }
 
 void SER_Init(){
-	RTOS_AddTask(vSerialTask, "SER", 1);
+	RTOS_AddTask(vSerialTask, "SER", 2);
 }

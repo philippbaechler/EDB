@@ -2,38 +2,14 @@
 #include "ColorSensor.h"
 #include "Serial.h"
 
+typedef struct colors{
+	uint16_t clearValue;
+	uint16_t redValue;
+	uint16_t greenValue;
+	uint16_t blueValue;
+}colors_t;
 
-//// slave address
-//#define TCS34725_ADDRESS          0x29
-//
-////addresses for the registers
-//#define EnablesStatesAndInterrupts 					0x80
-//
-//#define RGBTime										0x81
-//
-//#define WaitTime									0x83
-//#define ClearInterruptLowThresholdLowByte			0x84
-//#define ClearInterruptLowThresholdHighByte			0x85
-//#define ClearInterruptHighThresholdLowByte			0x86
-//#define ClearInterruptHighThresholdHighByte			0x87
-//
-//#define InterruptPersistanceFilter					0x8C
-//#define Configuration								0x8D
-//
-//#define GainControlRegister							0x8F
-//
-//// Startup settings
-//#define TCS34725_COMMAND_BIT      						0xA1
-//
-//#define RGBTime_init									0xC0
-//#define WaitTime_init									0xF0
-//#define ClearInterruptLowThresholdLowByte_init			0x00
-//#define ClearInterruptLowThresholdHighByte_init			0x00
-//#define ClearInterruptHighThresholdLowByte_init			0x00
-//#define ClearInterruptHighThresholdHighByte_init		0x00
-//#define InterruptPersistanceFilter_init					0x10
-//#define Configuration_init								0x00
-//#define GainControlRegister_init						0x00
+colors_t colors;
 
 uint8_t RGBTimeArr[] = {RGBTime, RGBTime_init};
 uint8_t WaitTimeArr[] = {WaitTime, WaitTime_init};
@@ -69,61 +45,104 @@ uint8_t BlueADClowDataRegister					=	0x9A;
 uint8_t BlueADChighDataRegister					=	0x9B;
 
 
-void COL_ReadData(){
-
+uint16_t COL_ReadClear(){
+	uint16_t clearResult = 0;
 	uint8_t clear[2];
-	uint8_t red[2];
-	uint8_t green[2];
-	uint8_t blue[2];
 
 	RGB_SENSOR_WriteBlock(&ClearADClowDataRegister, 1, RGB_SENSOR_DO_NOT_SEND_STOP);
 	RGB_SENSOR_ReadBlock((uint8_t*)&clear, 2,RGB_SENSOR_SEND_STOP);
 
-	WAIT_Waitms(1);
+	clearResult = (uint8_t)clear[1] << 8;
+	clearResult |= clear[0];
+
+	return clearResult;
+}
+
+uint16_t COL_ReadRed(){
+	uint16_t redResult = 0;
+	uint8_t red[2];
 
 	RGB_SENSOR_WriteBlock(&RedADClowDataRegister, 1, RGB_SENSOR_DO_NOT_SEND_STOP);
 	RGB_SENSOR_ReadBlock((uint8_t*)&red, 2,RGB_SENSOR_SEND_STOP);
 
-	WAIT_Waitms(1);
+	redResult = (uint8_t)red[1] << 8;
+	redResult |= red[0];
+
+	return redResult;
+}
+
+uint16_t COL_ReadGreen(){
+	uint16_t greenResult = 0;
+	uint8_t green[2];
 
 	RGB_SENSOR_WriteBlock(&GreenADClowDataRegister, 1, RGB_SENSOR_DO_NOT_SEND_STOP);
 	RGB_SENSOR_ReadBlock((uint8_t*)&green, 2,RGB_SENSOR_SEND_STOP);
 
-	WAIT_Waitms(1);
+	greenResult = (uint8_t)green[1] << 8;
+	greenResult |= green[0];
+
+	return greenResult;
+}
+
+uint16_t COL_ReadBlue(){
+	uint16_t blueResult = 0;
+	uint8_t blue[2];
 
 	RGB_SENSOR_WriteBlock(&BlueADClowDataRegister, 1, RGB_SENSOR_DO_NOT_SEND_STOP);
 	RGB_SENSOR_ReadBlock((uint8_t*)&blue, 2,RGB_SENSOR_SEND_STOP);
 
+	blueResult = (uint8_t)blue[1] << 8;
+	blueResult |= blue[0];
+
+	return blueResult;
+}
+
+void COL_ReadColors(){
+
+	colors.clearValue = COL_ReadClear();
+
 	WAIT_Waitms(1);
 
-	uint16_t clearRes = 0;
-	clearRes = (uint8_t)clear[1] << 8;
-	clearRes |= clear[0];
+	colors.redValue = COL_ReadRed();
 
-	uint16_t redRes = 0;
-	redRes = (uint8_t)red[1] << 8;
-	redRes |= red[0];
+	WAIT_Waitms(1);
 
-	uint16_t greenRes = 0;
-	greenRes = (uint8_t)green[1] << 8;
-	greenRes |= green[0];
+	colors.greenValue = COL_ReadGreen();
 
-	uint16_t blueRes = 0;
-	blueRes = (uint8_t)blue[1] << 8;
-	blueRes |= blue[0];
+	WAIT_Waitms(1);
 
-//	SER_SendString("c: ");		// debugging
-//	SER_SendUint16(clearRes);
-//
-//	SER_SendString("  r: ");
-//	SER_SendUint16(redRes);
-//
-//	SER_SendString("  g: ");
-//	SER_SendUint16(greenRes);
-//
-//	SER_SendString("  b: ");
-//	SER_SendUint16(blueRes);
-//	SER_SendNewLine();
+	colors.blueValue = COL_ReadBlue();
+
+	WAIT_Waitms(1);
+
+//	uint16_t clearRes = 0;
+//	clearRes = (uint8_t)clear[1] << 8;
+//	clearRes |= clear[0];
+
+//	uint16_t redRes = 0;
+//	redRes = (uint8_t)red[1] << 8;
+//	redRes |= red[0];
+
+//	uint16_t greenRes = 0;
+//	greenRes = (uint8_t)green[1] << 8;
+//	greenRes |= green[0];
+
+//	uint16_t blueRes = 0;
+//	blueRes = (uint8_t)blue[1] << 8;
+//	blueRes |= blue[0];
+
+	SER_SendString("c: ");		// debugging
+	SER_SendUint16(colors.clearValue);
+
+	SER_SendString("  r: ");
+	SER_SendUint16(colors.redValue);
+
+	SER_SendString("  g: ");
+	SER_SendUint16(colors.greenValue);
+
+	SER_SendString("  b: ");
+	SER_SendUint16(colors.blueValue);
+	SER_SendNewLine();
 }
 
 void COL_Init(){

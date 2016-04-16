@@ -34,7 +34,7 @@ void COR_Process(){
 			if(TRUE/*motionController.state = MOT_FSM_STOP*/){ // wait until we stand still (at the right place)
 
 				for(;;){
-					COL_ReadData();
+					COL_ReadColors();
 					RTOS_Wait(100);
 				}
 

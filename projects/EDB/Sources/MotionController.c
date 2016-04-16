@@ -3,9 +3,17 @@
 #include "MOT_RIGHT.h"
 #include "LED_RED.h"
 
+#include "SIG.h"
+
+#include "Route_A_LED.h"
+
 #include "MotionController.h"
 #include "Serial.h"
 #include "RTOS.h"
+
+#include "Servos.h"
+
+#include "WAIT.h"
 
 #include "SERIAL_UART.h"
 
@@ -516,15 +524,13 @@ void vMotionControlTask(){
 
 	for(;;){
 		// have to be executed exactly every 10 ms
+
 		if(motionController.running){
 			MOT_Process();
 
 			uint16_t i = motionController.actual_common_period;
 
-//			SER_SendUint16(i);	// debugging
-//			SER_SendNewLine();
-
-//			Route_A_LED_NegVal();
+//			Route_A_LED_NegVal(); // debugging
 
 			RTOS_Wait(10);
 		}
@@ -538,15 +544,18 @@ void vMotionControlTask(){
  * Initializes the MotionController. Different values could be defined here. e.g. minimal period time
  * */
 void MOT_Init(void){
+
+	SRV_Init(); // maybe we should initialize the servos when a button is pressed, like a command?
+
 	motionController.running = FALSE;
 	motionController.state = MOT_FSM_STOP;
 	motionController.max_common_period = 65000;
-	motionController.min_common_period = 200; 		// 0.2 ms minimale Periodendauer -> grösst mögliche Geschwindigkeit
+	motionController.min_common_period = 200;
 
 	motionController.target_common_period = motionController.max_common_period;
 
 	MOT_LEFT_Disable();
 	MOT_RIGHT_Disable();
 
-	RTOS_AddTask(vMotionControlTask, "MOT", 1);
+	RTOS_AddTask(vMotionControlTask, "MOT", 2);
 }
