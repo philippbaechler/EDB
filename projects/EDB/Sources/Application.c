@@ -7,16 +7,18 @@
 #include "Bluetooth.h"
 #include "RTOS.h"
 
+
 static void APP_EventHandler(/*EVNT_Handle event*/){
 }
 
 void APP_Start(void){
 
+	COR_Init();
 	MOT_Init();
 	SER_Init();
-	COR_Init();
 	BLT_Init();
 
 	// Start RTOS here!
 	RTOS_Init();
+
 }

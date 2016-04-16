@@ -31,15 +31,30 @@ void COR_Process(){
 			break;
 
 		case COR_FSM_RECOGNIZECOLOR:
-			(void)COL_Process();
-			break;
+			if(TRUE/*motionController.state = MOT_FSM_STOP*/){ // wait until we stand still (at the right place)
 
+				for(;;){
+					COL_ReadData();
+					RTOS_Wait(100);
+				}
+
+//				if(COL_RightContainer()){
+//					containerRecognizer.state = COR_FSM_PICKUP;
+//				}
+//				else{
+//					containerRecognizer.state = COR_FSM_STOP;
+//				}
+			}
+			break;
 		case COR_FSM_PICKUP:
 			break;
 	}
 }
 
 void vContainerRecognizerTask(/*void* pvParameters*/){
+
+	COL_Init(); // Has to be implemented here, because we need interrupts for the i2c. And these interrupts are disabled because of the Setup from RTOS. They get enabled with the RTOS_startShedule!
+
 	for(;;){
 		if(containerRecognizer.active /*containerRecognizer.state != COR_FSM_STOP*/){ // maybe this task could set sleeping if its not used?
 			COR_Process();
@@ -53,10 +68,11 @@ void vContainerRecognizerTask(/*void* pvParameters*/){
 
 void COR_Init(){
 
+//	COL_Init();
 	US_Init();
 
-	containerRecognizer.active = FALSE;
-	containerRecognizer.state = COR_FSM_STOP;
+	containerRecognizer.active = TRUE;
+	containerRecognizer.state = COR_FSM_RECOGNIZECOLOR;
 
 	RTOS_AddTask(vContainerRecognizerTask, "COR", 1);
 }

@@ -4,6 +4,8 @@
 #define MOTORLEFT 1
 #define MOTORRIGHT 2
 
+#define DUTY	100		// T_on in us
+
 #include "PE_Types.h"
 
 typedef enum MOT_StateKinds {

@@ -27,7 +27,10 @@ void MOT_SetSpeed(){
 	MOT_Regulate();
 
 	MOT_LEFT_SetPeriodUS(motionController.motorLeft.actual_period);
+	MOT_LEFT_SetDutyUS(motionController.motorLeft.actual_period-DUTY);
+
 	MOT_RIGHT_SetPeriodUS(motionController.motorRight.actual_period);
+	MOT_RIGHT_SetDutyUS(motionController.motorRight.actual_period-DUTY);
 }
 
 void MOT_ChangeState(MOT_StateKinds newState){
@@ -510,6 +513,7 @@ void MOT_Process(){
 }
 
 void vMotionControlTask(){
+
 	for(;;){
 		// have to be executed exactly every 10 ms
 		if(motionController.running){
@@ -517,9 +521,10 @@ void vMotionControlTask(){
 
 			uint16_t i = motionController.actual_common_period;
 
-			SER_SendUint16(i);
-			SER_SendNewLine();
+//			SER_SendUint16(i);	// debugging
+//			SER_SendNewLine();
 
+//			Route_A_LED_NegVal();
 
 			RTOS_Wait(10);
 		}
