@@ -42,14 +42,16 @@ void COR_Process(){
 
 			COL_ReadColors();
 
-			if(motionController.state = MOT_FSM_STOP){ // wait until we stand still (at the right place)
-				if(COL_RightContainer()){
-					containerRecognizer.state = COR_FSM_PICKUP;
-				}
-				else{
-					containerRecognizer.state = COR_FSM_STOP;
-				}
-			}
+
+
+//			if(motionController.state = MOT_FSM_STOP){ // wait until we stand still (at the right place)
+//				if(COL_RightContainer()){
+//					containerRecognizer.state = COR_FSM_PICKUP;
+//				}
+//				else{
+//					containerRecognizer.state = COR_FSM_STOP;
+//				}
+//			}
 			break;
 		case COR_FSM_PICKUP:
 			if (TPM0_C4V == grabberLowerLimit){
@@ -78,6 +80,8 @@ void vContainerRecognizerTask(/*void* pvParameters*/){
 }
 
 void COR_Init(){
+
+
 
 	US_Init();
 

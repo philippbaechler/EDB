@@ -77,6 +77,7 @@
 #include "BitIoLdd14.h"
 #include "RGB_SENSOR.h"
 #include "I2C1.h"
+#include "KSDK1.h"
 #include "FRTOS1.h"
 #include "_6V_ON.h"
 #include "BitIoLdd15.h"

@@ -336,7 +336,7 @@ void SER_SerialProcess(){
 		// below are just commands for debugging
 
 		case 8:		/* grab or release the container */
-			if (TPM0_C4V <= grabberLowerLimit+100){
+			if (TPM0_C4V <= grabberLowerLimit+300){
 				SRV_grab();
 			}
 			else{
@@ -394,6 +394,9 @@ void SER_SendNewLine(){
 }
 
 void vSerialTask(){
+
+	SER_SendString("\nEDB is ready!");
+
 	for(;;){
 		SER_SerialProcess();
 		WAIT_Waitms(1); // delete this?

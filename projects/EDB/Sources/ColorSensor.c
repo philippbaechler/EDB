@@ -1,7 +1,8 @@
 #include "RGB_SENSOR.h"
 #include "ColorSensor.h"
 #include "Serial.h"
-
+#include "LED_Enable_1.h"
+#include "LED_Enable_2.h"
 
 colors_t colors;
 
@@ -85,6 +86,9 @@ uint16_t COL_ReadBlue(){
 
 void COL_ReadColors(){
 
+	LED_Enable_1_SetVal();
+	LED_Enable_2_SetVal();
+
 	colors.clearValue = COL_ReadClear();
 
 	WAIT_Waitms(1);
@@ -114,6 +118,9 @@ void COL_ReadColors(){
 	SER_SendString("  b: ");
 	SER_SendUint16(colors.blueValue);
 	SER_SendNewLine();
+
+	LED_Enable_1_ClrVal();
+	LED_Enable_2_ClrVal();
 }
 
 bool COL_RightColor(){

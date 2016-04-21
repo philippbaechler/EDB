@@ -18,6 +18,15 @@
 
 #include "SERIAL_UART.h"
 
+#include "MOT_LEFT_DIR.h"
+#include "MOT_LEFT_M1.h"
+#include "MOT_RGHT_NSLEEP.h"
+#include "MOT_LEFT_M0.h"
+#include "MOT_LEFT_NSLEEP.h"
+#include "MOT_RIGHT_DIR.h"
+#include "MOT_RIGHT_M0.h"
+#include "MOT_RIGHT_M1.h"
+
 
 MOT_FSMData motionController;
 
@@ -545,6 +554,16 @@ void vMotionControlTask(){
  * Initializes the MotionController. Different values could be defined here. e.g. minimal period time
  * */
 void MOT_Init(void){
+
+	MOT_LEFT_NSLEEP_ClrVal();
+	MOT_LEFT_DIR_SetVal();
+	MOT_LEFT_M0_SetVal();
+	MOT_LEFT_M1_SetVal();
+
+	MOT_RGHT_NSLEEP_SetVal();
+	MOT_RIGHT_DIR_SetVal();
+	MOT_RIGHT_M0_SetVal();
+	MOT_RIGHT_M1_SetVal();
 
 	SRV_Init(); // maybe we should initialize the servos when a button is pressed, like a command?
 
