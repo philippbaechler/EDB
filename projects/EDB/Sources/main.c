@@ -107,9 +107,10 @@ int main(void)
   /*** End of Processor Expert internal initialization.                    ***/
 
 
-  for (;;){
-
-  }
+//  for (;;){
+//	  LED_Enable_1_NegVal();
+//	  WAIT_Waitms(1000);
+//  }
 
   APP_Start();
 
