@@ -107,6 +107,10 @@ int main(void)
   /*** End of Processor Expert internal initialization.                    ***/
 
 
+  for (;;){
+
+  }
+
   APP_Start();
 
 
