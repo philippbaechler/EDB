@@ -63,7 +63,6 @@ void SRV_pickUp(){
 
 	SRV_extend();
 	SRV_grab();
-	SRV_grab();
 	SRV_loadOn();
 	SRV_putBack();
 	SRV_release();

@@ -126,6 +126,10 @@ void COL_ReadColors(){
 bool COL_RightColor(){
 	bool rightContainer = FALSE;
 
+	if (!(colors.redValue > colors.blueValue && colors.greenValue > colors.blueValue)){ // First implementation of the color-detection
+		rightContainer = TRUE;
+	}
+
 	return rightContainer;
 }
 

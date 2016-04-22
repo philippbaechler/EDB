@@ -4,6 +4,7 @@
 #include "LED_RED.h"
 #include "ContainerRecognizer.h"
 #include "Serial.h"
+#include "MotionController.h"
 
 typedef enum {
   ECHO_IDLE, 		/* device not used */
@@ -50,6 +51,7 @@ void US_EventEchoCapture(){
 			// Change state to "Object captured"!
 //			LED_RED_On();
 			containerRecognizer.state = COR_FSM_SURFACESCAN;
+			motionController.target_common_period = 2281;
 		}
 		else{
 			// Stay in state "listening"!

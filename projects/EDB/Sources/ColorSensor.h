@@ -51,7 +51,7 @@ uint16_t COL_ReadRed();
 uint16_t COL_ReadGreen();
 uint16_t COL_ReadBlue();
 void COL_ReadColors();
-COL_RightContainer();
+bool COL_RightContainer();
 void COL_Init();
 
 #endif /* COLORSENSOR_H */

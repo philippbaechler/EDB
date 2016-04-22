@@ -40,18 +40,22 @@ void COR_Process(){
 
 		case COR_FSM_RECOGNIZECOLOR:
 
-			COL_ReadColors();
+//			COL_ReadColors();
 
+			if(motionController.state = MOT_FSM_STOP){ // wait until we stand still (at the right place)
 
+				uint8_t i = 0;
+				for (i; i < 5; i++){
+					COL_ReadColors();
+				}
 
-//			if(motionController.state = MOT_FSM_STOP){ // wait until we stand still (at the right place)
-//				if(COL_RightContainer()){
-//					containerRecognizer.state = COR_FSM_PICKUP;
-//				}
-//				else{
-//					containerRecognizer.state = COR_FSM_STOP;
-//				}
-//			}
+				if(COL_RightContainer()){
+					containerRecognizer.state = COR_FSM_PICKUP;
+				}
+				else{
+					containerRecognizer.state = COR_FSM_STOP;
+				}
+			}
 			break;
 		case COR_FSM_PICKUP:
 			if (TPM0_C4V == grabberLowerLimit){
