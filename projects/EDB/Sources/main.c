@@ -75,6 +75,8 @@
 #include "RGB_SENSOR.h"
 #include "I2C1.h"
 #include "KSDK1.h"
+#include "SYS1.h"
+#include "RTT1.h"
 #include "FRTOS1.h"
 #include "_6V_ON.h"
 #include "BitIoLdd15.h"
@@ -106,15 +108,7 @@ int main(void)
   PE_low_level_init();
   /*** End of Processor Expert internal initialization.                    ***/
 
-
-//  for (;;){
-//	  LED_Enable_1_NegVal();
-//	  WAIT_Waitms(1000);
-//  }
-
   APP_Start();
-
-
 
   /*** Don't write any code pass this line, or it will be deleted during code generation. ***/
   /*** RTOS startup code. Macro PEX_RTOS_START is defined by the RTOS component. DON'T MODIFY THIS CODE!!! ***/

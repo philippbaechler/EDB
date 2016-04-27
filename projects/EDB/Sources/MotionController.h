@@ -47,16 +47,13 @@ typedef struct MOT_FSMData {
 
 extern MOT_FSMData motionController;
 
-void MOT_Init(void);
 void MOT_SetMaxSpeed(int16_t max_speed);
-void MOT_SetSpeed();
 void MOT_ChangeState(MOT_StateKinds newState);
-void MOT_Regulate();
-void MOT_SetPeriod();;
-void MOT_CalcualteDifferential();
+void MOT_SetTicksUntilStop();
+uint16_t MOT_GetPeriodByAcclerationCounter(uint16_t aclerationCounter);
 void MOT_CalcualteNOfSteps();
-void MOT_StopAfterSteps(uint8_t nOfStepsLeft);
 void MOT_Process();
 void vMotionControlTask();
+void MOT_Init(void);
 
 #endif /* MOTIONCONTROLLER_H */

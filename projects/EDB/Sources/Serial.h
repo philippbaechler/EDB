@@ -2,7 +2,7 @@
 #define SERIAL_H
 
 uint16_t SER_GetPeriod(uint8 c);
-void SER_SerialProcess();
+uint8_t SER_SerialProcess();
 void SER_SendEvent();
 void SER_SendString(unsigned char *msg);
 void SER_SendUint16(uint16_t i);

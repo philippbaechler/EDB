@@ -6,6 +6,7 @@
 #include "ContainerRecognizer.h"
 #include "Serial.h"
 #include "RTOS.h"
+#include "FRTOS1.h"
 
 #include "Servos.h"
 #include "SIG.h"
@@ -274,8 +275,8 @@ uint16_t SER_GetPeriod(uint8 c){
 	return r;
 }
 
-void SER_SerialProcess(){
-	uint8_t c;
+uint8_t SER_SerialProcess(){
+	uint8_t c = 0;
 
 	SERIAL_UART_ReadChar(&c);
 
@@ -326,7 +327,6 @@ void SER_SerialProcess(){
 
 			motionController.differential = c;
 
-			MOT_SetSpeed();
 			break;
 
 		case 7:		/* SteerStraight */
@@ -374,6 +374,7 @@ void SER_SerialProcess(){
 			}
 			break;
 	}
+	return c;
 }
 
 void SER_SendEvent(){
@@ -398,8 +399,10 @@ void vSerialTask(){
 	SER_SendString("\nEDB is ready!");
 
 	for(;;){
-		SER_SerialProcess();
-		WAIT_Waitms(1); // delete this?
+		if(SER_SerialProcess() == 0){
+			FRTOS1_taskYIELD();
+		}
+//		WAIT_Waitms(1); // delete this?
 	}
 }
 
