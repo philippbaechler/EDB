@@ -40,17 +40,11 @@ typedef struct MOT_FSMData {
 
 	uint16_t acceleration_counter;	// we need this variable for remembering the state of acceleration
 
-//	uint16_t master_speed_period;	// Vorgabe von PI
-//	uint16_t min_common_period;		// entspricht der maximalen Geschwindigkeit
-//	uint16_t max_common_period;		// entspricht der minimalen Geschwindigkeit -> Stop Geschwindigkeit : Periodendauer 65000
-//	uint16_t accleration_counter;	// Variable um die Periodendauer für die Beschleunigung zu berechnen
-
-//	uint8_t differential;			// Abweichung von der Mittellinie. -128 bis 127
-
-	uint16_t step_count; 			// uint16_t = 65536 -> reaches for d = 60mm and 1/8 step mode to 7,7 Meter in [mm] resolution
-	uint16_t step_count_target;
+	uint16_t step_count; 				// uint16_t = 65536 -> reaches for d = 60mm and 1/8 step mode to 7,7 Meter in [mm] resolution
+	uint16_t step_count_target;			// for the event we have to send
 	uint16_t steps_for_deceleration;
 	uint16_t steps_left_until_stop;
+
 } MOT_FSMData;
 
 extern MOT_FSMData motionController;
