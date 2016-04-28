@@ -307,8 +307,8 @@ uint8_t SER_SerialProcess(){
 
 			//SERIAL_UART_SendChar(c);	/* only for debugging */
 
-			motionController.master_speed_period = SER_GetPeriod(c); // c in mm/s
-			motionController.target_common_period = motionController.master_speed_period;
+//			motionController.master_speed_period = SER_GetPeriod(c); // c in mm/s
+			motionController.target_common_period = SER_GetPeriod(c);
 			break;
 
 		case 4:		/* SearchContainers */
@@ -325,12 +325,12 @@ uint8_t SER_SerialProcess(){
 				SERIAL_UART_ReadChar(&c);
 			}while(c == 0);
 
-			motionController.differential = c;
+			motionController.steering_lock = c;
 
 			break;
 
 		case 7:		/* SteerStraight */
-			motionController.differential = 0;
+			motionController.steering_lock = 0;
 			break;
 
 		// below are just commands for debugging
