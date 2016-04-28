@@ -34,7 +34,7 @@ typedef struct MOT_FSMData {
 	uint16_t target_common_period;	// Zielgeschwidigkeit
 	uint16_t accleration_counter;	// Variable um die Periodendauer für die Beschleunigung zu berechnen
 
-	int8_t differential;			// Abweichung von der Mittellinie. -128 bis 127
+	uint8_t differential;			// Abweichung von der Mittellinie. -128 bis 127
 
 	MOT_MOTOR motorLeft;
 	MOT_MOTOR motorRight;
@@ -49,6 +49,7 @@ extern MOT_FSMData motionController;
 
 void MOT_SetMaxSpeed(int16_t max_speed);
 void MOT_ChangeState(MOT_StateKinds newState);
+void MOT_SetSpeed();
 void MOT_SetTicksUntilStop();
 uint16_t MOT_GetPeriodByAcclerationCounter(uint16_t aclerationCounter);
 void MOT_CalcualteNOfSteps();

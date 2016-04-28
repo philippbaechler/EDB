@@ -40,6 +40,19 @@ void MOT_ChangeState(MOT_StateKinds newState){
 	motionController.state = newState;
 }
 
+void MOT_SetSpeed(){
+	motionController.actual_common_period = MOT_GetPeriodByAcclerationCounter(motionController.accleration_counter);
+	motionController.motorLeft.actual_period = ((uint32_t)MOT_GetPeriodByAcclerationCounter(motionController.accleration_counter)*127)/motionController.differential;
+	motionController.motorRight.actual_period = ((uint32_t)MOT_GetPeriodByAcclerationCounter(motionController.accleration_counter)*(motionController.differential))/127;
+
+	MOT_LEFT_SetPeriodUS(motionController.motorLeft.actual_period);
+	MOT_LEFT_SetDutyUS(motionController.motorLeft.actual_period-DUTY);
+
+
+	MOT_RIGHT_SetPeriodUS(motionController.motorRight.actual_period);
+	MOT_RIGHT_SetDutyUS(motionController.motorRight.actual_period-DUTY);
+}
+
 /*
  * New function for setting the steps for deceleration
  * */
@@ -763,9 +776,7 @@ void MOT_Process(){
 			MOT_RIGHT_Enable();
 			motionController.accleration_counter++;
 
-			motionController.actual_common_period = MOT_GetPeriodByAcclerationCounter(motionController.accleration_counter);
-			motionController.motorLeft.actual_period = MOT_GetPeriodByAcclerationCounter(motionController.accleration_counter - motionController.differential);
-			motionController.motorRight.actual_period = MOT_GetPeriodByAcclerationCounter(motionController.accleration_counter + motionController.differential);
+			MOT_SetSpeed();
 			MOT_SetTicksUntilStop();
 
 			/* Check if we reached the target speed */
@@ -789,9 +800,7 @@ void MOT_Process(){
 
 			LED_RED_Off();
 
-			motionController.actual_common_period = MOT_GetPeriodByAcclerationCounter(motionController.accleration_counter);
-			motionController.motorLeft.actual_period = MOT_GetPeriodByAcclerationCounter(motionController.accleration_counter - motionController.differential);
-			motionController.motorRight.actual_period = MOT_GetPeriodByAcclerationCounter(motionController.accleration_counter + motionController.differential);
+			MOT_SetSpeed();
 			MOT_SetTicksUntilStop();
 
 			if((motionController.actual_common_period-motionController.target_common_period) > 0){
@@ -815,9 +824,7 @@ void MOT_Process(){
 			MOT_CalcualteNOfSteps();
 			motionController.accleration_counter--;
 
-			motionController.actual_common_period = MOT_GetPeriodByAcclerationCounter(motionController.accleration_counter);
-			motionController.motorLeft.actual_period = MOT_GetPeriodByAcclerationCounter(motionController.accleration_counter - motionController.differential);
-			motionController.motorRight.actual_period = MOT_GetPeriodByAcclerationCounter(motionController.accleration_counter + motionController.differential);
+			MOT_SetSpeed();
 			MOT_SetTicksUntilStop();
 
 			if(motionController.actual_common_period >= motionController.target_common_period){
@@ -852,16 +859,17 @@ void vMotionControlTask(){
 
 	for(;;){
 		// have to be executed exactly every 10 ms
+		RTOS_Wait(10);
 
 		if(motionController.running){
 			MOT_Process();
 
 			uint16_t i = motionController.actual_common_period;
 
-			RTOS_Wait(10);
+//			RTOS_Wait(10);
 		}
 		else{
-			FRTOS1_taskYIELD();
+//			FRTOS1_taskYIELD();
 		}
 	}
 }
@@ -887,12 +895,12 @@ void MOT_Init(void){
 	motionController.state = MOT_FSM_STOP;
 	motionController.max_common_period = 65000;
 	motionController.min_common_period = 200;
-	motionController.differential = 0;
+	motionController.differential = 127;
 
 	motionController.target_common_period = motionController.max_common_period;
 
 	MOT_LEFT_Disable();
 	MOT_RIGHT_Disable();
 
-	RTOS_AddTask(vMotionControlTask, "MOT", 2);
+	RTOS_AddTask(vMotionControlTask, "MOT", 3);
 }

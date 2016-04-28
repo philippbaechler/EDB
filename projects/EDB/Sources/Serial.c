@@ -399,8 +399,12 @@ void vSerialTask(){
 	SER_SendString("\nEDB is ready!");
 
 	for(;;){
+		RTOS_Wait(1);
 		if(SER_SerialProcess() == 0){
-			FRTOS1_taskYIELD();
+//			FRTOS1_taskYIELD();
+		}
+		else{
+//			RTOS_Wait(1);
 		}
 //		WAIT_Waitms(1); // delete this?
 	}
