@@ -29,14 +29,50 @@
 
 MOT_FSMData motionController;
 
-void MOT_AccelerateDeclerate(bool acclerate){
-	motionController.actual_common_period = MOT_GetPeriod(acclerate);
+uint8_t counterPrescaler;
+
+void MOT_Set_Kp(uint16_t p){
+	motionController.Kp = p;
+}
+void MOT_Set_Ki(uint16_t i){
+	motionController.Ki = i;
+}
+void MOT_Set_Kd(uint16_t d){
+	motionController.Kd = d;
+}
+void MOT_CalculatePID(int8_t targetValue, int8_t actualValue){
+	static int16_t esum = 0, e_old = 0;
+	int16_t y_p, y_i, y_d, y;
+	int16_t e;
+
+	e = targetValue - actualValue;
+
+	y_p = motionController.Kp * e;
+
+	esum = esum + e;
+	y_i = motionController.Ki * esum;
+
+	y_d = motionController.Kd * (e_old - e);
+	e_old = e;
+
+	y = y_p + y_i + y_d;
+//	int8_t y_res = (int8_t)(y/256);
+
+	motionController.steering_lock = ((100 * y) / 32768)*(-1);
+}
+
+void MOT_AccelerateDeclerate(bool accelerate){
+	motionController.actual_common_period = MOT_GetPeriod(accelerate);
 }
 void MOT_Steer(){
 
+	if(counterPrescaler >= 5){
+		MOT_CalculatePID(0, motionController.error); // calculate the steeringLock here
+		counterPrescaler = 0;
+	}
+
 	motionController.motorLeft.actual_period = (100*motionController.actual_common_period)/(100 + motionController.steering_lock);	// may we have to change the direction
 	motionController.motorRight.actual_period = (100*motionController.actual_common_period)/(100 - motionController.steering_lock);
-
 }
 void MOT_SetSpeed(){
 
@@ -154,7 +190,7 @@ void MOT_Process(){
 			MOT_Steer();
 			MOT_SetSpeed();
 
-			if(motionController.actual_common_period >= (motionController.target_common_period-25000)){
+			if(motionController.actual_common_period >= motionController.target_common_period && motionController.target_common_period != 0){
 
 				if(motionController.acceleration_counter == 1){ // if the acceleration-counter is 1, we have to stop!
 					motionController.running = FALSE;
@@ -180,6 +216,9 @@ void vMotionControlTask(){
 		RTOS_Wait(10);
 
 		if(motionController.running){
+
+			counterPrescaler++;
+
 			MOT_Process();
 
 			uint16_t i = motionController.actual_common_period;
@@ -195,15 +234,21 @@ void vMotionControlTask(){
  * */
 void MOT_Init(void){
 
+	MOT_Set_Kp(1); // define the values for the PID-regulation
+	MOT_Set_Ki(1);
+	MOT_Set_Kd(0);
+
 	MOT_LEFT_NSLEEP_ClrVal();
 	MOT_LEFT_DIR_SetVal();
 	MOT_LEFT_M0_SetVal();
 	MOT_LEFT_M1_SetVal();
+	MOT_LEFT_Disable();
 
 	MOT_RGHT_NSLEEP_SetVal();
 	MOT_RIGHT_DIR_SetVal();
 	MOT_RIGHT_M0_SetVal();
 	MOT_RIGHT_M1_SetVal();
+	MOT_RIGHT_Disable();
 
 	SRV_Init(); // maybe we should initialize the servos when a button is pressed, like a command?
 
@@ -213,8 +258,7 @@ void MOT_Init(void){
 	motionController.target_common_period = 0xffff;
 	motionController.steering_lock = 0; // drive straight
 
-	MOT_LEFT_Disable();
-	MOT_RIGHT_Disable();
+	counterPrescaler = 0;
 
 	RTOS_AddTask(vMotionControlTask, "MOT", 3);
 }

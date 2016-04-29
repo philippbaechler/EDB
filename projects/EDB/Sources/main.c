@@ -98,6 +98,8 @@
 
 #include "Application.h"
 
+#include "MotionController.h"
+
 /*lint -save  -e970 Disable MISRA rule (6.3) checking. */
 int main(void)
 /*lint -restore Enable MISRA rule (6.3) checking. */
@@ -107,6 +109,17 @@ int main(void)
   /*** Processor Expert internal initialization. DON'T REMOVE THIS CODE!!! ***/
   PE_low_level_init();
   /*** End of Processor Expert internal initialization.                    ***/
+
+  MOT_Set_Kp(10); // define the values for the PID-regulation
+  MOT_Set_Ki(10);
+  MOT_Set_Kd(0);
+
+//  for (;;)
+//  {
+//	  MOT_CalculatePID(0,10);
+//
+//	  uint8_t s = motionController.steering_lock;
+//  }
 
   APP_Start();
 

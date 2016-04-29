@@ -45,15 +45,24 @@ typedef struct MOT_FSMData {
 	uint16_t steps_for_deceleration;
 	uint16_t steps_left_until_stop;
 
+	uint16_t Kp, Ki, Kd;			// values for the pid regulation
+	int8_t error;
+
+
 } MOT_FSMData;
 
 extern MOT_FSMData motionController;
+
+void MOT_Set_Kp(uint16_t);
+void MOT_Set_Ki(uint16_t);
+void MOT_Set_Kd(uint16_t);
+void MOT_CalculatePID(int8_t targetValue, int8_t actualValue);
 
 void MOT_SetMaxSpeed(int16_t max_speed);
 void MOT_ChangeState(MOT_StateKinds newState);
 void MOT_SetSpeed();
 void MOT_SetTicksUntilStop();
-uint16_t MOT_GetPeriod(bool acclerate);
+uint16_t MOT_GetPeriod(bool accelerate);
 void MOT_CalcualteNOfSteps();
 void MOT_Process();
 void vMotionControlTask();

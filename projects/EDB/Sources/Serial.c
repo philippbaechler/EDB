@@ -67,12 +67,12 @@ uint8_t SER_SerialProcess(){
 				SERIAL_UART_ReadChar(&c);
 			}while(c == 0);
 
-			motionController.steering_lock = c;
+			motionController.error = c;
 
 			break;
 
 		case 7:		/* SteerStraight */
-			motionController.steering_lock = 0;
+			motionController.error = 0;
 			break;
 
 		// below are just commands for debugging

@@ -3,7 +3,7 @@
   <Header>
     <Name>EDB</Name>
     <SavedBy>Philipp</SavedBy>
-    <ModificationStamp>57</ModificationStamp>
+    <ModificationStamp>59</ModificationStamp>
     <Date>2016-03-21</Date>
     <IDE>Eclipse IDE</IDE>
     <PEversion>1.12.1.RT7_b1531-0480</PEversion>
@@ -29,7 +29,7 @@
     <UseExistingModules>true</UseExistingModules>
     <RenamePeripheries>false</RenamePeripheries>
     <Autodependency>true</Autodependency>
-    <ProjectCompNumb>118</ProjectCompNumb>
+    <ProjectCompNumb>125</ProjectCompNumb>
     <DelUnusedPreviouslyGenFiles>true</DelUnusedPreviouslyGenFiles>
     <GeneratedCodeFrozen>false</GeneratedCodeFrozen>
     <AssignInitComponentNameToPrph>true</AssignInitComponentNameToPrph>
