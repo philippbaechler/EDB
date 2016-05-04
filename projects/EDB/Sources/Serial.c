@@ -79,45 +79,12 @@ uint8_t SER_SerialProcess(){
 			motionController.error = 0;
 			break;
 
-		// below are just commands for debugging
-
-		case 8:		/* grab or release the container */
-			if (TPM0_C4V <= grabberLowerLimit+300){
-				SRV_grab();
-			}
-			else{
-				SRV_release();
-			}
+		case 8:		/* ROUTE_A */
+			// not implemented yet
 			break;
 
-		case 9: 	/* change state of the ContainerRecognizer */
-			switch (containerRecognizer.state){
-				case COR_FSM_STOP:
-					containerRecognizer.state = COR_FSM_OBSERVANT;
-					SER_SendString("COR_FSM_OBSERVANT");
-					SER_SendNewLine();
-					break;
-				case COR_FSM_OBSERVANT:
-					containerRecognizer.state = COR_FSM_SURFACESCAN;
-					SER_SendString("COR_FSM_SURFACESCAN");
-					SER_SendNewLine();
-					break;
-				case COR_FSM_SURFACESCAN:
-					containerRecognizer.state = COR_FSM_RECOGNIZECOLOR;
-					SER_SendString("COR_FSM_RECOGNIZECOLOR");
-					SER_SendNewLine();
-					break;
-				case COR_FSM_RECOGNIZECOLOR:
-					containerRecognizer.state = COR_FSM_PICKUP;
-					SER_SendString("COR_FSM_PICKUP");
-					SER_SendNewLine();
-					break;
-				case COR_FSM_PICKUP:
-					containerRecognizer.state = COR_FSM_STOP;
-					SER_SendString("COR_FSM_STOP");
-					SER_SendNewLine();
-					break;
-			}
+		case 9: 	/* ROUTE_B */
+			// not implemented yet
 			break;
 	}
 	return c;
@@ -145,15 +112,8 @@ void vSerialTask(){
 	SER_SendString("\nEDB is ready!");
 
 	for(;;){
-
-		Route_B_LED_ClrVal();
-
 		RTOS_Wait(3); 			// we only check every 3 ms the UART interfaces
-
 		SER_SerialProcess();
-//		BLT_Process();
-
-		Route_B_LED_SetVal();
 	}
 }
 

@@ -231,9 +231,6 @@ void vMotionControlTask(){
 			motionController.running = FALSE;
 		}
 
-
-		Route_A_LED_ClrVal();
-
 		// have to be executed exactly every 10 ms
 
 		FRTOS1_vTaskDelay(10);
@@ -249,8 +246,6 @@ void vMotionControlTask(){
 		else{
 //			FRTOS1_taskYIELD();
 		}
-
-		Route_A_LED_SetVal();
 	}
 }
 
@@ -266,15 +261,16 @@ static void MOT_PrintStatus(const BLUETOOTH_StdIOType *io) {
 	BLUETOOTH_SendStatusStr((unsigned char*)"  actual common period", (unsigned char*)"", io->stdOut);
 	BLUETOOTH_SendNum32s(motionController.actual_common_period, io->stdOut);
 	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
-//  CLS1_SendStatusStr((unsigned char*)"  R speed", (unsigned char*)"", io->stdOut);
-//  CLS1_SendNum32s(TACHO_GetSpeed(FALSE), io->stdOut);
-//  CLS1_SendStr((unsigned char*)" steps/sec\r\n", io->stdOut);
+	BLUETOOTH_SendStatusStr((unsigned char*)"  error", (unsigned char*)"", io->stdOut);
+	BLUETOOTH_SendNum32s(motionController.error, io->stdOut);
+	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
 }
 
 static void MOT_PrintHelp(const BLUETOOTH_StdIOType *io) {
 	BLUETOOTH_SendHelpStr((unsigned char*)"MOT", (unsigned char*)"Group of MOT commands\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  help|status", (unsigned char*)"Shows MOT help or status\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  speed <value>", (unsigned char*)"Set speed\r\n", io->stdOut);
+	BLUETOOTH_SendHelpStr((unsigned char*)"  error <value>", (unsigned char*)"Set error for the PID\r\n", io->stdOut);
 }
 
 uint8_t MOT_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIOType *io){
@@ -293,6 +289,17 @@ uint8_t MOT_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
 
 		if (UTIL1_xatoi(&p, &val)==ERR_OK){
 			motionController.target_common_period = SER_GetPeriod(val);
+			*handled = TRUE;
+		}
+		else {
+	        BLUETOOTH_SendStr((unsigned char*)"failed\r\n", io->stdErr);
+		}
+
+	} else if (UTIL1_strncmp((char*)cmd, (char*)"MOT error ", sizeof("MOT error ")-1) == 0) {
+		p = cmd+sizeof("MOT error");
+
+		if (UTIL1_xatoi(&p, &val)==ERR_OK){
+			motionController.error = val;
 			*handled = TRUE;
 		}
 		else {
