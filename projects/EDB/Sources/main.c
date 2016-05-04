@@ -30,8 +30,12 @@
 /* Including needed modules to compile this module/procedure */
 #include "Cpu.h"
 #include "Events.h"
+#include "BLUETOOTH.h"
 #include "WAIT.h"
 #include "CS1.h"
+#include "BT1.h"
+#include "Serial1.h"
+#include "ASerialLdd1.h"
 #include "UTIL1.h"
 #include "MOT_LEFT.h"
 #include "PpgLdd1.h"

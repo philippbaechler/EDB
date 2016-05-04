@@ -16,7 +16,7 @@ void APP_Start(void){
 	//COR_Init();
 	MOT_Init();
 	SER_Init();
-	//BLT_Init();
+	SHELL_Init();
 
 	// Start RTOS here!
 	RTOS_Init();

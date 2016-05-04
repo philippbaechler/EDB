@@ -148,10 +148,10 @@ void vSerialTask(){
 
 		Route_B_LED_ClrVal();
 
-		RTOS_Wait(3); 			// we only check every 3 ms the UART and bluetooth interfaces
+		RTOS_Wait(3); 			// we only check every 3 ms the UART interfaces
 
 		SER_SerialProcess();
-		BLT_Process();
+//		BLT_Process();
 
 		Route_B_LED_SetVal();
 	}
