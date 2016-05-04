@@ -70,7 +70,7 @@ void COR_Process(){
 
 void vContainerRecognizerTask(/*void* pvParameters*/){
 
-	COL_Init(); // Has to be implemented here, because we need interrupts for the i2c. And these interrupts are disabled because of the Setup from RTOS. They get enabled with the RTOS_startShedule!
+	//COL_Init(); // Has to be implemented here, because we need interrupts for the i2c. And these interrupts are disabled because of the Setup from RTOS. They get enabled with the RTOS_startShedule!
 
 	for(;;){
 		if(containerRecognizer.active /*containerRecognizer.state != COR_FSM_STOP*/){ // maybe this task could set sleeping if its not used?
@@ -84,8 +84,6 @@ void vContainerRecognizerTask(/*void* pvParameters*/){
 }
 
 void COR_Init(){
-
-
 
 	US_Init();
 

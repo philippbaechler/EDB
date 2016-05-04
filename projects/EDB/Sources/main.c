@@ -112,17 +112,6 @@ int main(void)
   PE_low_level_init();
   /*** End of Processor Expert internal initialization.                    ***/
 
-  MOT_Set_Kp(10); // define the values for the PID-regulation
-  MOT_Set_Ki(10);
-  MOT_Set_Kd(0);
-
-//  for (;;)
-//  {
-//	  MOT_CalculatePID(0,10);
-//
-//	  uint8_t s = motionController.steering_lock;
-//  }
-
   APP_Start();
 
   /*** Don't write any code pass this line, or it will be deleted during code generation. ***/

@@ -11,6 +11,8 @@
 #include "Servos.h"
 #include "SIG.h"
 
+#include "PID.h"
+
 #include "Bluetooth.h"
 
 #include "Route_B_LED.h"
@@ -71,12 +73,16 @@ uint8_t SER_SerialProcess(){
 				SERIAL_UART_ReadChar(&c);
 			}while(c == 0);
 
-			motionController.error = c;
+			PID_SetError(c);
+//			steer.error = c;
 
 			break;
 
 		case 7:		/* SteerStraight */
-			motionController.error = 0;
+
+			PID_SetError(0);
+
+//			motionController.error = 0;
 			break;
 
 		case 8:		/* ROUTE_A */

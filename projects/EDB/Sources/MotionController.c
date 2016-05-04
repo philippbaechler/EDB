@@ -11,6 +11,7 @@
 #include "MotionController.h"
 #include "Serial.h"
 #include "RTOS.h"
+#include "PID.h"
 
 #include "Servos.h"
 
@@ -35,35 +36,35 @@ MOT_FSMData motionController;
 
 uint8_t counterPrescaler;
 
-void MOT_Set_Kp(uint16_t p){
-	motionController.Kp = p;
-}
-void MOT_Set_Ki(uint16_t i){
-	motionController.Ki = i;
-}
-void MOT_Set_Kd(uint16_t d){
-	motionController.Kd = d;
-}
-void MOT_CalculatePID(int8_t targetValue, int8_t actualValue){
-	static int16_t esum = 0, e_old = 0;
-	int16_t y_p, y_i, y_d, y;
-	int16_t e;
-
-	e = targetValue - actualValue;
-
-	y_p = motionController.Kp * e;
-
-	esum = esum + e;
-	y_i = motionController.Ki * esum;
-
-	y_d = motionController.Kd * (e_old - e);
-	e_old = e;
-
-	y = y_p + y_i + y_d;
-//	int8_t y_res = (int8_t)(y/256);
-
-	motionController.steering_lock = ((100 * y) / 32768)*(-1);
-}
+//void MOT_Set_Kp(uint16_t p){
+//	motionController.Kp = p;
+//}
+//void MOT_Set_Ki(uint16_t i){
+//	motionController.Ki = i;
+//}
+//void MOT_Set_Kd(uint16_t d){
+//	motionController.Kd = d;
+//}
+//void MOT_CalculatePID(int8_t targetValue, int8_t actualValue){
+//	static int16_t esum = 0, e_old = 0;
+//	int16_t y_p, y_i, y_d, y;
+//	int16_t e;
+//
+//	e = targetValue - actualValue;
+//
+//	y_p = motionController.Kp * e;
+//
+//	esum = esum + e;
+//	y_i = motionController.Ki * esum;
+//
+//	y_d = motionController.Kd * (e_old - e);
+//	e_old = e;
+//
+//	y = y_p + y_i + y_d;
+////	int8_t y_res = (int8_t)(y/256);
+//
+//	motionController.steering_lock = ((100 * y) / 32768)*(-1);
+//}
 
 void MOT_AccelerateDeclerate(bool accelerate){
 	motionController.actual_common_period = MOT_GetPeriod(accelerate);
@@ -71,14 +72,8 @@ void MOT_AccelerateDeclerate(bool accelerate){
 void MOT_Steer(){
 
 	if(counterPrescaler >= 5){
-
-		_6V_ON_ClrVal();
-
-		MOT_CalculatePID(0, motionController.error); // calculate the steeringLock here
+		PID_CalculatePID(); // calculate the steeringLock here
 		counterPrescaler = 0;
-
-		_6V_ON_SetVal();
-
 	}
 
 	motionController.motorLeft.actual_period = (100*motionController.actual_common_period)/(100 + motionController.steering_lock);	// may we have to change the direction
@@ -200,9 +195,9 @@ void MOT_Process(){
 			MOT_Steer();
 			MOT_SetSpeed();
 
-			if(motionController.actual_common_period >= motionController.target_common_period && motionController.target_common_period != 0){
+			if(motionController.actual_common_period >= motionController.target_common_period || motionController.acceleration_counter <= 1/* && motionController.target_common_period != 0xffff*/){
 
-				if(motionController.acceleration_counter == 1){ // if the acceleration-counter is 1, we have to stop!
+				if(motionController.acceleration_counter <= 1){ // if the acceleration-counter is 1, we have to stop!
 					motionController.running = FALSE;
 					motionController.state = MOT_FSM_STOP;
 					MOT_LEFT_Disable();
@@ -250,8 +245,10 @@ void vMotionControlTask(){
 }
 
 static void MOT_PrintStatus(const BLUETOOTH_StdIOType *io) {
-  //TACHO_CalcSpeed(); /*! \todo only temporary until this is done periodically */
-	BLUETOOTH_SendStatusStr((unsigned char*)"MOT", (unsigned char*)"\r\n", io->stdOut);
+	BLUETOOTH_SendStatusStr((unsigned char*)"\r\nmot", (unsigned char*)"\r\n", io->stdOut);
+	BLUETOOTH_SendStatusStr((unsigned char*)"  actual state", (unsigned char*)"", io->stdOut);
+	BLUETOOTH_SendNum32s(motionController.state, io->stdOut);
+	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
 	BLUETOOTH_SendStatusStr((unsigned char*)"  accl count", (unsigned char*)"", io->stdOut);
 	BLUETOOTH_SendNum32s(motionController.acceleration_counter, io->stdOut);
 	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
@@ -261,16 +258,16 @@ static void MOT_PrintStatus(const BLUETOOTH_StdIOType *io) {
 	BLUETOOTH_SendStatusStr((unsigned char*)"  actual common period", (unsigned char*)"", io->stdOut);
 	BLUETOOTH_SendNum32s(motionController.actual_common_period, io->stdOut);
 	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
-	BLUETOOTH_SendStatusStr((unsigned char*)"  error", (unsigned char*)"", io->stdOut);
-	BLUETOOTH_SendNum32s(motionController.error, io->stdOut);
+	BLUETOOTH_SendStatusStr((unsigned char*)"  steering lock", (unsigned char*)"", io->stdOut);
+	BLUETOOTH_SendNum32s(motionController.steering_lock, io->stdOut);
 	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
 }
 
 static void MOT_PrintHelp(const BLUETOOTH_StdIOType *io) {
-	BLUETOOTH_SendHelpStr((unsigned char*)"MOT", (unsigned char*)"Group of MOT commands\r\n", io->stdOut);
-	BLUETOOTH_SendHelpStr((unsigned char*)"  help|status", (unsigned char*)"Shows MOT help or status\r\n", io->stdOut);
+	BLUETOOTH_SendHelpStr((unsigned char*)"mot", (unsigned char*)"Group of mot commands\r\n", io->stdOut);
+	BLUETOOTH_SendHelpStr((unsigned char*)"  help|status", (unsigned char*)"Shows mot help or status\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  speed <value>", (unsigned char*)"Set speed\r\n", io->stdOut);
-	BLUETOOTH_SendHelpStr((unsigned char*)"  error <value>", (unsigned char*)"Set error for the PID\r\n", io->stdOut);
+	BLUETOOTH_SendHelpStr((unsigned char*)"  stop <value>", (unsigned char*)"Stop the robot in <value> mm\r\n", io->stdOut);
 }
 
 uint8_t MOT_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIOType *io){
@@ -278,14 +275,14 @@ uint8_t MOT_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
 	const unsigned char *p;
 	int32_t val;
 
-	if (UTIL1_strcmp((char*)cmd, (char*)BLUETOOTH_CMD_HELP)==0 || UTIL1_strcmp((char*)cmd, (char*)"MOT help")==0) {
+	if (UTIL1_strcmp((char*)cmd, (char*)BLUETOOTH_CMD_HELP)==0 || UTIL1_strcmp((char*)cmd, (char*)"mot help")==0) {
 		MOT_PrintHelp(io);
 		*handled = TRUE;
-	} else if (UTIL1_strcmp((char*)cmd, (char*)BLUETOOTH_CMD_STATUS)==0 || UTIL1_strcmp((char*)cmd, (char*)"MOT status")==0) {
+	} else if (UTIL1_strcmp((char*)cmd, (char*)BLUETOOTH_CMD_STATUS)==0 || UTIL1_strcmp((char*)cmd, (char*)"mot status")==0) {
 		MOT_PrintStatus(io);
 		*handled = TRUE;
-	} else if (UTIL1_strncmp((char*)cmd, (char*)"MOT speed ", sizeof("MOT speed ")-1) == 0) {
-		p = cmd+sizeof("MOT speed");
+	} else if (UTIL1_strncmp((char*)cmd, (char*)"mot speed ", sizeof("mot speed ")-1) == 0) {
+		p = cmd+sizeof("mot speed");
 
 		if (UTIL1_xatoi(&p, &val)==ERR_OK){
 			motionController.target_common_period = SER_GetPeriod(val);
@@ -294,18 +291,16 @@ uint8_t MOT_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
 		else {
 	        BLUETOOTH_SendStr((unsigned char*)"failed\r\n", io->stdErr);
 		}
-
-	} else if (UTIL1_strncmp((char*)cmd, (char*)"MOT error ", sizeof("MOT error ")-1) == 0) {
-		p = cmd+sizeof("MOT error");
+	} else if (UTIL1_strncmp((char*)cmd, (char*)"mot stop ", sizeof("mot stop ")-1) == 0) {
+		p = cmd+sizeof("mot stop");
 
 		if (UTIL1_xatoi(&p, &val)==ERR_OK){
-			motionController.error = val;
+			motionController.steps_left_until_stop = val/0.1178;
 			*handled = TRUE;
 		}
 		else {
 	        BLUETOOTH_SendStr((unsigned char*)"failed\r\n", io->stdErr);
 		}
-
 	}
 
 	return res;
@@ -315,10 +310,6 @@ uint8_t MOT_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
  * Initializes the MotionController. Different values could be defined here. e.g. minimal period time
  * */
 void MOT_Init(void){
-
-	MOT_Set_Kp(1); // define the values for the PID-regulation
-	MOT_Set_Ki(1);
-	MOT_Set_Kd(0);
 
 	MOT_LEFT_NSLEEP_ClrVal();
 	MOT_LEFT_DIR_SetVal();

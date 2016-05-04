@@ -12,6 +12,7 @@
 #include "Application.h"
 #include "FRTOS1.h"
 #include "BT1.h"
+#include "PID.h"
 
 #include "MotionController.h"
 
@@ -25,6 +26,7 @@ static const BLUETOOTH_ParseCommandCallback CmdParserTable[] =
   BLUETOOTH_ParseCommand, /* Processor Expert Shell component, is first in list */
   SHELL_ParseCommand, /* our own module parser */
   MOT_ParseCommand,
+  PID_ParseCommand,
   NULL /* Sentinel */
 };
 

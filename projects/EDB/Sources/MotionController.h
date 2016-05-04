@@ -46,8 +46,8 @@ typedef struct MOT_FSMData {
 	uint16_t steps_for_deceleration;
 	uint16_t steps_left_until_stop;
 
-	uint16_t Kp, Ki, Kd;			// values for the pid regulation
-	int8_t error;
+//	uint16_t Kp, Ki, Kd;			// values for the pid regulation
+//	int8_t error;
 
 
 } MOT_FSMData;
