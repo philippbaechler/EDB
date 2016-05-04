@@ -27,6 +27,9 @@
 #include "MOT_RIGHT_M1.h"
 
 
+#include "Route_A_LED.h" // debugging
+#include "_6V_ON.h"
+
 MOT_FSMData motionController;
 
 uint8_t counterPrescaler;
@@ -67,8 +70,14 @@ void MOT_AccelerateDeclerate(bool accelerate){
 void MOT_Steer(){
 
 	if(counterPrescaler >= 5){
+
+		_6V_ON_ClrVal();
+
 		MOT_CalculatePID(0, motionController.error); // calculate the steeringLock here
 		counterPrescaler = 0;
+
+		_6V_ON_SetVal();
+
 	}
 
 	motionController.motorLeft.actual_period = (100*motionController.actual_common_period)/(100 + motionController.steering_lock);	// may we have to change the direction
@@ -212,8 +221,12 @@ void MOT_Process(){
 void vMotionControlTask(){
 
 	for(;;){
+
+		Route_A_LED_ClrVal();
+
 		// have to be executed exactly every 10 ms
-		RTOS_Wait(10);
+
+		FRTOS1_vTaskDelay(10);
 
 		if(motionController.running){
 
@@ -226,6 +239,8 @@ void vMotionControlTask(){
 		else{
 //			FRTOS1_taskYIELD();
 		}
+
+		Route_A_LED_SetVal();
 	}
 }
 

@@ -33,12 +33,6 @@ void BLT_Process(){
 					}*/
 }
 
-void vBlueToothTask(){
-	for(;;){
-		BLT_Process();
-	}
-}
-
 void BLT_Init(){
 	RTOS_AddTask(vBlueToothTask, "BLT", 1);
 }

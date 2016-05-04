@@ -24,7 +24,9 @@ void RTOS_AddTask(void (*callback)(void*), signed char* taskName, uint8_t priori
 }
 
 void RTOS_Wait(uint16_t ms) {
-	vTaskDelay(ms/portTICK_RATE_MS);
+	FRTOS1_vTaskDelay(ms/(portTICK_RATE_MS));
+
+//	vTaskDelay(ms/portTICK_RATE_MS);
 }
 
 void RTOS_Init(void) {

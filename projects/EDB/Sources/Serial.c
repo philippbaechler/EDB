@@ -11,6 +11,10 @@
 #include "Servos.h"
 #include "SIG.h"
 
+#include "Bluetooth.h"
+
+#include "Route_B_LED.h"
+
 uint16_t SER_GetPeriod(uint8 c){
 
 	uint16_t period;
@@ -141,14 +145,15 @@ void vSerialTask(){
 	SER_SendString("\nEDB is ready!");
 
 	for(;;){
-		RTOS_Wait(1);
-		if(SER_SerialProcess() == 0){
-//			FRTOS1_taskYIELD();
-		}
-		else{
-//			RTOS_Wait(1);
-		}
-//		WAIT_Waitms(1); // delete this?
+
+		Route_B_LED_ClrVal();
+
+		RTOS_Wait(3); 			// we only check every 3 ms the UART and bluetooth interfaces
+
+		SER_SerialProcess();
+		BLT_Process();
+
+		Route_B_LED_SetVal();
 	}
 }
 
