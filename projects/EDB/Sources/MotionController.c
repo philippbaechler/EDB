@@ -3,6 +3,7 @@
 #include "MOT_RIGHT.h"
 #include "LED_RED.h"
 #include "FRTOS1.h"
+#include "UTIL1.h"
 
 #include "SIG.h"
 
@@ -222,6 +223,15 @@ void vMotionControlTask(){
 
 	for(;;){
 
+		if (motionController.target_common_speed < 0xffff){
+			motionController.running = TRUE;
+		}
+		else
+		{
+			motionController.running = FALSE;
+		}
+
+
 		Route_A_LED_ClrVal();
 
 		// have to be executed exactly every 10 ms
@@ -242,6 +252,56 @@ void vMotionControlTask(){
 
 		Route_A_LED_SetVal();
 	}
+}
+
+static void MOT_PrintStatus(const BLUETOOTH_StdIOType *io) {
+  //TACHO_CalcSpeed(); /*! \todo only temporary until this is done periodically */
+	BLUETOOTH_SendStatusStr((unsigned char*)"MOT", (unsigned char*)"\r\n", io->stdOut);
+	BLUETOOTH_SendStatusStr((unsigned char*)"  accl count", (unsigned char*)"", io->stdOut);
+	BLUETOOTH_SendNum32s(motionController.acceleration_counter, io->stdOut);
+	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
+	BLUETOOTH_SendStatusStr((unsigned char*)"  target common period", (unsigned char*)"", io->stdOut);
+	BLUETOOTH_SendNum32s(motionController.target_common_period, io->stdOut);
+	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
+	BLUETOOTH_SendStatusStr((unsigned char*)"  actual common period", (unsigned char*)"", io->stdOut);
+	BLUETOOTH_SendNum32s(motionController.actual_common_period, io->stdOut);
+	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
+//  CLS1_SendStatusStr((unsigned char*)"  R speed", (unsigned char*)"", io->stdOut);
+//  CLS1_SendNum32s(TACHO_GetSpeed(FALSE), io->stdOut);
+//  CLS1_SendStr((unsigned char*)" steps/sec\r\n", io->stdOut);
+}
+
+static void MOT_PrintHelp(const BLUETOOTH_StdIOType *io) {
+	BLUETOOTH_SendHelpStr((unsigned char*)"MOT", (unsigned char*)"Group of MOT commands\r\n", io->stdOut);
+	BLUETOOTH_SendHelpStr((unsigned char*)"  help|status", (unsigned char*)"Shows MOT help or status\r\n", io->stdOut);
+	BLUETOOTH_SendHelpStr((unsigned char*)"  speed <value>", (unsigned char*)"Set speed\r\n", io->stdOut);
+}
+
+uint8_t MOT_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIOType *io){
+	uint8_t res = ERR_OK;
+	const unsigned char *p;
+	int32_t val;
+
+	if (UTIL1_strcmp((char*)cmd, (char*)BLUETOOTH_CMD_HELP)==0 || UTIL1_strcmp((char*)cmd, (char*)"MOT help")==0) {
+		MOT_PrintHelp(io);
+		*handled = TRUE;
+	} else if (UTIL1_strcmp((char*)cmd, (char*)BLUETOOTH_CMD_STATUS)==0 || UTIL1_strcmp((char*)cmd, (char*)"MOT status")==0) {
+		MOT_PrintStatus(io);
+		*handled = TRUE;
+	} else if (UTIL1_strncmp((char*)cmd, (char*)"MOT speed ", sizeof("MOT speed ")-1) == 0) {
+		p = cmd+sizeof("MOT speed");
+
+		if (UTIL1_xatoi(&p, &val)==ERR_OK){
+			motionController.target_common_period = SER_GetPeriod(val);
+			*handled = TRUE;
+		}
+		else {
+	        BLUETOOTH_SendStr((unsigned char*)"failed\r\n", io->stdErr);
+		}
+
+	}
+
+	return res;
 }
 
 /*

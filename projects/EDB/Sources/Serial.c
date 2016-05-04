@@ -49,7 +49,7 @@ uint8_t SER_SerialProcess(){
 
 		case 3:		/* Run */
 			do{
-				motionController.running = TRUE;
+//				motionController.running = TRUE; // this could be implemented in the MOT_Task
 				WAIT_Waitms(1); /* TODO: is this delay needed? */
 				SERIAL_UART_ReadChar(&c);
 			}while(c == 0);

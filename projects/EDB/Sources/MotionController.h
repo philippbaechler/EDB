@@ -7,6 +7,7 @@
 #define DUTY	100		// T_on in us
 
 #include "PE_Types.h"
+#include "BLUETOOTH.h"
 
 typedef enum MOT_StateKinds {
 	MOT_FSM_STOP,
@@ -67,5 +68,7 @@ void MOT_CalcualteNOfSteps();
 void MOT_Process();
 void vMotionControlTask();
 void MOT_Init(void);
+
+uint8_t MOT_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIOType *io);
 
 #endif /* MOTIONCONTROLLER_H */

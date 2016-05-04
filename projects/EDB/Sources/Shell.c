@@ -13,6 +13,8 @@
 #include "FRTOS1.h"
 #include "BT1.h"
 
+#include "MotionController.h"
+
 #define PL_CONFIG_HAS_BLUETOOTH (1)
 
 /* forward declaration */
@@ -22,7 +24,7 @@ static const BLUETOOTH_ParseCommandCallback CmdParserTable[] =
 {
   BLUETOOTH_ParseCommand, /* Processor Expert Shell component, is first in list */
   SHELL_ParseCommand, /* our own module parser */
-
+  MOT_ParseCommand,
   NULL /* Sentinel */
 };
 
