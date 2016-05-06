@@ -5,7 +5,7 @@
 
 void SRV_MoveServo(uint8_t degree, uint16_t dutyCycle, uint8_t servo){
 
-	uint16_t dC;
+	uint16_t dC = dutyCycle;
 
 	switch (servo){
 		case 1:
