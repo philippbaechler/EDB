@@ -28,7 +28,7 @@ void vWatchDogTask(){
 			if (voltage <= LowBatteryLigth){
 
 				if (voltage <= LowBatteryLigth){
-
+					WDG_ShutOff();
 				}
 				else{
 					Battery_low_NegVal(); // if the battery voltage is in a critical range, the LOW_BAT LED blinks with the frequency in witch this function runns
