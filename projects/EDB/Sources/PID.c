@@ -43,6 +43,7 @@ void PID_CalculatePID(){
 //	int8_t y_res = (int8_t)(y/256);
 
 	motionController.steering_lock = ((100 * y) / 32768)*(-1);
+//	motionController.steering_lock = ((100 * y) / 32768)*(-1);
 }
 
 static void PID_PrintStatus(const BLUETOOTH_StdIOType *io) {

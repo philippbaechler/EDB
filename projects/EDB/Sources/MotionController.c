@@ -30,41 +30,10 @@
 
 
 #include "Route_A_LED.h" // debugging
-#include "_6V_ON.h"
 
 MOT_FSMData motionController;
 
 uint8_t counterPrescaler;
-
-//void MOT_Set_Kp(uint16_t p){
-//	motionController.Kp = p;
-//}
-//void MOT_Set_Ki(uint16_t i){
-//	motionController.Ki = i;
-//}
-//void MOT_Set_Kd(uint16_t d){
-//	motionController.Kd = d;
-//}
-//void MOT_CalculatePID(int8_t targetValue, int8_t actualValue){
-//	static int16_t esum = 0, e_old = 0;
-//	int16_t y_p, y_i, y_d, y;
-//	int16_t e;
-//
-//	e = targetValue - actualValue;
-//
-//	y_p = motionController.Kp * e;
-//
-//	esum = esum + e;
-//	y_i = motionController.Ki * esum;
-//
-//	y_d = motionController.Kd * (e_old - e);
-//	e_old = e;
-//
-//	y = y_p + y_i + y_d;
-////	int8_t y_res = (int8_t)(y/256);
-//
-//	motionController.steering_lock = ((100 * y) / 32768)*(-1);
-//}
 
 void MOT_AccelerateDeclerate(bool accelerate){
 	motionController.actual_common_period = MOT_GetPeriod(accelerate);

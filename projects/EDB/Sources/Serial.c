@@ -15,6 +15,7 @@
 
 #include "Bluetooth.h"
 
+#include "Route_A_LED.h"
 #include "Route_B_LED.h"
 
 uint16_t SER_GetPeriod(uint8 c){
@@ -74,7 +75,6 @@ uint8_t SER_SerialProcess(){
 			}while(c == 0);
 
 			PID_SetError(c);
-//			steer.error = c;
 
 			break;
 
@@ -82,15 +82,20 @@ uint8_t SER_SerialProcess(){
 
 			PID_SetError(0);
 
-//			motionController.error = 0;
 			break;
 
 		case 8:		/* ROUTE_A */
-			// not implemented yet
+
+			Route_A_LED_SetVal();
+			Route_B_LED_ClrVal();
+
 			break;
 
 		case 9: 	/* ROUTE_B */
-			// not implemented yet
+
+			Route_A_LED_ClrVal();
+			Route_B_LED_SetVal();
+
 			break;
 	}
 	return c;

@@ -13,6 +13,7 @@
 #include "FRTOS1.h"
 #include "BT1.h"
 #include "PID.h"
+#include "WatchDog.h"
 
 #include "MotionController.h"
 
@@ -27,6 +28,7 @@ static const BLUETOOTH_ParseCommandCallback CmdParserTable[] =
   SHELL_ParseCommand, /* our own module parser */
   MOT_ParseCommand,
   PID_ParseCommand,
+  WDG_ParseCommand,
   NULL /* Sentinel */
 };
 
