@@ -6,7 +6,7 @@
 #include "UTIL1.h"
 #include "Battery_low.h"
 
-#define LowBatteryLigth 40116
+#define LowBatteryLight 40116 // set these values corresponding to the battery-voltage-monitor
 #define LowBatteryBlink 38924
 #define ShutOffVoltage 37733
 
@@ -15,6 +15,7 @@ uint16_t voltage;
 void WDG_ShutOff(){
 
 	Shut_OFF_SetVal();
+
 }
 
 void vWatchDogTask(){
@@ -24,19 +25,26 @@ void vWatchDogTask(){
 		ADC_GetChanValue16(1, &voltage);
 
 
-		if (voltage <= LowBatteryLigth){
-			if (voltage <= LowBatteryLigth){
+		if (voltage <= LowBatteryLight){
+			if (voltage <= LowBatteryBlink){
 
-				if (voltage <= LowBatteryLigth){
+				Battery_low_NegVal(); // if the battery voltage is in a critical range, the LOW_BAT LED blinks with the frequency in witch this function runns
+
+				if (voltage <= ShutOffVoltage){
 					WDG_ShutOff();
 				}
 				else{
-					Battery_low_NegVal(); // if the battery voltage is in a critical range, the LOW_BAT LED blinks with the frequency in witch this function runns
+					Shut_OFF_ClrVal();
 				}
 			}
 			else{
 				Battery_low_SetVal();
+				Shut_OFF_ClrVal();
 			}
+		}
+		else{
+			Battery_low_ClrVal();
+			Shut_OFF_ClrVal();
 		}
 
 		RTOS_Wait(500); // wait 500 ms between measurements
