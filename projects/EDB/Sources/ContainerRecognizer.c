@@ -74,9 +74,11 @@ void vContainerRecognizerTask(/*void* pvParameters*/){
 
 	for(;;){
 
+		RTOS_Wait(200);
+
 		if(containerRecognizer.active /*containerRecognizer.state != COR_FSM_STOP*/){ // maybe this task could set sleeping if its not used?
 			COR_Process();
-			RTOS_Wait(100);
+//			RTOS_Wait(100);
 		}
 		else{
 //			FRTOS1_taskYIELD();
@@ -88,8 +90,8 @@ void COR_Init(){
 
 	US_Init();
 
-	containerRecognizer.active = FALSE;
-	containerRecognizer.state = COR_FSM_STOP;
+	containerRecognizer.active = TRUE; //FALSE;
+	containerRecognizer.state = COR_FSM_SURFACESCAN; // COR_FSM_STOP;
 
 	RTOS_AddTask(vContainerRecognizerTask, "COR", 2);
 }
