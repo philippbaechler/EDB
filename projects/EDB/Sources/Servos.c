@@ -70,6 +70,11 @@ void SRV_pickUp(){
 
 }
 
+void SRV_park(){
+
+}
+
+
 void SRV_Init(){
 
 //	uint16_t i = grabberLowerLimit;
@@ -86,10 +91,12 @@ void SRV_Init(){
 //	}
 //}
 
-	_6V_ON_SetVal();
+	//_6V_ON_SetVal();
 
 	TPM0_C2V = 4500;
 	TPM0_C3V = 4500;
 	TPM0_C4V = grabberLowerLimit;
 	TPM0_C5V = 4500;
+	//WAIT_Waitms(1500);
+	//SRV_pickUp();
 }

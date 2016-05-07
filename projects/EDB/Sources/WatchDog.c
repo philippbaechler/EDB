@@ -6,9 +6,9 @@
 #include "UTIL1.h"
 #include "Battery_low.h"
 
-#define LowBatteryLight 40116 // set these values corresponding to the battery-voltage-monitor
-#define LowBatteryBlink 38924
-#define ShutOffVoltage 37733
+#define LowBatteryLight 9800 // set these values corresponding to the battery-voltage-monitor
+#define LowBatteryBlink 9400
+#define ShutOffVoltage 9000
 
 uint16_t voltage;
 
@@ -20,7 +20,6 @@ void WDG_ShutOff(){
 
 void vWatchDogTask(){
 	for(;;){
-
 		ADC_MeasureChan(TRUE, 1);
 		ADC_GetChanValue16(1, &voltage);
 

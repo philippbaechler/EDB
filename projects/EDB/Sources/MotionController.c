@@ -280,13 +280,16 @@ uint8_t MOT_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
  * */
 void MOT_Init(void){
 
-	MOT_LEFT_NSLEEP_ClrVal();
+	MOT_LEFT_NSLEEP_SetVal();
+	MOT_LEFT_NSLEEP_ClrVal();			// reagiert nicht auf Sleep Signal!!
+	MOT_LEFT_NSLEEP_SetVal();
+
 	MOT_LEFT_DIR_SetVal();
 	MOT_LEFT_M0_SetVal();
 	MOT_LEFT_M1_SetVal();
 	MOT_LEFT_Disable();
 
-	MOT_RGHT_NSLEEP_SetVal();
+	MOT_RGHT_NSLEEP_SetVal();			// SetVal = Treiber aktiv, ClrVal = Treiber inaktiv
 	MOT_RIGHT_DIR_SetVal();
 	MOT_RIGHT_M0_SetVal();
 	MOT_RIGHT_M1_SetVal();
