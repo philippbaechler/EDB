@@ -19,30 +19,29 @@ COR_FSMData containerRecognizer;
 void COR_Process(){
 
 	switch(containerRecognizer.state){
-		case COR_FSM_STOP:
-
-			containerRecognizer.state = COR_FSM_OBSERVANT; // is state STOP really needed?
-			break;
+//		case COR_FSM_STOP:
+//
+//			containerRecognizer.state = COR_FSM_OBSERVANT; // is state STOP really needed?
+//			break;
 
 		case COR_FSM_OBSERVANT:
-
 			RTOS_Wait(100);
 			US_Measure();
 			break;
 
 		case COR_FSM_SURFACESCAN:
 
-			if (SCN_IsAContainer()){ // Continue here!
+			if (SCN_IsAContainer()){
 				motionController.steps_left_until_stop = stepsAfterIR; // n of Steps we have to go after we recognized a container
+				containerRecognizer.state = COR_FSM_RECOGNIZECOLOR;
 			}
-
 			break;
 
 		case COR_FSM_RECOGNIZECOLOR:
 
 //			COL_ReadColors();
 
-			if(motionController.state = MOT_FSM_STOP){ // wait until we stand still (at the right place)
+			if(motionController.state == MOT_FSM_STOP){ // wait until we stand still (at the right place)
 
 				uint8_t i = 0;
 				for (i; i < 5; i++){
@@ -53,7 +52,7 @@ void COR_Process(){
 					containerRecognizer.state = COR_FSM_PICKUP;
 				}
 				else{
-					containerRecognizer.state = COR_FSM_STOP;
+					containerRecognizer.state = COR_FSM_OBSERVANT;
 				}
 			}
 			break;
@@ -70,6 +69,7 @@ void COR_Process(){
 
 void vContainerRecognizerTask(/*void* pvParameters*/){
 
+	// We only can initialize the color-sensor, if it is connected. Otherwise, we get errors and cannot debug.
 	//COL_Init(); // Has to be implemented here, because we need interrupts for the i2c. And these interrupts are disabled because of the Setup from RTOS. They get enabled with the RTOS_startShedule!
 
 	for(;;){
@@ -90,8 +90,8 @@ void COR_Init(){
 
 	US_Init();
 
-	containerRecognizer.active = TRUE; //FALSE;
-	containerRecognizer.state = COR_FSM_SURFACESCAN; // COR_FSM_STOP;
+	containerRecognizer.active = FALSE; //FALSE;
+	containerRecognizer.state = COR_FSM_OBSERVANT; // COR_FSM_STOP;
 
 	RTOS_AddTask(vContainerRecognizerTask, "COR", 2);
 }

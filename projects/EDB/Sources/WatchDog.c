@@ -1,3 +1,4 @@
+#include "WatchDog.h"
 #include "RTOS.h"
 #include "FreeRTOS.h"
 #include "Shut_OFF.h"
@@ -6,18 +7,20 @@
 #include "UTIL1.h"
 #include "Battery_low.h"
 
-#define LowBatteryLight 9800 // set these values corresponding to the battery-voltage-monitor
-#define LowBatteryBlink 9400
-#define ShutOffVoltage 9000
-
 uint16_t voltage;
 
+/*
+ * In this Function, we set a pin witch interrupts the power connection
+ * */
 void WDG_ShutOff(){
 
 	Shut_OFF_SetVal();
 
 }
 
+/*
+ * This Task runs with a frequency of 2 Hz and measures the battery voltage. If the voltage is too low, we decide to shut down.
+ * */
 void vWatchDogTask(){
 	for(;;){
 		ADC_MeasureChan(TRUE, 1);
@@ -50,19 +53,21 @@ void vWatchDogTask(){
 	}
 }
 
+
+/*
+ * Functions for the bluetooth interface
+ * */
 static void WDG_PrintStatus(const BLUETOOTH_StdIOType *io) {
 	BLUETOOTH_SendStatusStr((unsigned char*)"\r\nwdg", (unsigned char*)"\r\n", io->stdOut);
 	BLUETOOTH_SendStatusStr((unsigned char*)"  battery voltage", (unsigned char*)"", io->stdOut);
 	BLUETOOTH_SendNum32s(voltage, io->stdOut);
 	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
 }
-
 static void WDG_PrintHelp(const BLUETOOTH_StdIOType *io) {
 	BLUETOOTH_SendHelpStr((unsigned char*)"wdg", (unsigned char*)"Group of wdg commands\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  help|status", (unsigned char*)"Shows wdg help or status\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  shutdown", (unsigned char*)"Simulates a low battery! not yet! \r\n", io->stdOut);
 }
-
 uint8_t WDG_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIOType *io){
 	uint8_t res = ERR_OK;
 	const unsigned char *p;

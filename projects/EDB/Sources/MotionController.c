@@ -28,9 +28,6 @@
 #include "MOT_RIGHT_M0.h"
 #include "MOT_RIGHT_M1.h"
 
-
-#include "Route_A_LED.h" // debugging
-
 MOT_FSMData motionController;
 
 uint8_t counterPrescaler;
@@ -213,6 +210,10 @@ void vMotionControlTask(){
 	}
 }
 
+
+/*
+ * Functions for the bluetooth interface
+ * */
 static void MOT_PrintStatus(const BLUETOOTH_StdIOType *io) {
 	BLUETOOTH_SendStatusStr((unsigned char*)"\r\nmot", (unsigned char*)"\r\n", io->stdOut);
 	BLUETOOTH_SendStatusStr((unsigned char*)"  actual state", (unsigned char*)"", io->stdOut);
@@ -231,14 +232,12 @@ static void MOT_PrintStatus(const BLUETOOTH_StdIOType *io) {
 	BLUETOOTH_SendNum32s(motionController.steering_lock, io->stdOut);
 	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
 }
-
 static void MOT_PrintHelp(const BLUETOOTH_StdIOType *io) {
 	BLUETOOTH_SendHelpStr((unsigned char*)"mot", (unsigned char*)"Group of mot commands\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  help|status", (unsigned char*)"Shows mot help or status\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  speed <value>", (unsigned char*)"Set speed\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  stop <value>", (unsigned char*)"Stop the robot in <value> mm\r\n", io->stdOut);
 }
-
 uint8_t MOT_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIOType *io){
 	uint8_t res = ERR_OK;
 	const unsigned char *p;

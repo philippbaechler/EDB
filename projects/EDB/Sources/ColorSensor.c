@@ -103,27 +103,11 @@ void COL_ReadColors(){
 
 	colors.blueValue = COL_ReadBlue();
 
-	WAIT_Waitms(1);
-
-
-	SER_SendString("c: ");		// send on console for debug
-	SER_SendUint16(colors.clearValue);
-
-	SER_SendString("  r: ");
-	SER_SendUint16(colors.redValue);
-
-	SER_SendString("  g: ");
-	SER_SendUint16(colors.greenValue);
-
-	SER_SendString("  b: ");
-	SER_SendUint16(colors.blueValue);
-	SER_SendNewLine();
-
 	LED_Enable_1_ClrVal();
 	LED_Enable_2_ClrVal();
 }
 
-bool COL_RightColor(){
+bool COL_RightContainer(){
 	bool rightContainer = FALSE;
 
 	if (!(colors.redValue > colors.blueValue && colors.greenValue > colors.blueValue)){ // First implementation of the color-detection

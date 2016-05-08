@@ -4,7 +4,7 @@
 #include "PE_Types.h"
 
 typedef enum COR_StateKinds {
-	COR_FSM_STOP,
+//	COR_FSM_STOP,
 	COR_FSM_OBSERVANT,
 	COR_FSM_SURFACESCAN,
 	COR_FSM_RECOGNIZECOLOR,
