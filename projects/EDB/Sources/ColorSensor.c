@@ -3,6 +3,8 @@
 #include "Serial.h"
 #include "LED_Enable_1.h"
 #include "LED_Enable_2.h"
+#include "BLUETOOTH.h"
+#include "UTIL1.h"
 
 colors_t colors;
 
@@ -115,6 +117,43 @@ bool COL_RightContainer(){
 	}
 
 	return rightContainer;
+}
+
+/*
+ * Functions for the bluetooth interface
+ * */
+static void COL_PrintStatus(const BLUETOOTH_StdIOType *io) {
+	BLUETOOTH_SendStatusStr((unsigned char*)"\r\ncol", (unsigned char*)"\r\n", io->stdOut);
+	BLUETOOTH_SendStatusStr((unsigned char*)"  clear value", (unsigned char*)"", io->stdOut);
+	BLUETOOTH_SendNum32s(colors.clearValue, io->stdOut);
+	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
+	BLUETOOTH_SendStatusStr((unsigned char*)"  red value", (unsigned char*)"", io->stdOut);
+	BLUETOOTH_SendNum32s(colors.redValue, io->stdOut);
+	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
+	BLUETOOTH_SendStatusStr((unsigned char*)"  green value", (unsigned char*)"", io->stdOut);
+	BLUETOOTH_SendNum32s(colors.greenValue, io->stdOut);
+	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
+	BLUETOOTH_SendStatusStr((unsigned char*)"  blue value", (unsigned char*)"", io->stdOut);
+	BLUETOOTH_SendNum32s(colors.blueValue, io->stdOut);
+	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
+}
+static void COL_PrintHelp(const BLUETOOTH_StdIOType *io) {
+	BLUETOOTH_SendHelpStr((unsigned char*)"col", (unsigned char*)"Group of col commands\r\n", io->stdOut);
+	BLUETOOTH_SendHelpStr((unsigned char*)"  help|status", (unsigned char*)"Shows col help or status\r\n", io->stdOut);
+}
+uint8_t COL_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIOType *io){
+
+	uint8_t res = ERR_OK;
+
+	if (UTIL1_strcmp((char*)cmd, (char*)BLUETOOTH_CMD_HELP)==0 || UTIL1_strcmp((char*)cmd, (char*)"col help")==0) {
+		COL_PrintHelp(io);
+		*handled = TRUE;
+	} else if (UTIL1_strcmp((char*)cmd, (char*)BLUETOOTH_CMD_STATUS)==0 || UTIL1_strcmp((char*)cmd, (char*)"col status")==0) {
+		COL_PrintStatus(io);
+		*handled = TRUE;
+	}
+
+	return res;
 }
 
 void COL_Init(){

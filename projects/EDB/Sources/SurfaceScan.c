@@ -11,7 +11,7 @@
  * Here we calculate a average value of the analog input. We need this one, because the signal has some peaks(200mV/1us) with a frequency (333 kHz).
  * \return analog input IR-sensor
  * */
-uint32_t SCN_GetValue(){
+uint32_t SCN_GetValue(){ // semaphores?
 
 	uint32_t avgValue;
 	uint16_t IRvalue;
@@ -105,8 +105,8 @@ bool SCN_IsAContainer(){
 static void SCN_PrintStatus(const BLUETOOTH_StdIOType *io) {
 	BLUETOOTH_SendStatusStr((unsigned char*)"\r\nscn", (unsigned char*)"\r\n", io->stdOut);
 	BLUETOOTH_SendStatusStr((unsigned char*)"  IR value", (unsigned char*)"", io->stdOut);
-//	BLUETOOTH_SendNum32s(avgValue, io->stdOut);
-//	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
+	BLUETOOTH_SendNum32s(SCN_GetValue(), io->stdOut);
+	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
 }
 static void SCN_PrintHelp(const BLUETOOTH_StdIOType *io) {
 	BLUETOOTH_SendHelpStr((unsigned char*)"scn", (unsigned char*)"Group of scn commands\r\n", io->stdOut);

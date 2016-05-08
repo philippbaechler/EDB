@@ -10,6 +10,7 @@
 #include "SERIAL_UART.h"
 #include "SIG.h"
 #include "Servos.h"
+#include "BLUETOOTH.h"
 
 #define DistanceIRSevos 100 // in mm
 #define stepsAfterIR DistanceIRSevos / 0.1178
@@ -19,18 +20,12 @@ COR_FSMData containerRecognizer;
 void COR_Process(){
 
 	switch(containerRecognizer.state){
-//		case COR_FSM_STOP:
-//
-//			containerRecognizer.state = COR_FSM_OBSERVANT; // is state STOP really needed?
-//			break;
 
 		case COR_FSM_OBSERVANT:
-			RTOS_Wait(100);
 			US_Measure();
 			break;
 
 		case COR_FSM_SURFACESCAN:
-
 			if (SCN_IsAContainer()){
 				motionController.steps_left_until_stop = stepsAfterIR; // n of Steps we have to go after we recognized a container
 				containerRecognizer.state = COR_FSM_RECOGNIZECOLOR;
@@ -38,13 +33,10 @@ void COR_Process(){
 			break;
 
 		case COR_FSM_RECOGNIZECOLOR:
-
-//			COL_ReadColors();
-
 			if(motionController.state == MOT_FSM_STOP){ // wait until we stand still (at the right place)
 
 				uint8_t i = 0;
-				for (i; i < 5; i++){
+				for (i; i < 5; i++){ // Measure several times the color values to get a better value
 					COL_ReadColors();
 				}
 
@@ -56,13 +48,11 @@ void COR_Process(){
 				}
 			}
 			break;
+
 		case COR_FSM_PICKUP:
-			if (TPM0_C4V == grabberLowerLimit){
-				SRV_grab();
-			}
-			else if (TPM0_C4V == grabberUpperLimit){
-				SRV_release();
-			}
+
+			SRV_pickUp();
+
 			break;
 	}
 }
@@ -74,11 +64,10 @@ void vContainerRecognizerTask(/*void* pvParameters*/){
 
 	for(;;){
 
-		RTOS_Wait(200);
+		RTOS_Wait(100);
 
-		if(containerRecognizer.active /*containerRecognizer.state != COR_FSM_STOP*/){ // maybe this task could set sleeping if its not used?
+		if(containerRecognizer.active){
 			COR_Process();
-//			RTOS_Wait(100);
 		}
 		else{
 //			FRTOS1_taskYIELD();
@@ -86,12 +75,94 @@ void vContainerRecognizerTask(/*void* pvParameters*/){
 	}
 }
 
+/*
+ * Functions for the bluetooth interface
+ * */
+static void COR_PrintStatus(const BLUETOOTH_StdIOType *io) {
+	BLUETOOTH_SendStatusStr((unsigned char*)"\r\ncor", (unsigned char*)"\r\n", io->stdOut);
+	BLUETOOTH_SendStatusStr((unsigned char*)"  active", (unsigned char*)"", io->stdOut);
+
+	if (containerRecognizer.active){
+		BLUETOOTH_SendStr((unsigned char*)"TRUE", io->stdOut);
+	} else{
+		BLUETOOTH_SendStr((unsigned char*)"FALSE", io->stdOut);
+	}
+	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
+
+	BLUETOOTH_SendStatusStr((unsigned char*)"  state", (unsigned char*)"", io->stdOut);
+	switch (containerRecognizer.state) {
+		case COR_FSM_OBSERVANT:
+			BLUETOOTH_SendStr((unsigned char*)"OBSERVANT", io->stdOut);
+			break;
+		case COR_FSM_SURFACESCAN:
+			BLUETOOTH_SendStr((unsigned char*)"SURFACESCAN", io->stdOut);
+			break;
+		case COR_FSM_RECOGNIZECOLOR:
+			BLUETOOTH_SendStr((unsigned char*)"RECOGNIZECOLOR", io->stdOut);
+			break;
+		case COR_FSM_PICKUP:
+			BLUETOOTH_SendStr((unsigned char*)"PICKUP", io->stdOut);
+			break;
+	}
+}
+static void COR_PrintHelp(const BLUETOOTH_StdIOType *io) {
+	BLUETOOTH_SendHelpStr((unsigned char*)"cor", (unsigned char*)"Group of cor commands\r\n", io->stdOut);
+	BLUETOOTH_SendHelpStr((unsigned char*)"  help|status", (unsigned char*)"Shows cor help or status\r\n", io->stdOut);
+	BLUETOOTH_SendHelpStr((unsigned char*)"  state <value>", (unsigned char*)"Sets the state\r\n", io->stdOut);
+}
+uint8_t COR_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIOType *io){
+
+	uint8_t res = ERR_OK;
+	const unsigned char *p;
+	int32_t val;
+
+	if (UTIL1_strcmp((char*)cmd, (char*)BLUETOOTH_CMD_HELP)==0 || UTIL1_strcmp((char*)cmd, (char*)"cor help")==0) {
+		COR_PrintHelp(io);
+		*handled = TRUE;
+	} else if (UTIL1_strcmp((char*)cmd, (char*)BLUETOOTH_CMD_STATUS)==0 || UTIL1_strcmp((char*)cmd, (char*)"cor status")==0) {
+		COR_PrintStatus(io);
+		*handled = TRUE;
+	} else if (UTIL1_strncmp((char*)cmd, (char*)"cor state ", sizeof("cor state ")-1) == 0) {
+		p = cmd+sizeof("cor state");
+
+		if (UTIL1_xatoi(&p, &val)==ERR_OK){
+
+			switch (val) {
+				case 0:
+					containerRecognizer.state = COR_FSM_OBSERVANT;
+					break;
+				case 1:
+					containerRecognizer.state = COR_FSM_SURFACESCAN;
+					break;
+				case 2:
+					containerRecognizer.state = COR_FSM_RECOGNIZECOLOR;
+					break;
+				case 3:
+					containerRecognizer.state = COR_FSM_PICKUP;
+					break;
+				default:
+					BLUETOOTH_SendStr((unsigned char*)"State not found!\r\n", io->stdOut);
+					break;
+			}
+
+			*handled = TRUE;
+		}
+		else {
+		       BLUETOOTH_SendStr((unsigned char*)"failed\r\n", io->stdErr);
+		}
+
+		*handled = TRUE;
+	}
+
+	return res;
+}
+
 void COR_Init(){
 
 	US_Init();
 
-	containerRecognizer.active = FALSE; //FALSE;
-	containerRecognizer.state = COR_FSM_OBSERVANT; // COR_FSM_STOP;
+	containerRecognizer.active = FALSE;
+	containerRecognizer.state = COR_FSM_OBSERVANT;
 
 	RTOS_AddTask(vContainerRecognizerTask, "COR", 2);
 }

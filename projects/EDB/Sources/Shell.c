@@ -15,6 +15,8 @@
 #include "PID.h"
 #include "WatchDog.h"
 #include "SurfaceScan.h"
+#include "ColorSensor.h"
+#include "ContainerRecognizer.h"
 
 #include "MotionController.h"
 
@@ -31,6 +33,8 @@ static const BLUETOOTH_ParseCommandCallback CmdParserTable[] =
   PID_ParseCommand,
   WDG_ParseCommand,
   SCN_ParseCommand,
+  COL_ParseCommand,
+  COR_ParseCommand,
   NULL /* Sentinel */
 };
 

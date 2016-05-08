@@ -2,6 +2,7 @@
 #define COLORSENSOR_H
 
 #include "PE_Types.h"
+#include "BLUETOOTH.h"
 
 typedef struct colors{
 	uint16_t clearValue;
@@ -52,6 +53,7 @@ uint16_t COL_ReadGreen();
 uint16_t COL_ReadBlue();
 void COL_ReadColors();
 bool COL_RightContainer();
+uint8_t COL_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIOType *io);
 void COL_Init();
 
 #endif /* COLORSENSOR_H */
