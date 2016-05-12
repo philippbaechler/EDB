@@ -8,15 +8,15 @@ static PID_Config steering;
 
 void PID_Set_Kp(uint16_t p){
 	steering.Kp = p;
-//	motionController.Kp = p;
 }
 void PID_Set_Ki(uint16_t i){
 	steering.Ki = i;
-//	motionController.Ki = i;
 }
 void PID_Set_Kd(uint16_t d){
 	steering.Kd = d;
-//	motionController.Kd = d;
+}
+void PID_Set_W(uint16_t w){
+	steering.W = w;
 }
 void PID_SetError(uint16_t error){
 	steering.error = error;
@@ -33,8 +33,10 @@ void PID_CalculatePID(){
 
 	y_p = steering.Kp * e;
 
-	esum = esum + e;
-	y_i = steering.Ki * esum;
+	if (esum < steering.W){
+		esum = esum + e;
+		y_i = steering.Ki * esum;
+	}
 
 	y_d = steering.Kd * (e_old - e);
 	e_old = e;
@@ -58,6 +60,9 @@ static void PID_PrintStatus(const BLUETOOTH_StdIOType *io) {
 	BLUETOOTH_SendStatusStr((unsigned char*)"  d value", (unsigned char*)"", io->stdOut);
 	BLUETOOTH_SendNum32s(steering.Kd, io->stdOut);
 	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
+	BLUETOOTH_SendStatusStr((unsigned char*)"  w value", (unsigned char*)"", io->stdOut);
+	BLUETOOTH_SendNum32s(steering.W, io->stdOut);
+	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
 	BLUETOOTH_SendStatusStr((unsigned char*)"  error", (unsigned char*)"", io->stdOut);
 	BLUETOOTH_SendNum32s(steering.error, io->stdOut);
 	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
@@ -69,6 +74,7 @@ static void PID_PrintHelp(const BLUETOOTH_StdIOType *io) {
 	BLUETOOTH_SendHelpStr((unsigned char*)"  p <value>", (unsigned char*)"Set p value\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  i <value>", (unsigned char*)"Set i value\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  d <value>", (unsigned char*)"Set d value\r\n", io->stdOut);
+	BLUETOOTH_SendHelpStr((unsigned char*)"  w <value>", (unsigned char*)"Set windup value\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  e <value>", (unsigned char*)"Set error for simulating PI\r\n", io->stdOut);
 }
 
@@ -116,6 +122,17 @@ uint8_t PID_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
 	        BLUETOOTH_SendStr((unsigned char*)"failed\r\n", io->stdErr);
 		}
 
+	} else if (UTIL1_strncmp((char*)cmd, (char*)"pid w ", sizeof("pid w ")-1) == 0) {
+		p = cmd+sizeof("pid w");
+
+		if (UTIL1_xatoi(&p, &val)==ERR_OK){
+			steering.W = val;
+			*handled = TRUE;
+		}
+		else {
+	        BLUETOOTH_SendStr((unsigned char*)"failed\r\n", io->stdErr);
+		}
+
 	} else if (UTIL1_strncmp((char*)cmd, (char*)"pid e ", sizeof("pid e ")-1) == 0) {
 		p = cmd+sizeof("pid e");
 
@@ -137,5 +154,6 @@ void PID_Init(){
 	PID_Set_Kp(10);
 	PID_Set_Ki(1);
 	PID_Set_Kd(0);
+	PID_Set_W(1000);
 	PID_SetError(0);
 }

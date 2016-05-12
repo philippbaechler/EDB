@@ -99,6 +99,9 @@ void MOT_Process(){
 
 				MOT_LEFT_Enable();
 				MOT_RIGHT_Enable();
+
+				MOT_LEFT_NSLEEP_SetVal();
+				MOT_RGHT_NSLEEP_SetVal();
 			}
 
 			break;
@@ -168,6 +171,8 @@ void MOT_Process(){
 					motionController.state = MOT_FSM_STOP;
 					MOT_LEFT_Disable();
 					MOT_RIGHT_Disable();
+					MOT_LEFT_NSLEEP_ClrVal();
+					MOT_RGHT_NSLEEP_ClrVal();
 					motionController.steps_left_until_stop = 0;
 				}
 				else{
@@ -279,16 +284,13 @@ uint8_t MOT_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
  * */
 void MOT_Init(void){
 
-	MOT_LEFT_NSLEEP_SetVal();
-	MOT_LEFT_NSLEEP_ClrVal();			// reagiert nicht auf Sleep Signal!!
-	MOT_LEFT_NSLEEP_SetVal();
-
+	MOT_LEFT_NSLEEP_ClrVal();
 	MOT_LEFT_DIR_SetVal();
 	MOT_LEFT_M0_SetVal();
 	MOT_LEFT_M1_SetVal();
 	MOT_LEFT_Disable();
 
-	MOT_RGHT_NSLEEP_SetVal();			// SetVal = Treiber aktiv, ClrVal = Treiber inaktiv
+	MOT_RGHT_NSLEEP_ClrVal();			// SetVal = Treiber aktiv, ClrVal = Treiber inaktiv
 	MOT_RIGHT_DIR_SetVal();
 	MOT_RIGHT_M0_SetVal();
 	MOT_RIGHT_M1_SetVal();

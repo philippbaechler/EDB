@@ -40,6 +40,7 @@ void vWatchDogTask(){
 				}
 			}
 			else{
+				Battery_low_ClrVal();
 				Battery_low_SetVal();
 				Shut_OFF_ClrVal();
 			}

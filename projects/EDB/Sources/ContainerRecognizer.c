@@ -12,7 +12,10 @@
 #include "Servos.h"
 #include "BLUETOOTH.h"
 
-#define DistanceIRSevos 100 // in mm
+#include "LED_Enable_1.h"
+#include "LED_Enable_2.h"
+
+#define DistanceIRSevos 25 // in mm
 #define stepsAfterIR DistanceIRSevos / 0.1178
 
 COR_FSMData containerRecognizer;
@@ -59,8 +62,11 @@ void COR_Process(){
 
 void vContainerRecognizerTask(/*void* pvParameters*/){
 
+	LED_Enable_1_SetVal();
+	LED_Enable_2_SetVal();
+
 	// We only can initialize the color-sensor, if it is connected. Otherwise, we get errors and cannot debug.
-	//COL_Init(); // Has to be implemented here, because we need interrupts for the i2c. And these interrupts are disabled because of the Setup from RTOS. They get enabled with the RTOS_startShedule!
+	COL_Init(); // Has to be implemented here, because we need interrupts for the i2c. And these interrupts are disabled because of the Setup from RTOS. They get enabled with the RTOS_startShedule!
 
 	for(;;){
 
@@ -109,6 +115,7 @@ static void COR_PrintHelp(const BLUETOOTH_StdIOType *io) {
 	BLUETOOTH_SendHelpStr((unsigned char*)"cor", (unsigned char*)"Group of cor commands\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  help|status", (unsigned char*)"Shows cor help or status\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  state <value>", (unsigned char*)"Sets the state\r\n", io->stdOut);
+	BLUETOOTH_SendHelpStr((unsigned char*)"  active <0/1>", (unsigned char*)"active TRUE or FALSE\r\n", io->stdOut);
 }
 uint8_t COR_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIOType *io){
 
@@ -151,7 +158,21 @@ uint8_t COR_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
 		       BLUETOOTH_SendStr((unsigned char*)"failed\r\n", io->stdErr);
 		}
 
-		*handled = TRUE;
+//		*handled = TRUE;
+	} else if (UTIL1_strncmp((char*)cmd, (char*)"cor active ", sizeof("cor active ")-1) == 0){
+		p = cmd+sizeof("cor active");
+
+		if (UTIL1_xatoi(&p, &val)==ERR_OK){
+			if (val){
+				containerRecognizer.active = TRUE;
+			} else{
+				containerRecognizer.active = FALSE;
+			}
+
+			*handled = TRUE;
+		} else{
+			BLUETOOTH_SendStr((unsigned char*)"failed\r\n", io->stdErr);
+		}
 	}
 
 	return res;
@@ -162,7 +183,7 @@ void COR_Init(){
 	US_Init();
 
 	containerRecognizer.active = FALSE;
-	containerRecognizer.state = COR_FSM_OBSERVANT;
+	containerRecognizer.state = COR_FSM_SURFACESCAN;
 
 	RTOS_AddTask(vContainerRecognizerTask, "COR", 2);
 }

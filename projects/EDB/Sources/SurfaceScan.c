@@ -7,13 +7,17 @@
 #include "WAIT.h"
 #include "RTOS.h"
 
+#include "LED_RED.h"
+#include "LED_GREEN.h"
+
 /*
  * Here we calculate a average value of the analog input. We need this one, because the signal has some peaks(200mV/1us) with a frequency (333 kHz).
  * \return analog input IR-sensor
  * */
 uint32_t SCN_GetValue(){ // semaphores?
 
-	uint32_t avgValue;
+	static uint32_t avgValue = 0;
+	uint32_t Value = 0;
 	uint16_t IRvalue;
 	uint8_t i;
 
@@ -24,10 +28,10 @@ uint32_t SCN_GetValue(){ // semaphores?
 
 		ADC_MeasureChan(TRUE, 0);
 		ADC_GetChanValue16(0, &IRvalue);
-		avgValue = avgValue + IRvalue;
+		Value = Value + IRvalue;
 
 	}
-	avgValue = avgValue / 200; // dividing by the number of measurements
+	avgValue = Value / 200; // dividing by the number of measurements
 
 	return avgValue;
 }
@@ -37,14 +41,16 @@ uint32_t SCN_GetValue(){ // semaphores?
  * */
 void SCN_CaptureEdge(){
 
-	uint32_t valuesBuf[10];
-	uint32_t averageValue = 0;
+	uint32_t valuesBuf[measurementsBufferSize];
+	uint32_t Value = 0;
+	static uint32_t averageValue = 0;
+	uint32_t oldValue = 0;
 	uint8_t arrayCounter;
 	uint8_t i;
 
 	bool edgeCaptured = FALSE;
 
-	for (arrayCounter = 0; arrayCounter <= 9; arrayCounter++){ // fill the array with the first 10 values
+	for (arrayCounter = 0; arrayCounter <= (measurementsBufferSize-1); arrayCounter++){ // fill the array with the first 10 values
 		valuesBuf[arrayCounter] = SCN_GetValue();
 		RTOS_Wait(waitBetweenMeasurementsMS);
 	}
@@ -56,23 +62,35 @@ void SCN_CaptureEdge(){
 		RTOS_Wait(waitBetweenMeasurementsMS);
 
 		/* calculate the average */
-		for (i = 0; i <= 9; i++){
-			averageValue = averageValue + valuesBuf[i];
+		Value = 0;
+		for (i = 0; i <= (measurementsBufferSize-1); i++){
+			Value = Value + valuesBuf[i];
 		}
-		averageValue = averageValue / 10;
+		averageValue = Value / measurementsBufferSize;
+
+		if (averageValue > 0xffff || averageValue < 15000){ // filtering all the high picks
+			averageValue = oldValue;
+		}
+		oldValue = averageValue;
+
+//		BLUETOOTH_SendNum32u(averageValue, BLUETOOTH_GetStdio()->stdOut);
+//		BLUETOOTH_SendStr((const uint8_t*)"\r\n", BLUETOOTH_GetStdio()->stdOut);
+
+//		if (averageValue > 8000){
+//
+//		}
 
 		/* detect an edge */
 		if (valuesBuf[arrayCounter] <= (percentFallingEdge * averageValue) || valuesBuf[arrayCounter] >= (percentRisingEdge * averageValue)){ // if the average value is changing more than +-20% we decide to see an edge
 			edgeCaptured = TRUE;
 		}
-		else{
 
-			if (arrayCounter >= 9){
+		if (arrayCounter >= (measurementsBufferSize-1)){
 			arrayCounter = 0;
-			} else{
+		} else{
 			arrayCounter++;
-			}
 		}
+
 	} while(!edgeCaptured);
 
 }
@@ -84,15 +102,18 @@ bool SCN_IsAContainer(){
 	bool isAContainer = FALSE;
 
 	SCN_CaptureEdge();
+	LED_GREEN_On();
+
 
 	// reset step count
 	motionController.step_count = 0;
 
 	SCN_CaptureEdge();
-
+	LED_GREEN_Off();
 	// compare step count
 	if (motionController.step_count >= containerLengthMinSteps && motionController.step_count <= containerLengthMaxSteps){
 		isAContainer = TRUE;
+		LED_GREEN_Off();
 	}
 
 	return isAContainer;
