@@ -4,9 +4,9 @@
 #include "BLUETOOTH.h"
 #include "PE_Types.h"
 
-#define LowBatteryLight 30000 // set these values corresponding to the battery-voltage-monitor
-#define LowBatteryBlink 25000
-#define ShutOffVoltage 20000
+#define LowBatteryLight 40080 // set these values corresponding to the battery-voltage-monitor
+#define LowBatteryBlink 38997
+#define ShutOffVoltage 37913
 
 uint8_t WDG_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIOType *io);
 void WDG_Init();

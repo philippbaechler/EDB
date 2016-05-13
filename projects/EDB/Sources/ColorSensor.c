@@ -88,9 +88,6 @@ uint16_t COL_ReadBlue(){
 
 void COL_ReadColors(){
 
-	LED_Enable_1_SetVal();
-	LED_Enable_2_SetVal();
-
 	colors.clearValue = COL_ReadClear();
 
 	WAIT_Waitms(1);
@@ -104,9 +101,6 @@ void COL_ReadColors(){
 	WAIT_Waitms(1);
 
 	colors.blueValue = COL_ReadBlue();
-
-	LED_Enable_1_ClrVal();
-	LED_Enable_2_ClrVal();
 }
 
 bool COL_RightContainer(){
@@ -157,6 +151,11 @@ uint8_t COL_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
 }
 
 void COL_Init(){
+
+	LED_Enable_1_SetVal();
+	LED_Enable_2_SetVal();
+	LED_Enable_1_ClrVal();
+	LED_Enable_2_ClrVal();
 
 	// select slave by address
 	RGB_SENSOR_SelectSlave(TCS34725_ADDRESS);

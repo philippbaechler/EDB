@@ -11,14 +11,22 @@
 #include "SIG.h"
 #include "Servos.h"
 #include "BLUETOOTH.h"
-
 #include "LED_Enable_1.h"
 #include "LED_Enable_2.h"
 
-#define DistanceIRSevos 25 // in mm
+#define DistanceIRSevos 30 // in mm
 #define stepsAfterIR DistanceIRSevos / 0.1178
 
 COR_FSMData containerRecognizer;
+
+void COR_TurnOnLED(){
+	LED_Enable_1_SetVal();
+	LED_Enable_2_SetVal();
+}
+void COR_TurnOffLED(){
+	LED_Enable_1_ClrVal();
+	LED_Enable_2_ClrVal();
+}
 
 void COR_Process(){
 
@@ -38,17 +46,25 @@ void COR_Process(){
 		case COR_FSM_RECOGNIZECOLOR:
 			if(motionController.state == MOT_FSM_STOP){ // wait until we stand still (at the right place)
 
+				COR_TurnOnLED();
+
+				RTOS_Wait(1000);
+
 				uint8_t i = 0;
 				for (i; i < 5; i++){ // Measure several times the color values to get a better value
 					COL_ReadColors();
 				}
 
 				if(COL_RightContainer()){
-					containerRecognizer.state = COR_FSM_PICKUP;
+					containerRecognizer.state = COR_FSM_RECOGNIZECOLOR;//COR_FSM_PICKUP;
 				}
 				else{
-					containerRecognizer.state = COR_FSM_OBSERVANT;
+					containerRecognizer.state = COR_FSM_RECOGNIZECOLOR;//COR_FSM_OBSERVANT;
 				}
+
+				RTOS_Wait(1000);
+
+				COR_TurnOffLED();
 			}
 			break;
 
@@ -62,11 +78,9 @@ void COR_Process(){
 
 void vContainerRecognizerTask(/*void* pvParameters*/){
 
-	LED_Enable_1_SetVal();
-	LED_Enable_2_SetVal();
-
+	// cannot reach the color-sensor
 	// We only can initialize the color-sensor, if it is connected. Otherwise, we get errors and cannot debug.
-	COL_Init(); // Has to be implemented here, because we need interrupts for the i2c. And these interrupts are disabled because of the Setup from RTOS. They get enabled with the RTOS_startShedule!
+	COL_Init(); // Has to be implemented here, because we needd interrupts for the i2c. And these interrupts are disabled because of the Setup from RTOS. They get enabled with the RTOS_startShedule!
 
 	for(;;){
 
