@@ -21,6 +21,9 @@ void PID_Set_W(uint16_t w){
 void PID_SetError(uint16_t error){
 	steering.error = error;
 }
+void PID_Set_devider(uint16_t devider){
+	steering.devider = devider;
+}
 void PID_CalculatePID(){
 	int8_t targetValue = 0;
 	int8_t actualValue = steering.error;
@@ -41,7 +44,7 @@ void PID_CalculatePID(){
 	y_d = steering.Kd * (e_old - e);
 	e_old = e;
 
-	y = y_p + y_i + y_d;
+	y = (y_p + y_i + y_d)/steering.devider;
 //	int8_t y_res = (int8_t)(y/256);
 
 	motionController.steering_lock = ((100 * y) / 32768)*(-1);	// implementation for + 100% Version
@@ -63,6 +66,9 @@ static void PID_PrintStatus(const BLUETOOTH_StdIOType *io) {
 	BLUETOOTH_SendStatusStr((unsigned char*)"  w value", (unsigned char*)"", io->stdOut);
 	BLUETOOTH_SendNum32s(steering.W, io->stdOut);
 	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
+	BLUETOOTH_SendStatusStr((unsigned char*)"  devider value", (unsigned char*)"", io->stdOut);
+	BLUETOOTH_SendNum32s(steering.devider, io->stdOut);
+	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
 	BLUETOOTH_SendStatusStr((unsigned char*)"  error", (unsigned char*)"", io->stdOut);
 	BLUETOOTH_SendNum32s(steering.error, io->stdOut);
 	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
@@ -75,6 +81,7 @@ static void PID_PrintHelp(const BLUETOOTH_StdIOType *io) {
 	BLUETOOTH_SendHelpStr((unsigned char*)"  i <value>", (unsigned char*)"Set i value\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  d <value>", (unsigned char*)"Set d value\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  w <value>", (unsigned char*)"Set windup value\r\n", io->stdOut);
+	BLUETOOTH_SendHelpStr((unsigned char*)"  devider <value>", (unsigned char*)"Set devider-value\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  e <value>", (unsigned char*)"Set error for simulating PI\r\n", io->stdOut);
 }
 
@@ -146,6 +153,19 @@ uint8_t PID_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
 
 	}
 
+	else if (UTIL1_strncmp((char*)cmd, (char*)"pid devider ", sizeof("pid devider ")-1) == 0) {
+			p = cmd+sizeof("pid devider");
+
+			if (UTIL1_xatoi(&p, &val)==ERR_OK){
+				steering.devider = val;
+				*handled = TRUE;
+			}
+			else {
+		        BLUETOOTH_SendStr((unsigned char*)"failed\r\n", io->stdErr);
+			}
+
+		}
+
 	return res;
 }
 
@@ -156,4 +176,5 @@ void PID_Init(){
 	PID_Set_Kd(0);
 	PID_Set_W(1000);
 	PID_SetError(0);
+	PID_Set_devider(1);
 }
