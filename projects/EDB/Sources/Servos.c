@@ -90,10 +90,10 @@ void SRV_Debug(){
 //
 //	}
 
-	TPM0_C2V = servos.value1*45;
-	TPM0_C3V = servos.value2*45;
-	TPM0_C4V = servos.value3*45;
-	TPM0_C5V = servos.value4*45;
+	TPM0_C2V = servos.value1*30 + 3000;
+	TPM0_C3V = servos.value2*30 + 3000;
+	TPM0_C4V = servos.value3*30 + 3000;
+	TPM0_C5V = servos.value4*30 + 3000;
 
 }
 
@@ -170,6 +170,7 @@ uint8_t SRV_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
 
 		if (UTIL1_xatoi(&p, &val)==ERR_OK){
 			servos.value1 = val;
+			SRV_Debug();
 			*handled = TRUE;
 		}
 		else {
@@ -180,6 +181,7 @@ uint8_t SRV_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
 
 		if (UTIL1_xatoi(&p, &val)==ERR_OK){
 			servos.value2 = val;
+			SRV_Debug();
 			*handled = TRUE;
 		}
 		else {
@@ -190,6 +192,7 @@ uint8_t SRV_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
 
 		if (UTIL1_xatoi(&p, &val)==ERR_OK){
 			servos.value3 = val;
+			SRV_Debug();
 			*handled = TRUE;
 		}
 		else {
@@ -200,23 +203,26 @@ uint8_t SRV_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
 
 		if (UTIL1_xatoi(&p, &val)==ERR_OK){
 			servos.value4 = val;
+			SRV_Debug();
 			*handled = TRUE;
 		}
 		else {
 		       BLUETOOTH_SendStr((unsigned char*)"failed\r\n", io->stdErr);
 		}
-	} else if (UTIL1_strncmp((char*)cmd, (char*)"delay ", sizeof("delay ")-1) == 0) {
-		p = cmd+sizeof("delay");
+	} else if (UTIL1_strncmp((char*)cmd, (char*)"srv delay ", sizeof("srv delay ")-1) == 0) {
+		p = cmd+sizeof("srv delay");
 
 		if (UTIL1_xatoi(&p, &val)==ERR_OK){
 			servos.delay = val;
+			SRV_Debug();
 			*handled = TRUE;
 		}
 		else {
 		       BLUETOOTH_SendStr((unsigned char*)"failed\r\n", io->stdErr);
 		}
-	} else if (UTIL1_strncmp((char*)cmd, (char*)"off ", sizeof("off  ")-1) == 0) {
+	} else if (UTIL1_strncmp((char*)cmd, (char*)"srv off ", sizeof("srv off  ")-1) == 0) {
 		_6V_ON_ClrVal();
+		*handled = TRUE;
 	}
 	return res;
 }
