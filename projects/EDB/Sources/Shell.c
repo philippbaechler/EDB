@@ -17,6 +17,7 @@
 #include "SurfaceScan.h"
 #include "ColorSensor.h"
 #include "ContainerRecognizer.h"
+#include "Servos.h"
 
 #include "MotionController.h"
 
@@ -35,6 +36,7 @@ static const BLUETOOTH_ParseCommandCallback CmdParserTable[] =
   SCN_ParseCommand,
   COL_ParseCommand,
   COR_ParseCommand,
+  SRV_ParseCommand,
   NULL /* Sentinel */
 };
 
