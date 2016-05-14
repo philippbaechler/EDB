@@ -24,7 +24,10 @@ void COR_Process(){
 	switch(containerRecognizer.state){
 
 		case COR_FSM_OBSERVANT:
-			US_Measure();
+			//US_Measure();
+
+			// debugging
+			containerRecognizer.state = COR_FSM_SURFACESCAN;
 			break;
 
 		case COR_FSM_SURFACESCAN:
@@ -202,7 +205,7 @@ void COR_Init(){
 	US_Init();
 
 	containerRecognizer.active = FALSE;
-	containerRecognizer.state = COR_FSM_SURFACESCAN;
+	containerRecognizer.state = COR_FSM_OBSERVANT;
 
 	RTOS_AddTask(vContainerRecognizerTask, "COR", 2);
 }
