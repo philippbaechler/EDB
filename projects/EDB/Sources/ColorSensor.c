@@ -5,6 +5,8 @@
 #include "LED_Enable_2.h"
 #include "BLUETOOTH.h"
 #include "UTIL1.h"
+#include "LED_Enable_1.h"
+#include "LED_Enable_2.h"
 
 colors_t colors;
 
@@ -33,6 +35,14 @@ uint8_t GreenADChighDataRegister				=	0x99;
 uint8_t BlueADClowDataRegister					=	0x9A;
 uint8_t BlueADChighDataRegister					=	0x9B;
 
+void COL_TurnOnLED(){
+	LED_Enable_1_SetVal();
+	LED_Enable_2_SetVal();
+}
+void COL_TurnOffLED(){
+	LED_Enable_1_ClrVal();
+	LED_Enable_2_ClrVal();
+}
 
 uint16_t COL_ReadClear(){
 	uint16_t clearResult = 0;
@@ -114,6 +124,43 @@ bool COL_RightContainer(){
 }
 
 /*
+ * This is the function for the contactless positioning of the grabber. It's called by Servos.h
+ * \return TRUE if a we reached the peak.
+ * */
+bool COL_ClearReachedPeak(){
+
+	bool reachedPeak = FALSE;
+	static uint16_t clearValues[ClearValuesArraySize];
+	static uint8_t arrayCounter;
+	static uint32_t averageValue;
+	uint16_t newValue = 0;
+
+	newValue = COL_ReadClear();
+
+	if (newValue < averageValue){ // here, we decide if we had a peak
+		reachedPeak = TRUE;
+	} else{
+		clearValues[arrayCounter] = newValue;
+
+		// calculate average
+		uint8_t i;
+		for (i = 0; i <= (ClearValuesArraySize-1); i++){
+			averageValue = averageValue + clearValues[i];
+		}
+		averageValue = averageValue/ClearValuesArraySize;
+
+		// calculate position of the ring-buffer
+		if (arrayCounter >= (ClearValuesArraySize-1)){
+			arrayCounter = 0;
+		} else{
+			arrayCounter++;
+		}
+	}
+
+	return reachedPeak;
+}
+
+/*
  * Functions for the bluetooth interface
  * */
 static void COL_PrintStatus(const BLUETOOTH_StdIOType *io) {
@@ -151,11 +198,6 @@ uint8_t COL_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
 }
 
 void COL_Init(){
-
-	LED_Enable_1_SetVal();
-	LED_Enable_2_SetVal();
-	LED_Enable_1_ClrVal();
-	LED_Enable_2_ClrVal();
 
 	// select slave by address
 	RGB_SENSOR_SelectSlave(TCS34725_ADDRESS);

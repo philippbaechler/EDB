@@ -19,21 +19,15 @@
 
 COR_FSMData containerRecognizer;
 
-void COR_TurnOnLED(){
-	LED_Enable_1_SetVal();
-	LED_Enable_2_SetVal();
-}
-void COR_TurnOffLED(){
-	LED_Enable_1_ClrVal();
-	LED_Enable_2_ClrVal();
-}
-
 void COR_Process(){
 
 	switch(containerRecognizer.state){
 
 		case COR_FSM_OBSERVANT:
-			US_Measure();
+			//US_Measure();
+
+			// debugging
+			containerRecognizer.state = COR_FSM_SURFACESCAN;
 			break;
 
 		case COR_FSM_SURFACESCAN:
@@ -46,7 +40,7 @@ void COR_Process(){
 		case COR_FSM_RECOGNIZECOLOR:
 			if(motionController.state == MOT_FSM_STOP){ // wait until we stand still (at the right place)
 
-				COR_TurnOnLED();
+				COL_TurnOnLED();
 
 				RTOS_Wait(1000);
 
@@ -64,7 +58,7 @@ void COR_Process(){
 
 				RTOS_Wait(1000);
 
-				COR_TurnOffLED();
+				COL_TurnOffLED();
 			}
 			break;
 
@@ -124,12 +118,22 @@ static void COR_PrintStatus(const BLUETOOTH_StdIOType *io) {
 			BLUETOOTH_SendStr((unsigned char*)"PICKUP", io->stdOut);
 			break;
 	}
+
+	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
+
+	BLUETOOTH_SendStatusStr((unsigned char*)"  LED", (unsigned char*)"", io->stdOut);
+	if (LED_Enable_1_GetVal()){
+		BLUETOOTH_SendStr((unsigned char*)"on", io->stdOut);
+	} else{
+		BLUETOOTH_SendStr((unsigned char*)"off", io->stdOut);
+	}
 }
 static void COR_PrintHelp(const BLUETOOTH_StdIOType *io) {
 	BLUETOOTH_SendHelpStr((unsigned char*)"cor", (unsigned char*)"Group of cor commands\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  help|status", (unsigned char*)"Shows cor help or status\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  state <value>", (unsigned char*)"Sets the state\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  active <0/1>", (unsigned char*)"active TRUE or FALSE\r\n", io->stdOut);
+	BLUETOOTH_SendHelpStr((unsigned char*)"  LED <on/off>", (unsigned char*)"turn the LEDs on or off\r\n", io->stdOut);
 }
 uint8_t COR_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIOType *io){
 
@@ -171,8 +175,6 @@ uint8_t COR_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
 		else {
 		       BLUETOOTH_SendStr((unsigned char*)"failed\r\n", io->stdErr);
 		}
-
-//		*handled = TRUE;
 	} else if (UTIL1_strncmp((char*)cmd, (char*)"cor active ", sizeof("cor active ")-1) == 0){
 		p = cmd+sizeof("cor active");
 
@@ -187,6 +189,12 @@ uint8_t COR_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
 		} else{
 			BLUETOOTH_SendStr((unsigned char*)"failed\r\n", io->stdErr);
 		}
+	} else if (UTIL1_strncmp((char*)cmd, (char*)"cor LED on ", sizeof("cor LED on ")-1) == 0){
+		COL_TurnOnLED();
+		*handled = TRUE;
+	} else if (UTIL1_strncmp((char*)cmd, (char*)"cor LED off ", sizeof("cor LED off ")-1) == 0){
+		COL_TurnOffLED();
+		*handled = TRUE;
 	}
 
 	return res;
@@ -197,7 +205,7 @@ void COR_Init(){
 	US_Init();
 
 	containerRecognizer.active = FALSE;
-	containerRecognizer.state = COR_FSM_SURFACESCAN;
+	containerRecognizer.state = COR_FSM_OBSERVANT;
 
 	RTOS_AddTask(vContainerRecognizerTask, "COR", 2);
 }
