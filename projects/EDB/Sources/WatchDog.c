@@ -54,15 +54,15 @@ void vWatchDogTask(){
 	}
 }
 
-char* WDG_GetVoltage(){
+uint16_t WDG_GetVoltage(){
 	char* voltage;
 
-	char* r;
-	r = (voltage16_t*11*33)/(0xffff*10*100);
+	uint16_t r;
+	r = (voltage16_t*11*33*10)/(0xffff);
 
-	voltage = r[0]+r[1]+"."+r[2]+r[3];
+	//voltage = r[0]+r[1]+"."+r[2]+r[3];
 
-	return voltage;
+	return r;
 }
 
 /*
@@ -71,7 +71,7 @@ char* WDG_GetVoltage(){
 static void WDG_PrintStatus(const BLUETOOTH_StdIOType *io) {
 	BLUETOOTH_SendStatusStr((unsigned char*)"\r\nwdg", (unsigned char*)"\r\n", io->stdOut);
 	BLUETOOTH_SendStatusStr((unsigned char*)"  battery voltage", (unsigned char*)"", io->stdOut);
-	BLUETOOTH_SendStr(WDG_GetVoltage(), io->stdOut);
+	BLUETOOTH_SendNum16u(WDG_GetVoltage(), io->stdOut);
 	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
 }
 static void WDG_PrintHelp(const BLUETOOTH_StdIOType *io) {
@@ -88,7 +88,7 @@ uint8_t WDG_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
 	} else if (UTIL1_strcmp((char*)cmd, (char*)BLUETOOTH_CMD_STATUS)==0 || UTIL1_strcmp((char*)cmd, (char*)"wdg status")==0) {
 		WDG_PrintStatus(io);
 		*handled = TRUE;
-	} else if (UTIL1_strncmp((char*)cmd, (char*)"wdg shutdown ", sizeof("wdg shutdown ")-1) == 0){
+	} else if (UTIL1_strncmp((char*)cmd, (char*)"wdg shutdown", sizeof("wdg shutdown")-1) == 0){
 		WDG_ShutOff();
 		*handled = TRUE;
 	}

@@ -30,9 +30,10 @@ void SRV_release();
 void SRV_putBack();
 void SRV_loadOn();
 void SRV_grab();
-void SRV_extend();
+void SRV_extend(int extend_distance);
 void SRV_pickUp();
 void SRV_Init();
+void SRV_setValue();
 
 uint8_t SRV_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIOType *io);
 

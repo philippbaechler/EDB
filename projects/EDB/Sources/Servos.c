@@ -61,13 +61,22 @@ void SRV_grab(){
 	}
 }
 
-void SRV_extend(){
-
+void SRV_extend(int extend_distance){
+	if(servos.value1 == 24 && servos.value2 == 21 && servos.value3 == 96){
+		int i = 0;
+		while(i <= extend_distance){
+			servos.value1 = servos.value1 + 1;
+			servos.value2 = servos.value2 + 1;
+			SRV_setValue();
+			WAIT_Waitms(1000);
+			i = i++;
+		}
+	}
 }
 
 void SRV_pickUp(){
 
-	SRV_extend();
+	SRV_extend(20);
 	SRV_grab();
 	SRV_loadOn();
 	SRV_putBack();
@@ -80,6 +89,14 @@ void SRV_park(){
 
 }
 
+void SRV_setValue(){
+	TPM0_C2V = servos.value1*60 + 1500;
+	TPM0_C3V = servos.value2*60 + 1500;
+	TPM0_C4V = servos.value3*60 + 1500;
+	TPM0_C5V = servos.value4*60 + 1500;
+	_6V_ON_SetVal();
+}
+
 void SRV_Debug(){
 //	for(int i = 0; i <= servo.value1; i++){
 //
@@ -89,38 +106,20 @@ void SRV_Debug(){
 //	while(servos.value1 != TM0_C2V & servos.value2 != TM0_C3V & servos.value3 != TM0_C3V & servos.value4 != TM0_C4V){
 //
 //	}
+//	servos.value1*60 + 1500;
+//	servos.value2*60 + 1500;
+//	servos.value3*60 + 1500;
+//	servos.value4*60 + 1500;
 
-	TPM0_C2V = servos.value1*60 + 1500;
-	TPM0_C3V = servos.value2*60 + 1500;
-	TPM0_C4V = servos.value3*60 + 1500;
-	TPM0_C5V = servos.value4*60 + 1500;
-
+	SRV_setValue();
 }
 
 void SRV_Init(){
-
-//	uint16_t i = grabberLowerLimit;
-//
-//	for(;;){
-//	for (i; i >= grabberLowerLimit; i--){
-//		TPM0_C4V = i;
-//		WAIT_Waitus(grabberDutyCycleUS);
-//	}
-//
-//	for (i; i <= grabberUpperLimit; i++){
-//		TPM0_C4V = i;
-//		WAIT_Waitus(grabberDutyCycleUS);
-//	}
-//}
-
-	_6V_ON_SetVal();
-	servos.value2 =
-	TPM0_C2V = 4500;
-	TPM0_C3V = 4500;
-	TPM0_C4V = grabberLowerLimit;
-	TPM0_C5V = 4500;
-	//WAIT_Waitms(1500);
-	//SRV_pickUp();
+	_6V_ON_ClrVal();
+	servos.value1 = 24;
+	servos.value2 = 21;
+	servos.value3 = 96;
+	servos.value4 = 50;
 }
 
 
@@ -133,6 +132,7 @@ static void SRV_PrintHelp(const BLUETOOTH_StdIOType *io) {
 	BLUETOOTH_SendHelpStr((unsigned char*)"  4 <value>", (unsigned char*)"Set value (0... 100)\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  delay <value>", (unsigned char*)"Set delay (0... 100ms)\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  off", (unsigned char*)"switches the srv power off \r\n", io->stdOut);
+	BLUETOOTH_SendHelpStr((unsigned char*)"  extend <value>", (unsigned char*)"simultaniously extends the grapper by the distance of value \r\n", io->stdOut);
 }
 
 static void SRV_PrintStatus(const BLUETOOTH_StdIOType *io) {
@@ -220,9 +220,19 @@ uint8_t SRV_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
 		else {
 		       BLUETOOTH_SendStr((unsigned char*)"failed\r\n", io->stdErr);
 		}
-	} else if (UTIL1_strncmp((char*)cmd, (char*)"srv off ", sizeof("srv off  ")-1) == 0) {
+	} else if (UTIL1_strncmp((char*)cmd, (char*)"srv off", sizeof("srv off")-1) == 0) {
 		_6V_ON_ClrVal();
 		*handled = TRUE;
+	} else if (UTIL1_strncmp((char*)cmd, (char*)"srv extend ", sizeof("srv extend ")-1) == 0) {
+		p = cmd+sizeof("srv extend");
+
+		if (UTIL1_xatoi(&p, &val)==ERR_OK){
+			SRV_extend(val);
+			*handled = TRUE;
+		}
+		else {
+	        BLUETOOTH_SendStr((unsigned char*)"failed\r\n", io->stdErr);
+		}
 	}
 	return res;
 }
