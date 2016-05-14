@@ -90,10 +90,10 @@ void SRV_Debug(){
 //
 //	}
 
-	TPM0_C2V = servos.value1*30 + 3000;
-	TPM0_C3V = servos.value2*30 + 3000;
-	TPM0_C4V = servos.value3*30 + 3000;
-	TPM0_C5V = servos.value4*30 + 3000;
+	TPM0_C2V = servos.value1*60 + 1500;
+	TPM0_C3V = servos.value2*60 + 1500;
+	TPM0_C4V = servos.value3*60 + 1500;
+	TPM0_C5V = servos.value4*60 + 1500;
 
 }
 
