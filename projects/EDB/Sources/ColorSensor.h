@@ -47,12 +47,17 @@ typedef struct colors{
 #define CommandCodeEnable							0x80
 #define Enable_init									0x0b
 
+#define ClearValuesArraySize	5
+
+void COL_TurnOnLED();
+void COL_TurnOffLED();
 uint16_t COL_ReadClear();
 uint16_t COL_ReadRed();
 uint16_t COL_ReadGreen();
 uint16_t COL_ReadBlue();
 void COL_ReadColors();
 bool COL_RightContainer();
+bool COL_ClearReachedPeak();
 uint8_t COL_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIOType *io);
 void COL_Init();
 
