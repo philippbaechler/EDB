@@ -124,12 +124,22 @@ static void COR_PrintStatus(const BLUETOOTH_StdIOType *io) {
 			BLUETOOTH_SendStr((unsigned char*)"PICKUP", io->stdOut);
 			break;
 	}
+
+	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
+
+	BLUETOOTH_SendStatusStr((unsigned char*)"  LED", (unsigned char*)"", io->stdOut);
+	if (LED_Enable_1_GetVal()){
+		BLUETOOTH_SendStr((unsigned char*)"on", io->stdOut);
+	} else{
+		BLUETOOTH_SendStr((unsigned char*)"off", io->stdOut);
+	}
 }
 static void COR_PrintHelp(const BLUETOOTH_StdIOType *io) {
 	BLUETOOTH_SendHelpStr((unsigned char*)"cor", (unsigned char*)"Group of cor commands\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  help|status", (unsigned char*)"Shows cor help or status\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  state <value>", (unsigned char*)"Sets the state\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  active <0/1>", (unsigned char*)"active TRUE or FALSE\r\n", io->stdOut);
+	BLUETOOTH_SendHelpStr((unsigned char*)"  LED <on/off>", (unsigned char*)"turn the LEDs on or off\r\n", io->stdOut);
 }
 uint8_t COR_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIOType *io){
 
@@ -187,6 +197,12 @@ uint8_t COR_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
 		} else{
 			BLUETOOTH_SendStr((unsigned char*)"failed\r\n", io->stdErr);
 		}
+	} else if (UTIL1_strncmp((char*)cmd, (char*)"cor LED on ", sizeof("cor LED on ")-1) == 0){
+		COR_TurnOnLED();
+		*handled = TRUE;
+	} else if (UTIL1_strncmp((char*)cmd, (char*)"cor LED off ", sizeof("cor LED off ")-1) == 0){
+		COR_TurnOffLED();
+		*handled = TRUE;
 	}
 
 	return res;
