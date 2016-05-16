@@ -25,18 +25,18 @@ void PID_Set_devider(uint16_t devider){
 	steering.devider = devider;
 }
 void PID_CalculatePID(){
-	int8_t targetValue = 0;
-	int8_t actualValue = steering.error;
+	int32_t targetValue = 0;
+	int32_t actualValue = steering.error;
 
-	static int16_t esum = 0, e_old = 0;
-	int16_t y_p, y_i, y_d, y;
-	int16_t e;
+	static int32_t esum = 0, e_old = 0;
+	int32_t y_p = 0, y_i = 0, y_d = 0, y = 0;
+	int32_t e;
 
 	e = targetValue - actualValue;
 
 	y_p = steering.Kp * e;
 
-	if (esum < steering.W){
+	if (FALSE/*esum < steering.W*/){
 		esum = esum + e;
 		y_i = steering.Ki * esum;
 	}
@@ -171,10 +171,10 @@ uint8_t PID_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
 
 void PID_Init(){
 
-	PID_Set_Kp(10);
-	PID_Set_Ki(1);
+	PID_Set_Kp(2000);
+	PID_Set_Ki(0);
 	PID_Set_Kd(0);
 	PID_Set_W(1000);
 	PID_SetError(0);
-	PID_Set_devider(1);
+	PID_Set_devider(10);
 }

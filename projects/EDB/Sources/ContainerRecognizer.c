@@ -189,10 +189,10 @@ uint8_t COR_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
 		} else{
 			BLUETOOTH_SendStr((unsigned char*)"failed\r\n", io->stdErr);
 		}
-	} else if (UTIL1_strncmp((char*)cmd, (char*)"cor LED on ", sizeof("cor LED on ")-1) == 0){
+	} else if (UTIL1_strncmp((char*)cmd, (char*)"cor LED on", sizeof("cor LED on")-1) == 0){
 		COL_TurnOnLED();
 		*handled = TRUE;
-	} else if (UTIL1_strncmp((char*)cmd, (char*)"cor LED off ", sizeof("cor LED off ")-1) == 0){
+	} else if (UTIL1_strncmp((char*)cmd, (char*)"cor LED off", sizeof("cor LED off")-1) == 0){
 		COL_TurnOffLED();
 		*handled = TRUE;
 	}
