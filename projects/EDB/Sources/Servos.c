@@ -2,6 +2,8 @@
 #include "WAIT.h"
 #include "SIG.h"
 #include "_6V_ON.h"
+#include "stdlib.h"
+#include "ColorSensor.h"
 
 #include "SERIAL_UART.h"
 #include "Serial.h"
@@ -9,84 +11,87 @@
 
 SRV_Data servos;
 
-void SRV_MoveServo(uint8_t degree, uint16_t dutyCycle, uint8_t servo){
-
-	uint16_t dC = dutyCycle;
-
-	switch (servo){
-		case 1:
-			dC = TPM0_C2V;
-			break;
-		case 2:
-			dC = TPM0_C3V;
-			break;
-		case 3:
-			dC = TPM0_C4V;
-			break;
-		case 4:
-			dC = TPM0_C5V;
-			break;
-	}
+void SRV_Init(){
+	_6V_ON_ClrVal();
+	servos.value1 = SRV1park;
+	servos.value2 = SRV2park;
+	servos.value3 = SRV3open;
+	servos.value4 = SRV4closed;
 }
 
-void SRV_retract(){
-
-}
-
-void SRV_release(){
-
-	uint16_t i = TPM0_C4V;
-
-	for (i; i >= grabberLowerLimit; i--){
-		TPM0_C4V = i;
-		WAIT_Waitus(grabberDutyCycleUS);
-	}
-}
-
-void SRV_putBack(){
-
-}
-
-void SRV_loadOn(){
-
-}
-
-void SRV_grab(){
-
-	uint16_t i = TPM0_C4V;
-
-	for (i; i <= grabberUpperLimit; i++){
-		TPM0_C4V = i;
-		WAIT_Waitus(grabberDutyCycleUS);
-	}
+void SRV_outlet(){
+	servos.value4 = SRV4open;
+	WAIT_Waitms(5000);
+	servos.value4 = SRV4closed;
 }
 
 void SRV_extend(int extend_distance){
-	if(servos.value1 == 24 && servos.value2 == 21 && servos.value3 == 96){
+	if(extend_distance <= 20){
 		int i = 0;
-		while(i <= extend_distance){
+		while(i < extend_distance){
 			servos.value1 = servos.value1 + 1;
 			servos.value2 = servos.value2 + 1;
 			SRV_setValue();
-			WAIT_Waitms(1000);
+			WAIT_Waitms(100);						// Verzögerungszeit, sorgt für eine flüssige Bewegung ohne Schwingung
 			i = i++;
 		}
 	}
 }
 
-void SRV_pickUp(){
+void SRV_pickUp(){					//TODO: Rückgabewert boolean pickup erfolgreich J/N
 
-	SRV_extend(20);
-	SRV_grab();
-	SRV_loadOn();
-	SRV_putBack();
-	SRV_release();
-	SRV_retract();
+	int SRV1posX, SRV2posX;
 
+	if(servos.value1 == SRV1park && servos.value2 == SRV1park && servos.value3 == SRV3open){	// Wenn Servo in Parkier-position
+		SRV_moveArm(SRV1pos1, SRV2pos1, fast);												// Greifarm schnell kurze Distanz ausfahren
+		while(COL_ClearReachedPeak() != 1 && servos.value2 <= SRV2extendLimit){
+			SRV_extend(extendDistance);													// Greifarm langsam unter stetigem Distanzmessen am Container annähern
+		}
+		SRV1posX = servos.value1;						//Position von Container merken
+		SRV2posX = servos.value2;
+
+		if(COL_RightContainer() == 1){						// Containerfarbe prüfen
+			servos.value3 = SRV3closed;					// Greifer schliessen
+			SRV_moveArm(SRV1pos2,SRV2pos2,medium);
+			WAIT_Waitms(1000);
+			SRV_moveArm(SRV1pos3,SRV2pos3,slow);
+			SRV_moveArm(SRV1pos2,SRV2pos2,fast);
+			SRV_moveArm(SRV1posX,SRV2posX,fast);
+			servos.value3 = SRV3open;					// Greifer öffnen
+		}
+		SRV_moveArm(SRV1park,SRV2park,medium);			// Greifarm parkieren
+		_6V_ON_ClrVal();								// Servo Speisung abschalten
+	}
 }
 
-void SRV_park(){
+void SRV_moveArm(int srv1, int srv2, speedModeType_t speed){
+	int srv1d = srv1 - servos.value1;				// Bewegungswinkel des Arms berechnen (Sollwert - Istwert)
+	int srv2d = srv2 - servos.value2;
 
+	float stepValue1;
+	float stepValue2;
+
+	if(abs(srv1d) != 0 || abs(srv2d) != 0){				// min. ein Servo wert muss verändert sein (sonst division durch 0)
+		if(abs(srv1d) > abs(srv2d)){					// Servo mit dem grösseren Bewegungswinkel auf |1| skalieren,
+			stepValue1 = srv1d / srv1d;					// anderer Servo mit einem Floating-Wert skalieren
+			stepValue2 = srv2d / srv1d;
+		}
+		else if(abs(srv1d) <= abs(srv2d)){											// Servo mit dem grösseren Bewegungswinkel auf |1| skalieren,
+				stepValue2 = srv2d / srv2d;				// anderer Servo mit einem Floating-Wert skalieren
+				stepValue1 = srv1d / srv2d;
+		}
+
+		while(servos.value1 != srv1 || servos.value2 != srv2){	// Solange Endwert nicht erreicht
+			servos.value1 = servos.value1 + stepValue1;
+			servos.value2 = servos.value2 + stepValue2;
+			SRV_setValue();
+			WAIT_Waitms(speed);									// Konstante Wartezeit
+		}
+	}
+	WAIT_Waitms(speed);
+	servos.value1 = srv1;				// eventuelle Rundungsfehler von Floating Addition durch setzen der int Werte eliminieren
+	servos.value2 = srv2;
+	SRV_setValue();
 }
 
 void SRV_setValue(){
@@ -98,30 +103,8 @@ void SRV_setValue(){
 }
 
 void SRV_Debug(){
-//	for(int i = 0; i <= servo.value1; i++){
-//
-//		WAIT_Waitms(servos.delay);
-//	}
-
-//	while(servos.value1 != TM0_C2V & servos.value2 != TM0_C3V & servos.value3 != TM0_C3V & servos.value4 != TM0_C4V){
-//
-//	}
-//	servos.value1*60 + 1500;
-//	servos.value2*60 + 1500;
-//	servos.value3*60 + 1500;
-//	servos.value4*60 + 1500;
-
 	SRV_setValue();
 }
-
-void SRV_Init(){
-	_6V_ON_ClrVal();
-	servos.value1 = 24;
-	servos.value2 = 21;
-	servos.value3 = 96;
-	servos.value4 = 50;
-}
-
 
 static void SRV_PrintHelp(const BLUETOOTH_StdIOType *io) {
 	BLUETOOTH_SendHelpStr((unsigned char*)"srv", (unsigned char*)"Group of srv commands\r\n", io->stdOut);
@@ -132,7 +115,8 @@ static void SRV_PrintHelp(const BLUETOOTH_StdIOType *io) {
 	BLUETOOTH_SendHelpStr((unsigned char*)"  4 <value>", (unsigned char*)"Set value (0... 100)\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  delay <value>", (unsigned char*)"Set delay (0... 100ms)\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  off", (unsigned char*)"switches the srv power off \r\n", io->stdOut);
-	BLUETOOTH_SendHelpStr((unsigned char*)"  extend <value>", (unsigned char*)"simultaniously extends the grapper by the distance of value \r\n", io->stdOut);
+	BLUETOOTH_SendHelpStr((unsigned char*)"  extend <value>", (unsigned char*)"simultaniously extends the arm by the distance of <value> \r\n", io->stdOut);
+	BLUETOOTH_SendHelpStr((unsigned char*)"  move <srv1> <srv2> <speed>", (unsigned char*)"simultaniously moves the arm to the position of <srv1> and <srv2> by the speed of <speed> \r\n", io->stdOut);
 }
 
 static void SRV_PrintStatus(const BLUETOOTH_StdIOType *io) {
@@ -150,7 +134,7 @@ static void SRV_PrintStatus(const BLUETOOTH_StdIOType *io) {
 	BLUETOOTH_SendNum32s(servos.value4, io->stdOut);
 	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
 	BLUETOOTH_SendStatusStr((unsigned char*)"  value delay", (unsigned char*)"", io->stdOut);
-	BLUETOOTH_SendNum32s(servos.delay, io->stdOut);
+	BLUETOOTH_SendNum32s(servos.speed, io->stdOut);
 	BLUETOOTH_SendStr((unsigned char*)"\r\n", io->stdOut);
 }
 
@@ -213,7 +197,7 @@ uint8_t SRV_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
 		p = cmd+sizeof("srv delay");
 
 		if (UTIL1_xatoi(&p, &val)==ERR_OK){
-			servos.delay = val;
+			servos.speed = val;
 			SRV_Debug();
 			*handled = TRUE;
 		}
@@ -229,6 +213,26 @@ uint8_t SRV_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
 		if (UTIL1_xatoi(&p, &val)==ERR_OK){
 			SRV_extend(val);
 			*handled = TRUE;
+		}
+		else {
+	        BLUETOOTH_SendStr((unsigned char*)"failed\r\n", io->stdErr);
+		}
+	} else if (UTIL1_strncmp((char*)cmd, (char*)"srv move ", sizeof("srv move ")-1) == 0) {
+		p = cmd+sizeof("srv move");
+		int srv1,srv2;
+		speedModeType_t speed;
+
+		if (UTIL1_xatoi(&p, &val)==ERR_OK){
+			srv1 = val;
+			p = cmd+sizeof("srv move xx");
+			if (UTIL1_xatoi(&p, &val)==ERR_OK){
+				srv2 = val;
+				p = cmd+sizeof("srv move xx xx");
+				if (UTIL1_xatoi(&p, &val)==ERR_OK){
+					SRV_moveArm(srv1,srv2,speed);
+					*handled = TRUE;
+				}
+			}
 		}
 		else {
 	        BLUETOOTH_SendStr((unsigned char*)"failed\r\n", io->stdErr);
