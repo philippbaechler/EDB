@@ -98,6 +98,11 @@ uint16_t COL_ReadBlue(){
 
 void COL_ReadColors(){
 
+//	colors.blueValue = 0;
+//	colors.clearValue = 0;
+//	colors.greenValue = 0;
+//	colors.redValue = 0;
+
 	colors.clearValue = COL_ReadClear();
 
 	WAIT_Waitms(1);

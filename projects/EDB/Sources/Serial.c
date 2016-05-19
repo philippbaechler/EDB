@@ -57,7 +57,8 @@ uint8_t SER_SerialProcess(){
 				SERIAL_UART_ReadChar(&c);
 			}while(c == 0);
 
-			motionController.target_common_period = SER_GetPeriod(c);
+			motionController.master_command_speed = c;
+			motionController.target_common_period = SER_GetPeriod(motionController.master_command_speed);
 			break;
 
 		case 4:		/* SearchContainers */

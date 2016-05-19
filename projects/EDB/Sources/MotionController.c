@@ -258,7 +258,10 @@ uint8_t MOT_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
 		p = cmd+sizeof("mot speed");
 
 		if (UTIL1_xatoi(&p, &val)==ERR_OK){
-			motionController.target_common_period = SER_GetPeriod(val);
+
+			motionController.master_command_speed = val;
+			motionController.target_common_period = SER_GetPeriod(motionController.master_command_speed);
+
 			*handled = TRUE;
 		}
 		else {

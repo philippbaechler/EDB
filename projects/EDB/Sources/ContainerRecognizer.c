@@ -24,16 +24,19 @@ void COR_Process(){
 	switch(containerRecognizer.state){
 
 		case COR_FSM_OBSERVANT:
-			//US_Measure();
+			US_Measure();
 
-			// debugging
-			containerRecognizer.state = COR_FSM_SURFACESCAN;
+//			 debugging
+//			containerRecognizer.state = COR_FSM_SURFACESCAN;
 			break;
 
 		case COR_FSM_SURFACESCAN:
 			if (SCN_IsAContainer()){
 				motionController.steps_left_until_stop = stepsAfterIR; // n of Steps we have to go after we recognized a container
 				containerRecognizer.state = COR_FSM_RECOGNIZECOLOR;
+			} else{
+				containerRecognizer.state = COR_FSM_OBSERVANT;
+				motionController.target_common_period = SER_GetPeriod(motionController.master_command_speed);
 			}
 			break;
 
@@ -47,13 +50,15 @@ void COR_Process(){
 				uint8_t i = 0;
 				for (i; i < 5; i++){ // Measure several times the color values to get a better value
 					COL_ReadColors();
+					RTOS_Wait(1);
 				}
 
 				if(COL_RightContainer()){
-					containerRecognizer.state = COR_FSM_RECOGNIZECOLOR;//COR_FSM_PICKUP;
+					containerRecognizer.state = COR_FSM_PICKUP;
 				}
 				else{
-					containerRecognizer.state = COR_FSM_RECOGNIZECOLOR;//COR_FSM_OBSERVANT;
+					containerRecognizer.state = COR_FSM_OBSERVANT;
+					motionController.target_common_period = SER_GetPeriod(motionController.master_command_speed);
 				}
 
 				RTOS_Wait(1000);
@@ -64,7 +69,8 @@ void COR_Process(){
 
 		case COR_FSM_PICKUP:
 
-			SRV_pickUp();
+//			SRV_pickUp();
+
 
 			break;
 	}
@@ -207,5 +213,5 @@ void COR_Init(){
 	containerRecognizer.active = FALSE;
 	containerRecognizer.state = COR_FSM_OBSERVANT;
 
-	RTOS_AddTask(vContainerRecognizerTask, "COR", 2);
+	RTOS_AddTask(vContainerRecognizerTask, "COR", 3);
 }

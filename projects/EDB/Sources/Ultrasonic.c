@@ -23,7 +23,7 @@ typedef struct {
 } US_DeviceType;
 
 static US_DeviceType usDevice; 	/* device handle for the ultrasonic device */
-uint8_t range = 15;				/* defines the range(in cm) in which objects can be recognized */
+uint8_t range = 30;				/* defines the range(in cm) in which objects can be recognized */
 uint16_t rangeInTics;
 
 void US_Measure(){

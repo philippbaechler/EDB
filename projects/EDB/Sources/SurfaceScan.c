@@ -39,7 +39,7 @@ uint32_t SCN_GetValue(){ // semaphores?
 /*
  * We wait here for a rising or falling edge.
  * */
-void SCN_CaptureEdge(){
+bool SCN_CaptureEdge(){
 
 	uint32_t valuesBuf[measurementsBufferSize];
 	uint32_t Value = 0;
@@ -47,6 +47,8 @@ void SCN_CaptureEdge(){
 	uint32_t oldValue = 0;
 	uint8_t arrayCounter;
 	uint8_t i;
+
+
 
 	bool edgeCaptured = FALSE;
 
@@ -73,13 +75,6 @@ void SCN_CaptureEdge(){
 		}
 		oldValue = averageValue;
 
-//		BLUETOOTH_SendNum32u(averageValue, BLUETOOTH_GetStdio()->stdOut);
-//		BLUETOOTH_SendStr((const uint8_t*)"\r\n", BLUETOOTH_GetStdio()->stdOut);
-
-//		if (averageValue > 8000){
-//
-//		}
-
 		/* detect an edge */
 		if (valuesBuf[arrayCounter] <= (percentFallingEdge * averageValue) || valuesBuf[arrayCounter] >= (percentRisingEdge * averageValue)){ // if the average value is changing more than +-20% we decide to see an edge
 			edgeCaptured = TRUE;
@@ -91,8 +86,13 @@ void SCN_CaptureEdge(){
 			arrayCounter++;
 		}
 
+		if (motionController.step_count > 2500){ // when we do not recognize an edge within 30 cm we return to observant
+			break;
+		}
+
 	} while(!edgeCaptured);
 
+	return edgeCaptured;
 }
 
 /*
@@ -101,21 +101,25 @@ void SCN_CaptureEdge(){
 bool SCN_IsAContainer(){
 	bool isAContainer = FALSE;
 
-	SCN_CaptureEdge();
-	LED_GREEN_On();
-
-
-	// reset step count
 	motionController.step_count = 0;
 
-	SCN_CaptureEdge();
-	LED_GREEN_Off();
-	// compare step count
-	if (motionController.step_count >= containerLengthMinSteps && motionController.step_count <= containerLengthMaxSteps){
-		isAContainer = TRUE;
-		LED_GREEN_Off();
-	}
+	if (SCN_CaptureEdge()){
 
+		LED_GREEN_On();
+
+		// reset step count
+		motionController.step_count = 0;
+
+		if (SCN_CaptureEdge()){
+
+			LED_GREEN_Off();
+			// compare step count
+			if (motionController.step_count >= containerLengthMinSteps && motionController.step_count <= containerLengthMaxSteps){
+				isAContainer = TRUE;
+				LED_GREEN_Off();
+			}
+		}
+	}
 	return isAContainer;
 }
 
