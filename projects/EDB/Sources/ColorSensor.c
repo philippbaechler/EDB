@@ -142,12 +142,13 @@ bool COL_ClearReachedPeak(){
 
 	newValue = COL_ReadClear();
 
-	if (newValue < averageValue){ // here, we decide if we had a peak
+	if (newValue < (averageValue*0.9)){ // here, we decide if we had a peak
 		reachedPeak = TRUE;
-	} else{
+	}
 		clearValues[arrayCounter] = newValue;
 
 		// calculate average
+		averageValue = 0;
 		uint8_t i;
 		for (i = 0; i <= (ClearValuesArraySize-1); i++){
 			averageValue = averageValue + clearValues[i];
@@ -160,7 +161,7 @@ bool COL_ClearReachedPeak(){
 		} else{
 			arrayCounter++;
 		}
-	}
+
 
 	return reachedPeak;
 }

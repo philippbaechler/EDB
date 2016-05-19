@@ -28,6 +28,9 @@
 #include "MOT_RIGHT_M0.h"
 #include "MOT_RIGHT_M1.h"
 
+// debug
+#include "ColorSensor.h"
+
 MOT_FSMData motionController;
 
 uint8_t counterPrescaler;
@@ -214,6 +217,15 @@ void vMotionControlTask(){
 		else{
 //			FRTOS1_taskYIELD();
 		}
+
+
+		// debugging the clear peak recognizer
+
+//		if(COL_ClearReachedPeak()){
+//			COL_TurnOffLED();
+//		}
+
+
 	}
 }
 
