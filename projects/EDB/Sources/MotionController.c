@@ -63,7 +63,7 @@ uint16_t MOT_GetPeriod(bool acclerate){ // accelerate = 1 / decelerate = 0
 	uint16_t newPeriod = 0xFF;
 
 	if(acclerate){
-		newPeriod = motionController.actual_common_period - (motionController.actual_common_period/(motionController.acceleration_counter + 2));
+		newPeriod = motionController.actual_common_period - (2*motionController.actual_common_period/(2*motionController.acceleration_counter + 2));
 	}
 	else{
 		newPeriod = motionController.actual_common_period + (motionController.actual_common_period/(motionController.acceleration_counter + 2));
@@ -175,6 +175,7 @@ void MOT_Process(){
 					MOT_LEFT_NSLEEP_ClrVal();
 					MOT_RGHT_NSLEEP_ClrVal();
 					motionController.steps_left_until_stop = 0;
+					motionController.actual_common_period = 32500;
 				}
 				else{
 					motionController.state = MOT_FSM_RUN;

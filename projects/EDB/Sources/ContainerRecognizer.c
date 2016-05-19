@@ -14,7 +14,7 @@
 #include "LED_Enable_1.h"
 #include "LED_Enable_2.h"
 
-#define DistanceIRSevos 30 // in mm
+#define DistanceIRSevos 180 // in mm
 #define stepsAfterIR DistanceIRSevos / 0.1178
 
 COR_FSMData containerRecognizer;
@@ -24,10 +24,10 @@ void COR_Process(){
 	switch(containerRecognizer.state){
 
 		case COR_FSM_OBSERVANT:
-			US_Measure();
+//			US_Measure(); // in our recent version, we do not need an ultrasonic sensor anymore
 
-//			 debugging
-//			containerRecognizer.state = COR_FSM_SURFACESCAN;
+//			debugging
+			containerRecognizer.state = COR_FSM_SURFACESCAN;
 			break;
 
 		case COR_FSM_SURFACESCAN:
@@ -58,7 +58,7 @@ void COR_Process(){
 				}
 				else{
 					containerRecognizer.state = COR_FSM_OBSERVANT;
-					motionController.target_common_period = SER_GetPeriod(motionController.master_command_speed);
+//					motionController.target_common_period = SER_GetPeriod(motionController.master_command_speed);
 				}
 
 				RTOS_Wait(1000);
@@ -71,6 +71,8 @@ void COR_Process(){
 
 //			SRV_pickUp();
 
+			// debug
+			containerRecognizer.state = COR_FSM_OBSERVANT;
 
 			break;
 	}
