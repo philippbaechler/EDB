@@ -75,6 +75,7 @@ uint16_t MOT_GetPeriod(bool acclerate){ // accelerate = 1 / decelerate = 0
 void MOT_CalcualteNOfSteps(){
 	uint16_t newSteps = (10000 / motionController.actual_common_period); // works only when actual_common_period > 10000, we've got here an error in our distance measuring. Since we've normally have periods < 1000, this shoulden't be a problem!
 	motionController.step_count = motionController.step_count + newSteps;
+	motionController.step_count_container = motionController.step_count_container + newSteps;
 
 	if (motionController.step_count >= motionController.step_count_target && motionController.step_count_target != 0){
 		SER_SendEvent(); /* sending an event if we reach the number of steps to the PI */

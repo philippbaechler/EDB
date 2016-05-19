@@ -86,7 +86,7 @@ bool SCN_CaptureEdge(){
 			arrayCounter++;
 		}
 
-		if (motionController.step_count > 2500){ // when we do not recognize an edge within 30 cm we return to observant
+		if (motionController.step_count_container > 2500){ // when we do not recognize an edge within 30 cm we return to observant
 			break;
 		}
 
@@ -101,20 +101,20 @@ bool SCN_CaptureEdge(){
 bool SCN_IsAContainer(){
 	bool isAContainer = FALSE;
 
-	motionController.step_count = 0;
+	motionController.step_count_container = 0;
 
 	if (SCN_CaptureEdge()){
 
 		LED_GREEN_On();
 
 		// reset step count
-		motionController.step_count = 0;
+		motionController.step_count_container = 0;
 
 		if (SCN_CaptureEdge()){
 
 			LED_GREEN_Off();
 			// compare step count
-			if (motionController.step_count >= containerLengthMinSteps && motionController.step_count <= containerLengthMaxSteps){
+			if (motionController.step_count_container >= containerLengthMinSteps && motionController.step_count_container <= containerLengthMaxSteps){
 				isAContainer = TRUE;
 				LED_GREEN_Off();
 			}
