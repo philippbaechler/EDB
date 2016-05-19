@@ -33,7 +33,7 @@ void SRV_extend(int extend_distance){
 			servos.value2 = servos.value2 + 1;
 			SRV_setValue();
 			WAIT_Waitms(100);						// Verzögerungszeit, sorgt für eine flüssige Bewegung ohne Schwingung
-			i = i++;
+			i = i + 1;
 		}
 	}
 }
@@ -42,9 +42,9 @@ void SRV_pickUp(){					//TODO: Rückgabewert boolean pickup erfolgreich J/N
 
 	int SRV1posX, SRV2posX;
 
-	if(servos.value1 == SRV1park && servos.value2 == SRV1park && servos.value3 == SRV3open){	// Wenn Servo in Parkier-position
+	if(servos.value1 == SRV1park && servos.value2 == SRV2park && servos.value3 == SRV3open){	// Wenn Servo in Parkier-position
 		SRV_moveArm(SRV1pos1, SRV2pos1, fast);												// Greifarm schnell kurze Distanz ausfahren
-		while(COL_ClearReachedPeak() != 1 && servos.value2 <= SRV2extendLimit){
+		while(COL_ClearReachedPeak() == 0 && servos.value2 <= SRV2extendLimit){
 			SRV_extend(extendDistance);													// Greifarm langsam unter stetigem Distanzmessen am Container annähern
 		}
 		SRV1posX = servos.value1;						//Position von Container merken

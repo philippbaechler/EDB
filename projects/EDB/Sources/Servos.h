@@ -6,22 +6,22 @@
 
 //#define grabberDutyCycleUS		200
 
-#define SRV1park					24			// TODO: Werte ermitteln
-#define SRV2park					21
+#define SRV1park					16			// TODO: Werte ermitteln
+#define SRV2park					23
 
-#define SRV1pos1					47
-#define SRV2pos1					44
+#define SRV1pos1					23
+#define SRV2pos1					33
 
-#define SRV1pos2					24
-#define SRV2pos2					21
+#define SRV1pos2					83
+#define SRV2pos2					60
 
-#define SRV1pos3					24
-#define SRV2pos3					21
+#define SRV1pos3					83
+#define SRV2pos3					30
 
 #define SRV3open					96
 #define SRV3closed					57
 
-#define SRV4open					96
+#define SRV4open					93
 #define SRV4closed					57
 
 #define extendDistance				1			// Distanz um welche der Greifer sich pro Distanzmesszyklus dem Container nähert
