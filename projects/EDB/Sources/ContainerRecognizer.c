@@ -69,10 +69,10 @@ void COR_Process(){
 
 		case COR_FSM_PICKUP:
 
-//			SRV_pickUp();
+			SRV_pickUp();
 
 			// debug
-			containerRecognizer.state = COR_FSM_OBSERVANT;
+			containerRecognizer.active = 0;
 
 			break;
 	}

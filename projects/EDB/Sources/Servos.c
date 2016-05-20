@@ -9,15 +9,9 @@
 #include "Serial.h"
 #include "UTIL1.h"
 
-SRV_Data servos;
+#include "math.h"
 
-void SRV_Init(){
-	_6V_ON_ClrVal();
-	servos.value1 = SRV1park;
-	servos.value2 = SRV2park;
-	servos.value3 = SRV3open;
-	servos.value4 = SRV4closed;
-}
+SRV_Data servos;
 
 void SRV_outlet(){
 	servos.value4 = SRV4open;
@@ -27,14 +21,15 @@ void SRV_outlet(){
 
 void SRV_extend(int extend_distance){
 	if(extend_distance <= 20){
-		int i = 0;
-		while(i < extend_distance){
-			servos.value1 = servos.value1 + 1;
-			servos.value2 = servos.value2 + 1;
-			SRV_setValue();
-			WAIT_Waitms(100);						// Verzögerungszeit, sorgt für eine flüssige Bewegung ohne Schwingung
-			i = i + 1;
-		}
+		SRV_moveArm(servos.value1 + extend_distance, servos.value2 + extend_distance, slow);
+//		int i = 0;
+//		while(i < extend_distance){
+//			servos.value1 = servos.value1 + 1;
+//			servos.value2 = servos.value2 + 1;
+//			SRV_setValue();
+//			WAIT_Waitms(100);						// Verzögerungszeit, sorgt für eine flüssige Bewegung ohne Schwingung
+//			i = i + 1;
+//		}
 	}
 }
 
@@ -50,12 +45,16 @@ void SRV_pickUp(){					//TODO: Rückgabewert boolean pickup erfolgreich J/N
 		SRV1posX = servos.value1;						//Position von Container merken
 		SRV2posX = servos.value2;
 
+		COL_ReadColors();
+		WAIT_Waitms(1);
+
 		if(COL_RightContainer() == 1){						// Containerfarbe prüfen
 			servos.value3 = SRV3closed;					// Greifer schliessen
-			SRV_moveArm(SRV1pos2,SRV2pos2,medium);
+			SRV_moveArm(SRV1pos2,SRV2pos2,medium);		//medium
 			WAIT_Waitms(1000);
-			SRV_moveArm(SRV1pos3,SRV2pos3,slow);
-			SRV_moveArm(SRV1pos2,SRV2pos2,fast);
+			SRV_moveArm(SRV1pos3,SRV2pos3,slow);		//slow
+			WAIT_Waitms(3000);
+			SRV_moveArm(SRV1pos2,SRV2pos2,medium);		//medium
 			SRV_moveArm(SRV1posX,SRV2posX,fast);
 			servos.value3 = SRV3open;					// Greifer öffnen
 		}
@@ -65,30 +64,32 @@ void SRV_pickUp(){					//TODO: Rückgabewert boolean pickup erfolgreich J/N
 }
 
 void SRV_moveArm(int srv1, int srv2, speedModeType_t speed){
-	int srv1d = srv1 - servos.value1;				// Bewegungswinkel des Arms berechnen (Sollwert - Istwert)
-	int srv2d = srv2 - servos.value2;
+	float srv1d = srv1 - servos.value1;				// Bewegungswinkel des Arms berechnen (Sollwert - Istwert)
+	float srv2d = srv2 - servos.value2;
+
+	float speed_f = speed;
 
 	float stepValue1;
 	float stepValue2;
 
 	if(abs(srv1d) != 0 || abs(srv2d) != 0){				// min. ein Servo wert muss verändert sein (sonst division durch 0)
 		if(abs(srv1d) > abs(srv2d)){					// Servo mit dem grösseren Bewegungswinkel auf |1| skalieren,
-			stepValue1 = srv1d / srv1d;					// anderer Servo mit einem Floating-Wert skalieren
-			stepValue2 = srv2d / srv1d;
+			stepValue1 = srv1d / abs(srv1d);					// anderer Servo mit einem Floating-Wert skalieren
+			stepValue2 = srv2d / abs(srv1d);
 		}
 		else if(abs(srv1d) <= abs(srv2d)){											// Servo mit dem grösseren Bewegungswinkel auf |1| skalieren,
-				stepValue2 = srv2d / srv2d;				// anderer Servo mit einem Floating-Wert skalieren
-				stepValue1 = srv1d / srv2d;
+				stepValue2 = srv2d / abs(srv2d);				// anderer Servo mit einem Floating-Wert skalieren
+				stepValue1 = srv1d / abs(srv2d);
 		}
 
-		while(servos.value1 != srv1 || servos.value2 != srv2){	// Solange Endwert nicht erreicht
+		while(servos.value1 != srv1 && servos.value2 != srv2){	// Solange Endwert nicht erreicht
 			servos.value1 = servos.value1 + stepValue1;
 			servos.value2 = servos.value2 + stepValue2;
 			SRV_setValue();
-			WAIT_Waitms(speed);									// Konstante Wartezeit
+			RTOS_Wait(speed_f);									// Konstante Wartezeit
 		}
 	}
-	WAIT_Waitms(speed);
+	WAIT_Waitms(speed_f);
 	servos.value1 = srv1;				// eventuelle Rundungsfehler von Floating Addition durch setzen der int Werte eliminieren
 	servos.value2 = srv2;
 	SRV_setValue();
@@ -104,6 +105,36 @@ void SRV_setValue(){
 
 void SRV_Debug(){
 	SRV_setValue();
+}
+
+void SRV_Init(){
+	_6V_ON_ClrVal();
+	servos.value1 = SRV1park;
+	servos.value2 = SRV2park;
+	servos.value3 = SRV3open;
+	servos.value4 = SRV4closed;
+
+	//SRV_moveArm(SRV1park, SRV2park, slow);
+
+	//Following Code for Debuging purposes
+	//------------------------------------
+	//servos.value1 = SRV1p
+//	SRV_setValue();
+//
+//	SRV_pickUp();
+//
+//	WAIT_Waitms(2000);
+//
+//	SRV_extend(20);
+//
+//	SRV_moveArm(SRV1pos2, SRV2pos2, fast);
+//
+//	WAIT_Waitms(2000);
+//
+//	SRV_moveArm(SRV1pos1, SRV2pos1, medium);
+//	SRV_moveArm(SRV1park, SRV2park, slow);
+//
+//	WAIT_Waitms(2000);
 }
 
 static void SRV_PrintHelp(const BLUETOOTH_StdIOType *io) {
