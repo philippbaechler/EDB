@@ -1,6 +1,5 @@
 #include "MotionController.h"
 #include "WAIT.h"
-#include "Ultrasonic.h"
 #include "LED_RED.h"
 #include "ContainerRecognizer.h"
 #include "Serial.h"
@@ -18,7 +17,6 @@ void APP_Start(void){
 	MOT_Init();
 	SER_Init();
 	SHELL_Init();
-	PID_Init();
 	WDG_Init();
 
 

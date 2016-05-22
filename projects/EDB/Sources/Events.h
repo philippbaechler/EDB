@@ -42,7 +42,7 @@
 #include "UTIL1.h"
 #include "MOT_LEFT.h"
 #include "PpgLdd1.h"
-#include "SIG.h"
+#include "SERVOS.h"
 #include "MOT_RIGHT.h"
 #include "PpgLdd2.h"
 #include "LED_RED.h"
@@ -65,15 +65,13 @@
 #include "BitIoLdd8.h"
 #include "MOT_RIGHT_M1.h"
 #include "BitIoLdd9.h"
-#include "ULTRA_SONIC_TRIG.h"
 #include "BitIoLdd10.h"
 #include "BitIoLdd11.h"
 #include "LED_Enable_2.h"
 #include "BitIoLdd19.h"
 #include "LED_GREEN.h"
 #include "LEDpin2.h"
-#include "BitIoLdd12.h"
-#include "ADC.h"
+#include "ADC_IR_BATT.h"
 #include "AdcLdd1.h"
 #include "Shut_OFF.h"
 #include "BitIoLdd13.h"
@@ -83,6 +81,8 @@
 #include "I2C1.h"
 #include "KSDK1.h"
 #include "FRTOS1.h"
+#include "SYS1.h"
+#include "RTT1.h"
 #include "_6V_ON.h"
 #include "BitIoLdd15.h"
 #include "Route_B_LED.h"
@@ -117,9 +117,9 @@ void Cpu_OnNMIINT(void);
 
 /*
 ** ===================================================================
-**     Event       :  SIG_OnChannel0 (module Events)
+**     Event       :  SERVOS_OnChannel0 (module Events)
 **
-**     Component   :  SIG [TimerUnit_LDD]
+**     Component   :  SERVOS [TimerUnit_LDD]
 */
 /*!
 **     @brief
@@ -134,14 +134,14 @@ void Cpu_OnNMIINT(void);
 **                           the parameter of Init method.
 */
 /* ===================================================================*/
-void SIG_OnChannel0(LDD_TUserData *UserDataPtr);
+void SERVOS_OnChannel0(LDD_TUserData *UserDataPtr);
 
-void ADC_OnEnd(void);
+void ADC_IR_BATT_OnEnd(void);
 /*
 ** ===================================================================
-**     Event       :  ADC_OnEnd (module Events)
+**     Event       :  ADC_IR_BATT_OnEnd (module Events)
 **
-**     Component   :  ADC [ADC]
+**     Component   :  ADC_IR_BATT [ADC_IR_BATT]
 **     Description :
 **         This event is called after the measurement (which consists
 **         of <1 or more conversions>) is/are finished.
@@ -152,12 +152,12 @@ void ADC_OnEnd(void);
 ** ===================================================================
 */
 
-void ADC_OnCalibrationEnd(void);
+void ADC_IR_BATT_OnCalibrationEnd(void);
 /*
 ** ===================================================================
-**     Event       :  ADC_OnCalibrationEnd (module Events)
+**     Event       :  ADC_IR_BATT_OnCalibrationEnd (module Events)
 **
-**     Component   :  ADC [ADC]
+**     Component   :  ADC_IR_BATT [ADC_IR_BATT]
 **     Description :
 **         This event is called when the calibration has been finished.
 **         User should check if the calibration pass or fail by
@@ -170,9 +170,9 @@ void ADC_OnCalibrationEnd(void);
 
 /*
 ** ===================================================================
-**     Event       :  SIG_OnChannel1 (module Events)
+**     Event       :  SERVOS_OnChannel1 (module Events)
 **
-**     Component   :  SIG [TimerUnit_LDD]
+**     Component   :  SERVOS [TimerUnit_LDD]
 */
 /*!
 **     @brief
@@ -187,7 +187,7 @@ void ADC_OnCalibrationEnd(void);
 **                           the parameter of Init method.
 */
 /* ===================================================================*/
-void SIG_OnChannel1(LDD_TUserData *UserDataPtr);
+void SERVOS_OnChannel1(LDD_TUserData *UserDataPtr);
 
 void RGB_SENSOR_OnRequestBus(void);
 /*

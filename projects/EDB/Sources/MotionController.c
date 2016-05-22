@@ -5,7 +5,7 @@
 #include "FRTOS1.h"
 #include "UTIL1.h"
 
-#include "SIG.h"
+#include "SERVOS.h"
 
 
 #include "MotionController.h"
@@ -322,6 +322,8 @@ void MOT_Init(void){
 	motionController.steering_lock = 0; // drive straight
 
 	counterPrescaler = 0;
+
+	PID_Init();
 
 	RTOS_AddTask(vMotionControlTask, "MOT", 3);
 }

@@ -1,6 +1,6 @@
 #include "Servos.h"
 #include "WAIT.h"
-#include "SIG.h"
+#include "SERVOS.h"
 #include "_6V_ON.h"
 #include "stdlib.h"
 #include "ColorSensor.h"

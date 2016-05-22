@@ -37,8 +37,7 @@ extern "C" {
 /* User includes (#include below this line is not maintained by Processor Expert) */
 
 #include "MotionController.h"
-#include "SIG.h"
-#include "Ultrasonic.h"
+#include "SERVOS.h"
 
 /*
 ** ===================================================================
@@ -60,9 +59,9 @@ void Cpu_OnNMIINT(void)
 
 /*
 ** ===================================================================
-**     Event       :  SIG_OnChannel0 (module Events)
+**     Event       :  SERVOS_OnChannel0 (module Events)
 **
-**     Component   :  SIG [TimerUnit_LDD]
+**     Component   :  SERVOS [TimerUnit_LDD]
 */
 /*!
 **     @brief
@@ -77,19 +76,16 @@ void Cpu_OnNMIINT(void)
 **                           the parameter of Init method.
 */
 /* ===================================================================*/
-void SIG_OnChannel0(LDD_TUserData *UserDataPtr)
+void SERVOS_OnChannel0(LDD_TUserData *UserDataPtr)
 {
-//	if(motionController.running){
-//		MOT_Process();
-//		TPM0_C0V = TPM0_CNT + 30000; // MOT_Process() gets called with a frequency of 1kHz
-//	}
+
 }
 
 /*
 ** ===================================================================
-**     Event       :  ADC_OnEnd (module Events)
+**     Event       :  ADC_IR_BATT_OnEnd (module Events)
 **
-**     Component   :  ADC [ADC]
+**     Component   :  ADC_IR_BATT [ADC_IR_BATT]
 **     Description :
 **         This event is called after the measurement (which consists
 **         of <1 or more conversions>) is/are finished.
@@ -99,16 +95,16 @@ void SIG_OnChannel0(LDD_TUserData *UserDataPtr)
 **     Returns     : Nothing
 ** ===================================================================
 */
-void ADC_OnEnd(void)
+void ADC_IR_BATT_OnEnd(void)
 {
   /* Write your code here ... */
 }
 
 /*
 ** ===================================================================
-**     Event       :  ADC_OnCalibrationEnd (module Events)
+**     Event       :  ADC_IR_BATT_OnCalibrationEnd (module Events)
 **
-**     Component   :  ADC [ADC]
+**     Component   :  ADC_IR_BATT [ADC_IR_BATT]
 **     Description :
 **         This event is called when the calibration has been finished.
 **         User should check if the calibration pass or fail by
@@ -118,16 +114,16 @@ void ADC_OnEnd(void)
 **     Returns     : Nothing
 ** ===================================================================
 */
-void ADC_OnCalibrationEnd(void)
+void ADC_IR_BATT_OnCalibrationEnd(void)
 {
   /* Write your code here ... */
 }
 
 /*
 ** ===================================================================
-**     Event       :  SIG_OnChannel1 (module Events)
+**     Event       :  SERVOS_OnChannel1 (module Events)
 **
-**     Component   :  SIG [TimerUnit_LDD]
+**     Component   :  SERVOS [TimerUnit_LDD]
 */
 /*!
 **     @brief
@@ -142,9 +138,9 @@ void ADC_OnCalibrationEnd(void)
 **                           the parameter of Init method.
 */
 /* ===================================================================*/
-void SIG_OnChannel1(LDD_TUserData *UserDataPtr)
+void SERVOS_OnChannel1(LDD_TUserData *UserDataPtr)
 {
-	US_EventEchoCapture();
+
 }
 
 /*

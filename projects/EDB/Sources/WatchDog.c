@@ -2,7 +2,7 @@
 #include "RTOS.h"
 #include "FreeRTOS.h"
 #include "Shut_OFF.h"
-#include "ADC.h"
+#include "ADC_IR_BATT.h"
 #include "BLUETOOTH.h"
 #include "UTIL1.h"
 #include "Battery_low.h"
