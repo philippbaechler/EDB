@@ -1,6 +1,6 @@
 #include "SurfaceScan.h"
 #include "PE_Types.h"
-#include "ADC.h"
+#include "ADC_IR_BATT.h"
 #include "MotionController.h"
 #include "BLUETOOTH.h"
 #include "UTIL1.h"

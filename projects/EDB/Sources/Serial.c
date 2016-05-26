@@ -9,7 +9,7 @@
 #include "FRTOS1.h"
 
 #include "Servos.h"
-#include "SIG.h"
+#include "SERVOS.h"
 
 #include "PID.h"
 
