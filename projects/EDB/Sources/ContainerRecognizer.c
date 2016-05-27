@@ -209,7 +209,6 @@ uint8_t COR_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
 
 void COR_Init(){
 
-	US_Init();
 
 	containerRecognizer.active = FALSE;
 	containerRecognizer.state = COR_FSM_OBSERVANT;

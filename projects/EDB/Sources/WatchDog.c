@@ -23,8 +23,8 @@ void WDG_ShutOff(){
  * */
 void vWatchDogTask(){
 	for(;;){
-		ADC_MeasureChan(TRUE, 1);
-		ADC_GetChanValue16(1, &voltage16_t);
+		ADC_IR_BATT_MeasureChan(TRUE, 1);
+		ADC_IR_BATT_GetChanValue16(1, &voltage16_t);
 
 
 		if (voltage16_t <= LowBatteryLight){

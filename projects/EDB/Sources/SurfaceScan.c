@@ -26,8 +26,8 @@ uint32_t SCN_GetValue(){ // semaphores?
 
 		WAIT_Waitus(1);
 
-		ADC_MeasureChan(TRUE, 0);
-		ADC_GetChanValue16(0, &IRvalue);
+		ADC_IR_BATT_MeasureChan(TRUE, 0);
+		ADC_IR_BATT_GetChanValue16(0, &IRvalue);
 		Value = Value + IRvalue;
 
 	}
