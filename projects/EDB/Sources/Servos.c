@@ -83,10 +83,11 @@ void SRV_moveArm(int srv1, int srv2, speedModeType_t speed){
 		}
 
 		while(servos.value1 != srv1 && servos.value2 != srv2){	// Solange Endwert nicht erreicht
-			servos.value1 = servos.value1 + stepValue1;
-			servos.value2 = servos.value2 + stepValue2;
+			servos.value1 = servos.value1 + stepValue1/8;
+			servos.value2 = servos.value2 + stepValue2/8;
 			SRV_setValue();
-			RTOS_Wait(speed_f);									// Konstante Wartezeit
+			//RTOS_Wait(speed_f);									// Konstante Wartezeit
+			WAIT_Waitms(speed_f/8);
 		}
 	}
 	WAIT_Waitms(speed_f);
@@ -96,10 +97,12 @@ void SRV_moveArm(int srv1, int srv2, speedModeType_t speed){
 }
 
 void SRV_setValue(){
-	TPM0_C2V = servos.value1*60 + 1500;
-	TPM0_C3V = servos.value2*60 + 1500;
-	TPM0_C4V = servos.value3*60 + 1500;
-	TPM0_C5V = servos.value4*60 + 1500;
+	int round;
+	round = rint(servos.value1*60 + 1500);
+	TPM0_C2V = round;
+	TPM0_C3V = rint(servos.value2*60 + 1500);
+	TPM0_C4V = rint(servos.value3*60 + 1500);
+	TPM0_C5V = rint(servos.value4*60 + 1500);
 	_6V_ON_SetVal();
 }
 
@@ -119,22 +122,22 @@ void SRV_Init(){
 	//Following Code for Debuging purposes
 	//------------------------------------
 	//servos.value1 = SRV1p
-//	SRV_setValue();
-//
-//	SRV_pickUp();
-//
-//	WAIT_Waitms(2000);
-//
-//	SRV_extend(20);
-//
-//	SRV_moveArm(SRV1pos2, SRV2pos2, fast);
-//
-//	WAIT_Waitms(2000);
-//
-//	SRV_moveArm(SRV1pos1, SRV2pos1, medium);
-//	SRV_moveArm(SRV1park, SRV2park, slow);
-//
-//	WAIT_Waitms(2000);
+	SRV_setValue();
+
+	//SRV_pickUp();
+
+	WAIT_Waitms(2000);
+
+	SRV_extend(20);
+
+	SRV_moveArm(SRV1pos2, SRV2pos2, fast);
+
+	WAIT_Waitms(2000);
+
+	SRV_moveArm(SRV1pos1, SRV2pos1, medium);
+	SRV_moveArm(SRV1park, SRV2park, slow);
+
+	WAIT_Waitms(2000);
 }
 
 static void SRV_PrintHelp(const BLUETOOTH_StdIOType *io) {
