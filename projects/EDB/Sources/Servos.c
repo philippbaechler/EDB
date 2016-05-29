@@ -49,22 +49,22 @@ void SRV_pickUp(){					//TODO: Rückgabewert boolean pickup erfolgreich J/N
 		WAIT_Waitms(1);
 
 		if(COL_RightContainer() == 1){						// Containerfarbe prüfen
-			servos.value3 = SRV3closed;					// Greifer schliessen
-			SRV_moveArm(SRV1pos2,SRV2pos2,medium);		//medium
+			servos.value3 = SRV3closed;						// Greifer schliessen
+			SRV_moveArm(SRV1pos2,SRV2pos2,medium);			//medium
 			WAIT_Waitms(1000);
-			SRV_moveArm(SRV1pos3,SRV2pos3,slow);		//slow
+			SRV_moveArm(SRV1pos3,SRV2pos3,slow);			//slow
 			WAIT_Waitms(3000);
-			SRV_moveArm(SRV1pos2,SRV2pos2,medium);		//medium
+			SRV_moveArm(SRV1pos2,SRV2pos2,medium);			//medium
 			SRV_moveArm(SRV1posX,SRV2posX,fast);
-			servos.value3 = SRV3open;					// Greifer öffnen
+			servos.value3 = SRV3open;						// Greifer öffnen
 		}
-		SRV_moveArm(SRV1park,SRV2park,medium);			// Greifarm parkieren
-		_6V_ON_ClrVal();								// Servo Speisung abschalten
+		SRV_moveArm(SRV1park,SRV2park,medium);				// Greifarm parkieren
+		_6V_ON_ClrVal();									// Servo Speisung abschalten
 	}
 }
 
 void SRV_moveArm(int srv1, int srv2, speedModeType_t speed){
-	float srv1d = srv1 - servos.value1;				// Bewegungswinkel des Arms berechnen (Sollwert - Istwert)
+	float srv1d = srv1 - servos.value1;						// Bewegungswinkel des Arms berechnen (Sollwert - Istwert)
 	float srv2d = srv2 - servos.value2;
 
 	float speed_f = speed;
@@ -72,26 +72,32 @@ void SRV_moveArm(int srv1, int srv2, speedModeType_t speed){
 	float stepValue1;
 	float stepValue2;
 
-	if(abs(srv1d) != 0 || abs(srv2d) != 0){				// min. ein Servo wert muss verändert sein (sonst division durch 0)
-		if(abs(srv1d) > abs(srv2d)){					// Servo mit dem grösseren Bewegungswinkel auf |1| skalieren,
-			stepValue1 = srv1d / abs(srv1d);					// anderer Servo mit einem Floating-Wert skalieren
+	if(abs(srv1d) != 0 || abs(srv2d) != 0){										// min. ein Servo wert muss verändert sein (sonst division durch 0)
+		if(abs(srv1d) > abs(srv2d)){											// Servo mit dem grösseren Bewegungswinkel auf |1| skalieren,
+			stepValue1 = srv1d / abs(srv1d);									// anderer Servo mit einem Floating-Wert skalieren
 			stepValue2 = srv2d / abs(srv1d);
-		}
-		else if(abs(srv1d) <= abs(srv2d)){											// Servo mit dem grösseren Bewegungswinkel auf |1| skalieren,
-				stepValue2 = srv2d / abs(srv2d);				// anderer Servo mit einem Floating-Wert skalieren
-				stepValue1 = srv1d / abs(srv2d);
-		}
 
-		while(servos.value1 != srv1 && servos.value2 != srv2){	// Solange Endwert nicht erreicht
-			servos.value1 = servos.value1 + stepValue1/8;
-			servos.value2 = servos.value2 + stepValue2/8;
-			SRV_setValue();
-			//RTOS_Wait(speed_f);									// Konstante Wartezeit
-			WAIT_Waitms(speed_f/8);
+			while(servos.value1 != srv1){										// Solange Endwert nicht erreicht
+				servos.value1 = servos.value1 + stepValue1/movementFactor;
+				servos.value2 = servos.value2 + stepValue2/movementFactor;
+				SRV_setValue();
+				WAIT_Waitms(speed_f/movementFactor);
+			}
+		}
+		else if(abs(srv1d) <= abs(srv2d)){										// Servo mit dem grösseren Bewegungswinkel auf |1| skalieren,
+			stepValue2 = srv2d / abs(srv2d);									// anderer Servo mit einem Floating-Wert skalieren
+			stepValue1 = srv1d / abs(srv2d);
+
+			while(servos.value2 != srv2){										// Solange Endwert nicht erreicht
+				servos.value1 = servos.value1 + stepValue1/movementFactor;
+				servos.value2 = servos.value2 + stepValue2/movementFactor;
+				SRV_setValue();
+				WAIT_Waitms(speed_f/movementFactor);
+			}
 		}
 	}
 	WAIT_Waitms(speed_f);
-	servos.value1 = srv1;				// eventuelle Rundungsfehler von Floating Addition durch setzen der int Werte eliminieren
+	servos.value1 = srv1;											// eventuelle Rundungsfehler von Floating Addition durch setzen der int Werte eliminieren
 	servos.value2 = srv2;
 	SRV_setValue();
 }

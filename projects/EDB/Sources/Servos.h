@@ -27,6 +27,8 @@
 #define extendDistance				1			// Distanz um welche der Greifer sich pro Distanzmesszyklus dem Container nähert
 #define SRV2extendLimit				50
 
+#define movementFactor				1			// Teilungsfaktor für eine flüssigere Servobewegung
+
 typedef enum {
 		slow	= 200,				// Wartezeit zwischen neuem Stellwert in ms
 		medium	= 100,
