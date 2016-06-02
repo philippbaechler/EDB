@@ -13,7 +13,7 @@
 #include "LED_Enable_1.h"
 #include "LED_Enable_2.h"
 
-#define DistanceIRSevos 180 // in mm
+#define DistanceIRSevos 160 // in mm
 #define stepsAfterIR DistanceIRSevos / 0.1178
 
 COR_FSMData containerRecognizer;

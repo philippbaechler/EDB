@@ -18,7 +18,7 @@ void APP_Start(void){
 	SER_Init();
 	SHELL_Init();
 	WDG_Init();
-
+	SRV_Init(); // Debug
 
 	// Start RTOS here!
 	RTOS_Init();

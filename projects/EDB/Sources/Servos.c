@@ -14,9 +14,19 @@
 SRV_Data servos;
 
 void SRV_outlet(){
+	servos.value3 = SRV3closed;
+	SRV_setValue();
+	WAIT_Waitms(1000);
 	servos.value4 = SRV4open;
-	WAIT_Waitms(5000);
+	SRV_setValue();
+	WAIT_Waitms(3000);
 	servos.value4 = SRV4closed;
+	SRV_setValue();
+	WAIT_Waitms(1000);
+	servos.value3 = SRV3open;
+	SRV_setValue();
+	WAIT_Waitms(1000);
+	_6V_ON_ClrVal();
 }
 
 void SRV_extend(int extend_distance){
@@ -39,24 +49,26 @@ void SRV_pickUp(){					//TODO: Rückgabewert boolean pickup erfolgreich J/N
 
 	if(servos.value1 == SRV1park && servos.value2 == SRV2park && servos.value3 == SRV3open){	// Wenn Servo in Parkier-position
 		SRV_moveArm(SRV1pos1, SRV2pos1, fast);												// Greifarm schnell kurze Distanz ausfahren
-		while(COL_ClearReachedPeak() == 0 && servos.value2 <= SRV2extendLimit){
+		while(servos.value2 <= SRV2extendLimit){								// COL_ClearReachedPeak() == 0 &&
 			SRV_extend(extendDistance);													// Greifarm langsam unter stetigem Distanzmessen am Container annähern
 		}
 		SRV1posX = servos.value1;						//Position von Container merken
 		SRV2posX = servos.value2;
 
-		COL_ReadColors();
-		WAIT_Waitms(1);
+		//COL_ReadColors();
 
-		if(COL_RightContainer() == 1){						// Containerfarbe prüfen
+		if(1){						// Containerfarbe prüfen COL_RightContainer() == 1
 			servos.value3 = SRV3closed;						// Greifer schliessen
-			SRV_moveArm(SRV1pos2,SRV2pos2,medium);			//medium
-			WAIT_Waitms(1000);
-			SRV_moveArm(SRV1pos3,SRV2pos3,slow);			//slow
+			SRV_setValue();
+			WAIT_Waitms(2000);
+			SRV_moveArm(SRV1pos2,SRV2pos2,fast);			//medium
+			//WAIT_Waitms(1000);
+			SRV_moveArm(SRV1pos3,SRV2pos3,medium);			//slow
 			WAIT_Waitms(3000);
-			SRV_moveArm(SRV1pos2,SRV2pos2,medium);			//medium
+			SRV_moveArm(SRV1pos2,SRV2pos2,fast);			//medium
 			SRV_moveArm(SRV1posX,SRV2posX,fast);
 			servos.value3 = SRV3open;						// Greifer öffnen
+			WAIT_Waitms(500);
 		}
 		SRV_moveArm(SRV1park,SRV2park,medium);				// Greifarm parkieren
 		_6V_ON_ClrVal();									// Servo Speisung abschalten
@@ -130,20 +142,27 @@ void SRV_Init(){
 	//servos.value1 = SRV1p
 	SRV_setValue();
 
-	//SRV_pickUp();
+	WAIT_Waitms(5000);
 
-	WAIT_Waitms(2000);
+	SRV_pickUp();
 
-	SRV_extend(20);
+	WAIT_Waitms(5000);
 
-	SRV_moveArm(SRV1pos2, SRV2pos2, fast);
+	SRV_outlet();
 
-	WAIT_Waitms(2000);
 
-	SRV_moveArm(SRV1pos1, SRV2pos1, medium);
-	SRV_moveArm(SRV1park, SRV2park, slow);
-
-	WAIT_Waitms(2000);
+//	WAIT_Waitms(2000);
+//
+//	SRV_extend(20);
+//
+//	SRV_moveArm(SRV1pos2, SRV2pos2, fast);
+//
+//	WAIT_Waitms(2000);
+//
+//	SRV_moveArm(SRV1pos1, SRV2pos1, medium);
+//	SRV_moveArm(SRV1park, SRV2park, slow);
+//
+//	WAIT_Waitms(2000);
 }
 
 static void SRV_PrintHelp(const BLUETOOTH_StdIOType *io) {

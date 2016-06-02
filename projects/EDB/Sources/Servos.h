@@ -6,33 +6,33 @@
 
 //#define grabberDutyCycleUS		200
 
-#define SRV1park					16			// TODO: Werte ermitteln
-#define SRV2park					23
+#define SRV1park					17			// TODO: Werte ermitteln
+#define SRV2park					26
 
 #define SRV1pos1					23
-#define SRV2pos1					33
+#define SRV2pos1					33		//default: 33
 
-#define SRV1pos2					83
-#define SRV2pos2					60
+#define SRV1pos2					75
+#define SRV2pos2					80		//default: 60
 
-#define SRV1pos3					83
-#define SRV2pos3					30
+#define SRV1pos3					75
+#define SRV2pos3					25
 
 #define SRV3open					96
 #define SRV3closed					57
 
-#define SRV4open					93
-#define SRV4closed					57
+#define SRV4open					103
+#define SRV4closed					64
 
 #define extendDistance				1			// Distanz um welche der Greifer sich pro Distanzmesszyklus dem Container nähert
-#define SRV2extendLimit				50
+#define SRV2extendLimit				40
 
 #define movementFactor				1			// Teilungsfaktor für eine flüssigere Servobewegung
 
 typedef enum {
 		slow	= 200,				// Wartezeit zwischen neuem Stellwert in ms
-		medium	= 100,
-		fast	= 50
+		medium	= 30,
+		fast	= 20
 	} speedModeType_t;
 
 typedef struct SRV_Data {

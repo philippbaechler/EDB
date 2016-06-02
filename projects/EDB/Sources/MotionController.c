@@ -76,12 +76,13 @@ uint16_t MOT_GetPeriod(bool acclerate){ // accelerate = 1 / decelerate = 0
 }
 
 void MOT_CalcualteNOfSteps(){
-	uint16_t newSteps = (10000 / motionController.actual_common_period); // works only when actual_common_period > 10000, we've got here an error in our distance measuring. Since we've normally have periods < 1000, this shoulden't be a problem!
+	TPE_Float newSteps = ((TPE_Float)10000 / (TPE_Float)motionController.actual_common_period); // works only when actual_common_period > 10000, we've got here an error in our distance measuring. Since we've normally have periods < 1000, this shoulden't be a problem!
 	motionController.step_count = motionController.step_count + newSteps;
 	motionController.step_count_container = motionController.step_count_container + newSteps;
 
 	if (motionController.step_count >= motionController.step_count_target && motionController.step_count_target != 0){
 		SER_SendEvent(); /* sending an event if we reach the number of steps to the PI */
+		BLUETOOTH_SendStr((unsigned char*)"d", BLUETOOTH_GetStdio()->stdOut);  /* and to the bluetooth */
 		motionController.step_count = 0;
 		motionController.step_count_target = 0;
 	}
@@ -256,6 +257,7 @@ static void MOT_PrintHelp(const BLUETOOTH_StdIOType *io) {
 	BLUETOOTH_SendHelpStr((unsigned char*)"  help|status", (unsigned char*)"Shows mot help or status\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  speed <value>", (unsigned char*)"Set speed\r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  stop <value>", (unsigned char*)"Stop the robot in <value> mm\r\n", io->stdOut);
+	BLUETOOTH_SendHelpStr((unsigned char*)"  event <value>", (unsigned char*)"Sends an event after a certain distance\r\n", io->stdOut);
 }
 uint8_t MOT_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIOType *io){
 	uint8_t res = ERR_OK;
@@ -291,6 +293,14 @@ uint8_t MOT_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
 		else {
 	        BLUETOOTH_SendStr((unsigned char*)"failed\r\n", io->stdErr);
 		}
+	} else if(UTIL1_strncmp((char*)cmd, (char*)"mot event ", sizeof("mot event ")-1) == 0){
+		p = cmd+sizeof("mot event");
+
+		if (UTIL1_xatoi(&p, &val)==ERR_OK){
+			motionController.step_count = 0;
+			motionController.step_count_target = (val*10)/0.1178; // c in cm
+			*handled = TRUE;
+		}
 	}
 
 	return res;
@@ -313,7 +323,7 @@ void MOT_Init(void){
 	MOT_RIGHT_M1_SetVal();
 	MOT_RIGHT_Disable();
 
-	SRV_Init(); // maybe we should initialize the servos when a button is pressed, like a command?
+//	SRV_Init(); // maybe we should initialize the servos when a button is pressed, like a command?
 
 	motionController.running = FALSE;
 	motionController.state = MOT_FSM_STOP;

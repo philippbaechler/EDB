@@ -36,7 +36,7 @@ void PID_CalculatePID(){
 
 	y_p = steering.Kp * e;
 
-	if (FALSE/*esum < steering.W*/){
+	if (esum < steering.W){
 		esum = esum + e;
 		y_i = steering.Ki * esum;
 	}

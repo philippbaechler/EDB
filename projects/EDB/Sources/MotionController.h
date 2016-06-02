@@ -41,8 +41,9 @@ typedef struct MOT_FSMData {
 
 	uint16_t acceleration_counter;	// we need this variable for remembering the state of acceleration
 
-	uint16_t step_count; 				// uint16_t = 65536 -> reaches for d = 60mm and 1/8 step mode to 7,7 Meter in [mm] resolution
-	uint16_t step_count_container;		// this one is used to measure the length of the container
+
+	TPE_Float step_count; 				// uint16_t = 65536 -> reaches for d = 60mm and 1/8 step mode to 7,7 Meter in [mm] resolution
+	TPE_Float step_count_container;		// this one is used to measure the length of the container
 	uint16_t step_count_target;			// for the event we have to send
 	uint16_t steps_for_deceleration;
 	uint16_t steps_left_until_stop;
