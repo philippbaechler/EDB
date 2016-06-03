@@ -60,11 +60,13 @@ void SRV_pickUp(){					//TODO: Rückgabewert boolean pickup erfolgreich J/N
 		if(1){						// Containerfarbe prüfen COL_RightContainer() == 1
 			servos.value3 = SRV3closed;						// Greifer schliessen
 			SRV_setValue();
-			WAIT_Waitms(2000);
+			SRV_moveArm(SRV1posX,SRV2posX,fast);			//SRV_setValue Methode funktioniert oben nicht
+			WAIT_Waitms(1000);
 			SRV_moveArm(SRV1pos2,SRV2pos2,fast);			//medium
 			//WAIT_Waitms(1000);
-			SRV_moveArm(SRV1pos3,SRV2pos3,medium);			//slow
-			WAIT_Waitms(3000);
+			SRV_moveArm(SRV1pos3,45,medium);			//slow
+			SRV_moveArm(SRV1pos3,SRV2pos3,slow);
+			WAIT_Waitms(500);
 			SRV_moveArm(SRV1pos2,SRV2pos2,fast);			//medium
 			SRV_moveArm(SRV1posX,SRV2posX,fast);
 			servos.value3 = SRV3open;						// Greifer öffnen

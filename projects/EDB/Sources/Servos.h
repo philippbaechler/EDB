@@ -12,11 +12,11 @@
 #define SRV1pos1					23
 #define SRV2pos1					33		//default: 33
 
-#define SRV1pos2					75
+#define SRV1pos2					77		//default: 75
 #define SRV2pos2					80		//default: 60
 
-#define SRV1pos3					75
-#define SRV2pos3					25
+#define SRV1pos3					77
+#define SRV2pos3					30
 
 #define SRV3open					96
 #define SRV3closed					57
