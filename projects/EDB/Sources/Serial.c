@@ -98,6 +98,12 @@ uint8_t SER_SerialProcess(){
 			Route_B_LED_SetVal();
 
 			break;
+
+		case 10:
+
+			SRV_outlet();
+
+			break;
 	}
 	return c;
 }

@@ -144,13 +144,13 @@ void SRV_Init(){
 	//servos.value1 = SRV1p
 	SRV_setValue();
 
-	WAIT_Waitms(5000);
-
-	SRV_pickUp();
-
-	WAIT_Waitms(5000);
-
-	SRV_outlet();
+//	WAIT_Waitms(5000); // auskommentiert 11.06. Philipp
+//
+//	SRV_pickUp();
+//
+//	WAIT_Waitms(5000);
+//
+//	SRV_outlet(); // bis hier
 
 
 //	WAIT_Waitms(2000);
@@ -178,6 +178,8 @@ static void SRV_PrintHelp(const BLUETOOTH_StdIOType *io) {
 	BLUETOOTH_SendHelpStr((unsigned char*)"  off", (unsigned char*)"switches the srv power off \r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  extend <value>", (unsigned char*)"simultaniously extends the arm by the distance of <value> \r\n", io->stdOut);
 	BLUETOOTH_SendHelpStr((unsigned char*)"  move <srv1> <srv2> <speed>", (unsigned char*)"simultaniously moves the arm to the position of <srv1> and <srv2> by the speed of <speed> \r\n", io->stdOut);
+	BLUETOOTH_SendHelpStr((unsigned char*)" pickup",(unsigned char*)"pickup the container \r\n", io->stdOut);
+	BLUETOOTH_SendHelpStr((unsigned char*)" outlet",(unsigned char*)"let it flow \r\n", io->stdOut);
 }
 
 static void SRV_PrintStatus(const BLUETOOTH_StdIOType *io) {
@@ -298,6 +300,11 @@ uint8_t SRV_ParseCommand(const uint8_t *cmd, bool *handled, BLUETOOTH_ConstStdIO
 		else {
 	        BLUETOOTH_SendStr((unsigned char*)"failed\r\n", io->stdErr);
 		}
+	} else if (UTIL1_strncmp((char*)cmd, (char*)"srv pickup", sizeof("srv pickup")-1) == 0) {
+		SRV_pickUp();
+	} else if (UTIL1_strncmp((char*)cmd, (char*)"srv outlet", sizeof("srv outlet")-1) == 0) {
+		SRV_outlet();
 	}
+
 	return res;
 }
