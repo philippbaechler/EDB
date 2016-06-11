@@ -47,17 +47,22 @@ void SRV_pickUp(){					//TODO: Rückgabewert boolean pickup erfolgreich J/N
 
 	int SRV1posX, SRV2posX;
 
+	COL_TurnOnLED();
+
 	if(servos.value1 == SRV1park && servos.value2 == SRV2park && servos.value3 == SRV3open){	// Wenn Servo in Parkier-position
 		SRV_moveArm(SRV1pos1, SRV2pos1, fast);												// Greifarm schnell kurze Distanz ausfahren
-		while(servos.value2 <= SRV2extendLimit){								// COL_ClearReachedPeak() == 0 &&
+		while(COL_ClearReachedPeak() == 0 && servos.value2 <= SRV2extendLimit){								// COL_ClearReachedPeak() == 0 &&
 			SRV_extend(extendDistance);													// Greifarm langsam unter stetigem Distanzmessen am Container annähern
 		}
 		SRV1posX = servos.value1;						//Position von Container merken
 		SRV2posX = servos.value2;
 
-		//COL_ReadColors();
+		COL_ReadColors();
 
-		if(1){						// Containerfarbe prüfen COL_RightContainer() == 1
+		if(COL_RightContainer() == 1){						// Containerfarbe prüfen COL_RightContainer() == 1
+
+			COL_TurnOffLED();
+
 			servos.value3 = SRV3closed;						// Greifer schliessen
 			SRV_setValue();
 			SRV_moveArm(SRV1posX,SRV2posX,fast);			//SRV_setValue Methode funktioniert oben nicht
@@ -72,6 +77,9 @@ void SRV_pickUp(){					//TODO: Rückgabewert boolean pickup erfolgreich J/N
 			servos.value3 = SRV3open;						// Greifer öffnen
 			WAIT_Waitms(500);
 		}
+
+		COL_TurnOffLED();
+
 		SRV_moveArm(SRV1park,SRV2park,medium);				// Greifarm parkieren
 		_6V_ON_ClrVal();									// Servo Speisung abschalten
 	}
