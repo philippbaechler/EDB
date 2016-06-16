@@ -151,6 +151,8 @@ void SRV_Init(){
 	//------------------------------------
 	//servos.value1 = SRV1p
 	SRV_setValue();
+	WAIT_Waitms(1000);
+	_6V_ON_ClrVal();
 
 //	WAIT_Waitms(5000); // auskommentiert 11.06. Philipp
 //

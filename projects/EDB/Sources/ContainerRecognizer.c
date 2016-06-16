@@ -44,7 +44,7 @@ void COR_Process(){
 
 				COL_TurnOnLED();
 
-				RTOS_Wait(1000);
+				RTOS_Wait(5);
 
 				uint8_t i = 0;
 				for (i; i < 5; i++){ // Measure several times the color values to get a better value
@@ -56,11 +56,11 @@ void COR_Process(){
 					containerRecognizer.state = COR_FSM_PICKUP;
 				}
 				else{
-					containerRecognizer.state = COR_FSM_OBSERVANT;
-//					motionController.target_common_period = SER_GetPeriod(motionController.master_command_speed);
+//					containerRecognizer.state = COR_FSM_OBSERVANT;
+					motionController.target_common_period = SER_GetPeriod(motionController.master_command_speed);
 				}
 
-				RTOS_Wait(1000);
+				RTOS_Wait(5);
 
 				COL_TurnOffLED();
 			}
@@ -71,7 +71,9 @@ void COR_Process(){
 			SRV_pickUp();
 
 			// debug
-			containerRecognizer.active = 0;
+			//containerRecognizer.active = 0;
+			motionController.target_common_period = SER_GetPeriod(motionController.master_command_speed);
+			containerRecognizer.state = COR_FSM_OBSERVANT;
 
 			break;
 	}
@@ -85,7 +87,7 @@ void vContainerRecognizerTask(/*void* pvParameters*/){
 
 	for(;;){
 
-		RTOS_Wait(100);
+		RTOS_Wait(5);
 
 		if(containerRecognizer.active){
 			COR_Process();

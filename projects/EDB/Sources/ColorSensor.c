@@ -123,6 +123,8 @@ bool COL_RightContainer(){
 
 	if (!(colors.redValue > colors.blueValue && colors.greenValue > colors.blueValue)){ // First implementation of the color-detection
 		rightContainer = TRUE;
+	} else if(colors.blueValue > colors.redValue && colors.greenValue > colors.redValue){
+		rightContainer = TRUE;
 	}
 
 	return rightContainer;

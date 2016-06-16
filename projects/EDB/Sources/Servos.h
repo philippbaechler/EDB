@@ -21,8 +21,8 @@
 #define SRV3open					96
 #define SRV3closed					57
 
-#define SRV4open					103
-#define SRV4closed					64
+#define SRV4open					92		//default: 104 / 92
+#define SRV4closed					51		//51
 
 #define extendDistance				1			// Distanz um welche der Greifer sich pro Distanzmesszyklus dem Container nähert
 #define SRV2extendLimit				40
