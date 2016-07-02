@@ -121,11 +121,15 @@ void COL_ReadColors(){
 bool COL_RightContainer(){
 	bool rightContainer = FALSE;
 
-	if (!(colors.redValue > colors.blueValue && colors.greenValue > colors.blueValue)){ // First implementation of the color-detection
-		rightContainer = TRUE;
-	} else if(colors.blueValue > colors.redValue && colors.greenValue > colors.redValue){
+	if (colors.blueValue > colors.redValue || colors.greenValue > colors.redValue){
 		rightContainer = TRUE;
 	}
+
+//	if (!(colors.redValue > colors.blueValue && colors.greenValue > colors.blueValue)){ // First implementation of the color-detection
+//		rightContainer = TRUE;
+//	} else if(colors.blueValue > colors.redValue && colors.greenValue > colors.redValue){
+//		rightContainer = TRUE;
+//	}
 
 	return rightContainer;
 }
