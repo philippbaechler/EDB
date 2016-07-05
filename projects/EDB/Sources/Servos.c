@@ -4,6 +4,7 @@
 #include "_6V_ON.h"
 #include "stdlib.h"
 #include "ColorSensor.h"
+#include "SchutteliMotor.h"
 
 #include "SERIAL_UART.h"
 #include "Serial.h"
@@ -19,7 +20,9 @@ void SRV_outlet(){
 	WAIT_Waitms(1000);
 	servos.value4 = SRV4open;
 	SRV_setValue();
+	SchutteliMotor_SetVal();
 	WAIT_Waitms(3000);
+	SchutteliMotor_ClrVal();
 	servos.value4 = SRV4closed;
 	SRV_setValue();
 	WAIT_Waitms(1000);

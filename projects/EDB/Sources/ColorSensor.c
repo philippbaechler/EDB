@@ -169,6 +169,14 @@ bool COL_ClearReachedPeak(){
 		}
 
 
+		if(reachedPeak){
+			for (i = 0; i <= (ClearValuesArraySize-1); i++){
+				clearValues[i] = 0;
+			}
+			arrayCounter = 0;
+			averageValue = 0;
+		}
+
 	return reachedPeak;
 }
 

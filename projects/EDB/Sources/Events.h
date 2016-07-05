@@ -83,6 +83,8 @@
 #include "FRTOS1.h"
 #include "SYS1.h"
 #include "RTT1.h"
+#include "SchutteliMotor.h"
+#include "BitIoLdd12.h"
 #include "_6V_ON.h"
 #include "BitIoLdd15.h"
 #include "Route_B_LED.h"
